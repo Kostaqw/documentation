@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>target_link_libraries</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-4">target_link_libraries</h1>
+        <div id="contents">
+            <h2>Содержание</h2>
+            <ul>
+                <li><a href="#target_link_libraries">target_link_libraries</a></li>
+                <li><a href="#overview">Обзор</a></li>
+                <li><a href="#libraries-for-a-target-and-its-dependents">Библиотеки для цели и/или ее зависимостей</a></li>
+                <li><a href="#libraries-for-both-a-target-and-its-dependents">Библиотеки для цели и ее зависимостей</a></li>
+                <li><a href="#libraries-for-a-target-and-its-dependents-legacy">Библиотеки для цели и/или ее зависимостей (устаревшие)</a></li>
+                <li><a href="#libraries-for-dependents-only-legacy">Библиотеки только для зависимостей (устаревшие)</a></li>
+                <li><a href="#linking-object-libraries">Связывание объектных библиотек</a></li>
+                <li><a href="#linking-object-libraries-via">Связывание объектных библиотек через $&lt;TARGET_OBJECTS&gt;</a></li>
+                <li><a href="#cyclic-dependencies-of-static-libraries">Циклические зависимости статических библиотек</a></li>
+                <li><a href="#creating-relocatable-packages">Создание перемещаемых пакетов</a></li>
+                <li><a href="#see-also">См. также</a></li>
+            </ul>
+        </div>
+
+        <div id="target_link_libraries" class="mt-4">
+            <h2>target_link_libraries</h2>
+            <p>Укажите библиотеки или флаги для использования при связывании данной цели и/или ее зависимостей. Требования к использованию связанных библиотек будут переданы. Требования к использованию зависимостей цели влияют на компиляцию ее собственных исходников.</p>
+        </div>
+
+        <div id="overview" class="mt-4">
+            <h2>Обзор</h2>
+            <p>Эта команда имеет несколько вариантов, описанных в следующих подразделах. Все они имеют общую форму</p>
+            <pre><code>target_link_libraries(&lt;target&gt; ... &lt;item&gt;... ...)</code></pre>
+            <p>Указанная <code>target</code> должна быть создана с помощью команды, такой как <code>add_executable()</code> или <code>add_library()</code>, и не должна быть целью <code>ALIAS</code>. Если политика <code>CMP0079</code> не установлена на <code>NEW</code>, цель должна быть создана в текущем каталоге. Повторные вызовы для одной и той же <code>target</code> добавляют элементы в порядке вызова.</p>
+            <p>Новое в версии 3.13: <code>target</code> не обязательно должна быть определена в том же каталоге, что и вызов <code>target_link_libraries</code>.</p>
+            <p>Каждый <code>item</code> может быть:</p>
+            <ul>
+                <li><strong>Имя целевой библиотеки:</strong> Сгенерированная строка ссылки будет содержать полный путь к файлу связуемой библиотеки, связанной с целью. Система сборки будет иметь зависимость на повторное связывание <code>target</code>, если файл библиотеки изменится. Указанная цель должна быть создана с помощью <code>add_library()</code> в проекте или как импортированная библиотека. Если она создана в проекте, зависимость на упорядочение автоматически добавляется в систему сборки, чтобы убедиться, что указанная целевая библиотека актуальна перед связыванием <code>target</code>. Если импортированная библиотека имеет установленное свойство <code>IMPORTED_NO_SONAME</code>, CMake может попросить компоновщик искать библиотеку вместо использования полного пути (например, <code>/usr/lib/libfoo.so</code> становится <code>-lfoo</code>). Полный путь к артефакту цели будет автоматически экранирован для оболочки.</li>
+                <li><strong>Полный путь к файлу библиотеки:</strong> Сгенерированная строка ссылки обычно сохранит полный путь к файлу. Система сборки будет иметь зависимость на повторное связывание <code>target</code>, если файл библиотеки изменится. Есть некоторые случаи, когда CMake может попросить компоновщик искать библиотеку (например, <code>/usr/lib/libfoo.so</code> становится <code>-lfoo</code>), такие как когда обнаруживается, что общая библиотека не имеет поля <code>SONAME</code>. См. политику <code>CMP0060</code> для обсуждения другого случая. Если файл библиотеки находится в фреймворке macOS, каталог <code>Headers</code> фреймворка также будет обработан как требование использования. Это имеет тот же эффект, что и передача каталога фреймворка в качестве каталога включения. Новое в версии 3.28: Файл библиотеки может указывать на папку <code>.xcframework</code> на платформах Apple. Если это так, цель получит выбранный каталог <code>Headers</code> библиотеки как требование использования. Новое в версии 3.8: На генераторах Visual Studio для VS 2010 и выше, файлы библиотек с окончанием <code>.targets</code> будут рассматриваться как файлы целей MSBuild и импортироваться в сгенерированные проектные файлы. Это не поддерживается другими генераторами. Полный путь к файлу библиотеки будет автоматически экранирован для оболочки.</li>
+                <li><strong>Обычное имя библиотеки:</strong> Сгенерированная строка ссылки попросит компоновщик искать библиотеку (например, <code>foo</code> становится <code>-lfoo</code> или <code>foo.lib</code>). Имя/флаг библиотеки обрабатывается как фрагмент строки командной строки и будет использоваться без дополнительного экранирования.</li>
+                <li><strong>Флаг связывания:</strong> Элементы, начинающиеся с <code>-</code>, но не с <code>-l</code> или <code>-framework</code>, рассматриваются как флаги компоновщика. Обратите внимание, что такие флаги будут рассматриваться как любой другой элемент связывания библиотеки для целей транзитивных зависимостей, поэтому их обычно безопасно указывать только как приватные элементы связывания, которые не будут распространяться на зависимые цели. Указанные здесь флаги связывания вставляются в команду связывания в том же месте, что и библиотеки связывания. Это может быть неверным, в зависимости от компоновщика. Используйте свойство <code>LINK_OPTIONS</code> цели или команду <code>target_link_options()</code> для явного добавления флагов связывания. Флаги будут помещены в определенное инструментальной цепочкой место для флагов в команде связывания. Новое в версии 3.13: Свойство цели <code>LINK_OPTIONS</code> и команда <code>target_link_options()</code>. Для более ранних версий CMake используйте свойство <code>LINK_FLAGS</code>. Флаг связывания обрабатывается как фрагмент строки командной строки и будет использоваться без дополнительного экранирования.</li>
+                <li><strong>Генераторное выражение:</strong> Выражение генератора <code>$&lt;...&gt;</code> может оцениваться в любой из вышеперечисленных элементов или в список из них, разделенный точкой с запятой. Если <code>...</code> содержит любые символы <code>;</code>, например, после оценки переменной <code>${list}</code>, обязательно используйте явно цитируемый аргумент <code>"$&lt;...&gt;"</code>, чтобы эта команда получила его как один элемент <code>item</code>. Кроме того, выражение генератора может использоваться как фрагмент любого из вышеперечисленных элементов, например, <code>foo$&lt;1:_d&gt;</code>. Обратите внимание, что выражения генератора не будут использоваться в OLD обработке политики <code>CMP0003</code> или политики <code>CMP0004</code>.</li>
+                <li><strong>Ключевое слово debug, optimized или general, за которым сразу следует другой элемент <code>item</code>:</strong> Элемент, следующий за таким ключевым словом, будет использоваться только для соответствующей конфигурации сборки. Ключевое слово <code>debug</code> соответствует конфигурации <code>Debug</code> (или конфигурациям, указанным в глобальном свойстве <code>DEBUG_CONFIGURATIONS</code>, если оно установлено). Ключевое слово <code>optimized</code> соответствует всем другим конфигурациям. Ключевое слово <code>general</code> соответствует всем конфигурациям и является чисто необязательным. Более высокая степень детализации может быть достигнута для правил конфигурации, создавая и связывая с импортированными целевыми библиотеками. Эти ключевые слова интерпретируются немедленно этой командой и, следовательно, не имеют особого значения, когда создаются выражением генератора.</li>
+                <li><strong>Элементы, содержащие <code>::</code>, такие как <code>Foo::Bar</code>, считаются именами импортированных или алиасных целевых библиотек и вызовут ошибку, если такая цель не существует. См. политику <code>CMP0028</code>.</strong></li>
+            </ul>
+            <p>См. руководство <code>cmake-buildsystem(7)</code> для получения дополнительной информации о определении свойств системы сборки.</p>
+        </div>
+
+        <div id="libraries-for-a-target-and-its-dependents" class="mt-4">
+            <h2>Библиотеки для цели и/или ее зависимостей</h2>
+            <pre><code>target_link_libraries(&lt;target&gt;
+                                &lt;PRIVATE|PUBLIC|INTERFACE&gt; &lt;item&gt;...
+                             [  &lt;PRIVATE|PUBLIC|INTERFACE&gt; &lt;item&gt;...]...)</code></pre>
+            <p>Ключевые слова <code>PUBLIC</code>, <code>PRIVATE</code> и <code>INTERFACE</code> могут использоваться для указания как зависимостей связывания, так и интерфейса связывания в одной команде.</p>
+            <p>Библиотеки и цели, следующие за <code>PUBLIC</code>, связываются и становятся частью интерфейса связывания. Библиотеки и цели, следующие за <code>PRIVATE</code>, связываются, но не становятся частью интерфейса связывания. Библиотеки, следующие за <code>INTERFACE</code>, добавляются к интерфейсу связывания и не используются для связывания <code>target</code>.</p>
+        </div>
+
+        <div id="libraries-for-both-a-target-and-its-dependents" class="mt-4">
+            <h2>Библиотеки для цели и ее зависимостей</h2>
+            <pre><code>target_link_libraries(&lt;target&gt; &lt;item&gt;...)</code></pre>
+            <p>Зависимости библиотеки по умолчанию транзитивны с этим вариантом. Когда эта цель связывается с другой целью, библиотеки, связанные с этой целью, также появятся в строке связывания для другой цели. Этот транзитивный "интерфейс связывания" сохраняется в свойстве цели <code>INTERFACE_LINK_LIBRARIES</code> и может быть переопределен, установив это свойство напрямую. Когда <code>CMP0022</code> не установлен на <code>NEW</code>, транзитивное связывание встроено, но может быть переопределено свойством <code>LINK_INTERFACE_LIBRARIES</code>. Вызовы других вариантов этой команды могут установить это свойство, делая любые библиотеки, связанные исключительно этим вариантом, приватными.</p>
+        </div>
+
+        <div id="libraries-for-a-target-and-its-dependents-legacy" class="mt-4">
+            <h2>Библиотеки для цели и/или ее зависимостей (устаревшие)</h2>
+            <pre><code>target_link_libraries(&lt;target&gt;
+                              &lt;LINK_PRIVATE|LINK_PUBLIC&gt; <lib>...
+                             [&lt;LINK_PRIVATE|LINK_PUBLIC&gt; <lib>...]...)</code></pre>
+            <p>Режимы <code>LINK_PUBLIC</code> и <code>LINK_PRIVATE</code> могут использоваться для указания как зависимостей связывания, так и интерфейса связывания в одной команде.</p>
+            <p>Этот вариант предназначен только для совместимости. Предпочтительнее использовать ключевые слова <code>PUBLIC</code> или <code>PRIVATE</code>.</p>
+            <p>Библиотеки и цели, следующие за <code>LINK_PUBLIC</code>, связываются и становятся частью <code>INTERFACE_LINK_LIBRARIES</code>. Если политика <code>CMP0022</code> не установлена на <code>NEW</code>, они также становятся частью <code>LINK_INTERFACE_LIBRARIES</code>. Библиотеки и цели, следующие за <code>LINK_PRIVATE</code>, связываются, но не становятся частью <code>INTERFACE_LINK_LIBRARIES</code> (или <code>LINK_INTERFACE_LIBRARIES</code>).</p>
+        </div>
+
+        <div id="libraries-for-dependents-only-legacy" class="mt-4">
+            <h2>Библиотеки только для зависимостей (устаревшие)</h2>
+            <pre><code>target_link_libraries(&lt;target&gt; LINK_INTERFACE_LIBRARIES &lt;item&gt;...)</code></pre>
+            <p>Режим <code>LINK_INTERFACE_LIBRARIES</code> добавляет библиотеки к свойству цели <code>INTERFACE_LINK_LIBRARIES</code> вместо их использования для связывания. Если политика <code>CMP0022</code> не установлена на <code>NEW</code>, этот режим также добавляет библиотеки к <code>LINK_INTERFACE_LIBRARIES</code> и его эквиваленту для каждой конфигурации.</p>
+            <p>Этот вариант предназначен только для совместимости. Предпочтительнее использовать режим <code>INTERFACE</code>.</p>
+            <p>Библиотеки, указанные как <code>debug</code>, оборачиваются в выражение генератора, соответствующее отладочным сборкам. Если политика <code>CMP0022</code> не установлена на <code>NEW</code>, библиотеки также добавляются к свойству <code>LINK_INTERFACE_LIBRARIES_DEBUG</code> (или к свойствам, соответствующим конфигурациям, указанным в глобальном свойстве <code>DEBUG_CONFIGURATIONS</code>, если оно установлено). Библиотеки, указанные как <code>optimized</code>, добавляются к свойству <code>INTERFACE_LINK_LIBRARIES</code>. Если политика <code>CMP0022</code> не установлена на <code>NEW</code>, они также добавляются к свойству <code>LINK_INTERFACE_LIBRARIES</code>. Библиотеки, указанные как <code>general</code> (или без ключевого слова), обрабатываются так, как если бы они были указаны и для отладочных, и для оптимизированных конфигураций.</p>
+        </div>
+
+        <div id="linking-object-libraries" class="mt-4">
+            <h2>Связывание объектных библиотек</h2>
+            <p>Новое в версии 3.12.</p>
+            <p>Объектные библиотеки могут использоваться в качестве аргумента <code>&lt;target&gt;</code> команды <code>target_link_libraries</code> для указания зависимостей их исходников от других библиотек. Например, код</p>
+            <pre><code>add_library(A SHARED a.c)
+target_compile_definitions(A PUBLIC A)
+
+add_library(obj OBJECT obj.c)
+target_compile_definitions(obj PUBLIC OBJ)
+target_link_libraries(obj PUBLIC A)</code></pre>
+            <p>компилирует <code>obj.c</code> с <code>-DA -DOBJ</code> и устанавливает требования к использованию для <code>obj</code>, которые передаются его зависимостям.</p>
+            <p>Обычные библиотеки и исполняемые файлы могут ссылаться на объектные библиотеки, чтобы получить их объекты и требования к использованию. Продолжая предыдущий пример, код</p>
+            <pre><code>add_library(B SHARED b.c)
+target_link_libraries(B PUBLIC obj)</code></pre>
+            <p>компилирует <code>b.c</code> с <code>-DA -DOBJ</code>, создает общую библиотеку <code>B</code> с объектными файлами из <code>b.c</code> и <code>obj.c</code> и связывает <code>B</code> с <code>A</code>. Далее, код</p>
+            <pre><code>add_executable(main main.c)
+target_link_libraries(main B)</code></pre>
+            <p>компилирует <code>main.c</code> с <code>-DA -DOBJ</code> и связывает исполняемый файл <code>main</code> с <code>B</code> и <code>A</code>. Требования к использованию объектной библиотеки передаются транзитивно через <code>B</code>, но ее объектные файлы нет.</p>
+            <p>Объектные библиотеки могут "связываться" с другими объектными библиотеками, чтобы получить требования к использованию, но поскольку у них нет этапа связывания, их объектные файлы не используются. Продолжая предыдущий пример, код:</p>
+            <pre><code>add_library(obj2 OBJECT obj2.c)
+target_link_libraries(obj2 PUBLIC obj)
+
+add_executable(main2 main2.c)
+target_link_libraries(main2 obj2)</code></pre>
+            <p>компилирует <code>obj2.c</code> с <code>-DA -DOBJ</code>, создает исполняемый файл <code>main2</code> с объектными файлами из <code>main2.c</code> и <code>obj2.c</code> и связывает <code>main2</code> с <code>A</code>.</p>
+            <p>Иными словами, когда объектные библиотеки появляются в свойстве цели <code>INTERFACE_LINK_LIBRARIES</code>, они будут рассматриваться как интерфейсные библиотеки, но когда они появляются в свойстве цели <code>LINK_LIBRARIES</code>, их объектные файлы также будут включены в связывание.</p>
+        </div>
+
+        <div id="linking-object-libraries-via-target-objects" class="mt-4">
+            <h2>Связывание объектных библиотек через $&lt;TARGET_OBJECTS&gt;</h2>
+            <p>Новое в версии 3.21.</p>
+            <p>Объектные файлы, связанные с объектной библиотекой, могут быть указаны с помощью выражения генератора <code>$&lt;TARGET_OBJECTS&gt;</code>. Такие объектные файлы размещаются в строке связывания перед всеми библиотеками, независимо от их относительного порядка. Дополнительно, зависимость по порядку будет добавлена в систему сборки, чтобы убедиться, что объектная библиотека актуальна перед связыванием зависимой цели. Например, код</p>
+            <pre><code>add_library(obj3 OBJECT obj3.c)
+target_compile_definitions(obj3 PUBLIC OBJ3)
+
+add_executable(main3 main3.c)
+target_link_libraries(main3 PRIVATE a3 $<TARGET_OBJECTS:obj3> b3)</code></pre>
+            <p>связывает исполняемый файл <code>main3</code> с объектными файлами из <code>main3.c</code> и <code>obj3.c</code>, за которыми следуют библиотеки <code>a3</code> и <code>b3</code>. <code>main3.c</code> не компилируется с требованиями к использованию от <code>obj3</code>, такими как <code>-DOBJ3</code>.</p>
+            <p>Этот подход может использоваться для достижения транзитивного включения объектных файлов в строки связывания в качестве требований к использованию. Продолжая предыдущий пример, код</p>
+            <pre><code>add_library(iface_obj3 INTERFACE)
+target_link_libraries(iface_obj3 INTERFACE obj3 $<TARGET_OBJECTS:obj3>)</code></pre>
+            <p>создает интерфейсную библиотеку <code>iface_obj3</code>, которая передает требования к использованию <code>obj3</code> и добавляет объектные файлы <code>obj3</code> в строки связывания зависимых. Код</p>
+            <pre><code>add_executable(use_obj3 use_obj3.c)
+target_link_libraries(use_obj3 PRIVATE iface_obj3)</code></pre>
+            <p>компилирует <code>use_obj3.c</code> с <code>-DOBJ3</code> и связывает исполняемый файл <code>use_obj3</code> с объектными файлами из <code>use_obj3.c</code> и <code>obj3.c</code>.</p>
+            <p>Это также работает транзитивно через статическую библиотеку. Поскольку статическая библиотека не связывается, она не использует объектные файлы из объектных библиотек, указанных таким образом. Вместо этого объектные файлы становятся транзитивными зависимостями связывания статической библиотеки. Продолжая предыдущий пример, код</p>
+            <pre><code>add_library(static3 STATIC static3.c)
+target_link_libraries(static3 PRIVATE iface_obj3)
+
+add_executable(use_static3 use_static3.c)
+target_link_libraries(use_static3 PRIVATE static3)</code></pre>
+            <p>компилирует <code>static3.c</code> с <code>-DOBJ3</code> и создает <code>libstatic3.a</code>, используя только свой собственный объектный файл. <code>use_static3.c</code> компилируется без <code>-DOBJ3</code>, поскольку требование к использованию не транзитивно через приватную зависимость <code>static3</code>. Однако зависимости связывания <code>static3</code> передаются, включая ссылку <code>iface_obj3</code> на <code>$<TARGET_OBJECTS:obj3></code>. Исполняемый файл <code>use_static3</code> создается с объектными файлами из <code>use_static3.c</code> и <code>obj3.c</code> и связывается с библиотекой <code>libstatic3.a</code>.</p>
+            <p>При использовании этого подхода ответственность за предотвращение связывания нескольких зависимых бинарных файлов с <code>iface_obj3</code> лежит на проекте, так как они все получат объектные файлы <code>obj3</code> в своих строках связывания.</p>
+            <p>Примечание: Ссылки на <code>$&lt;TARGET_OBJECTS&gt;</code> в вызовах <code>target_link_libraries</code> работали в версиях CMake до 3.21 в некоторых случаях, но не были полностью поддержаны:</p>
+            <ul>
+                <li>Объектные файлы не размещались перед библиотеками в строках связывания.</li>
+                <li>Не добавлялась зависимость по порядку на объектную библиотеку.</li>
+                <li>Не работало в Xcode с несколькими архитектурами.</li>
+            </ul>
+        </div>
+
+        <div id="cyclic-dependencies-of-static-libraries" class="mt-4">
+            <h2>Циклические зависимости статических библиотек</h2>
+            <p>Граф зависимостей библиотек обычно ацикличен (DAG), но в случае взаимозависимых статических библиотек CMake позволяет графу содержать циклы (сильно связанные компоненты). Когда другая цель связывается с одной из библиотек, CMake повторяет весь связанный компонент. Например, код</p>
+            <pre><code>add_library(A STATIC a.c)
+add_library(B STATIC b.c)
+target_link_libraries(A B)
+target_link_libraries(B A)
+add_executable(main main.c)
+target_link_libraries(main A)</code></pre>
+            <p>связывает <code>main</code> с <code>A B A B</code>. Хотя обычно достаточно одного повторения, патологические случаи расположения объектных файлов и символов могут потребовать большего. Один из способов обработки таких случаев заключается в использовании свойства цели <code>LINK_INTERFACE_MULTIPLICITY</code> или в ручном повторении компонента в последнем вызове <code>target_link_libraries</code>. Однако, если два архива действительно так взаимозависимы, их, вероятно, следует объединить в один архив, возможно, используя объектные библиотеки.</p>
+        </div>
+
+        <div id="creating-relocatable-packages" class="mt-4">
+            <h2>Создание перемещаемых пакетов</h2>
+            <p>Обратите внимание, что не рекомендуется заполнять <code>INTERFACE_LINK_LIBRARIES</code> цели абсолютными путями к зависимостям. Это жестко закодировало бы в установленные пакеты пути к библиотечным файлам для зависимостей, найденным на машине, на которой был создан пакет.</p>
+            <p>См. раздел "Создание перемещаемых пакетов" руководства <code>cmake-packages(7)</code> для обсуждения дополнительных мер, которые необходимо принять при указании требований к использованию при создании пакетов для распространения.</p>
+        </div>
+
+        <div id="see-also" class="mt-4">
+            <h2>См. также</h2>
+            <ul>
+                <li><code>target_compile_definitions()</code></li>
+                <li><code>target_compile_features()</code></li>
+                <li><code>target_compile_options()</code></li>
+                <li><code>target_include_directories()</code></li>
+                <li><code>target_link_directories()</code></li>
+                <li><code>target_link_options()</code></li>
+                <li><code>target_precompile_headers()</code></li>
+                <li><code>target_sources()</code></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

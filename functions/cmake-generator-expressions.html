@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cmake-generator-expressions</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1>cmake-generator-expressions(7)</h1>
+            <h2>Содержание</h2>
+            <ul>
+              <li>Введение</li>
+              <li>Пробелы и кавычки</li>
+              <li>Отладка</li>
+              <li>Справочник по генераторным выражениям</li>
+              <ul>
+                <li>Условные выражения</li>
+                <li>Логические операторы</li>
+                <li>Первичные выражения сравнения</li>
+                <li>Сравнение строк</li>
+                <li>Сравнение версий</li>
+                <li>Трансформации строк</li>
+                <li>Выражения для списков</li>
+                <li>Сравнение списков</li>
+                <li>Запросы списков</li>
+                <li>Трансформации списков</li>
+                <li>Упорядочение списков</li>
+                <li>Выражения для путей</li>
+                <li>Сравнение путей</li>
+                <li>Запросы путей</li>
+                <li>Декомпозиция путей</li>
+                <li>Трансформации путей</li>
+                <li>Пути для shell</li>
+                <li>Выражения для конфигурации</li>
+                <li>Выражения для инструментов и языков</li>
+                <li>Платформа</li>
+                <li>Версия компилятора</li>
+                <li>Язык компилятора, идентификатор и вариант фронтенда</li>
+                <li>Особенности компиляции</li>
+                <li>Контекст компиляции</li>
+                <li>Язык и идентификатор компоновщика</li>
+                <li>Особенности компоновки</li>
+                <li>Контекст компоновки</li>
+                <li>Зависимые от цели выражения</li>
+                <li>Метаданные цели</li>
+                <li>Свойства цели</li>
+                <li>Артефакты цели</li>
+                <li>Выражения для экспорта и установки</li>
+                <li>Многоуровневая оценка выражений</li>
+                <li>Экранированные символы</li>
+                <li>Устаревшие выражения</li>
+              </ul>
+            </ul>
+          
+            <h2>Введение</h2>
+            <p>Генераторные выражения оцениваются во время генерации системы сборки для создания информации, специфичной для каждой конфигурации сборки. Они имеют форму $&lt;...&gt;. Например:</p>
+            <pre><code>target_include_directories(tgt PRIVATE /opt/include/$&lt;CXX_COMPILER_ID&gt;)</code></pre>
+            <p>Это развернется в /opt/include/GNU, /opt/include/Clang и т.д. в зависимости от используемого компилятора C++.</p>
+            <p>Генераторные выражения разрешены в контексте многих свойств целей, таких как <code>LINK_LIBRARIES, INCLUDE_DIRECTORIES, COMPILE_DEFINITIONS</code> и других. Они также могут использоваться при выполнении команд для заполнения этих свойств, таких как <code>target_link_libraries(), target_include_directories(), target_compile_definitions()</code> и другие. Эти выражения позволяют реализовать условное связывание, условные определения при компиляции, условные каталоги включения и многое другое. Условия могут основываться на конфигурации сборки, свойствах целей, информации о платформе или любой другой запрашиваемой информации.</p>
+            <p>Генераторные выражения могут быть вложенными:</p>
+            <pre><code>target_compile_definitions(tgt PRIVATE
+            $&lt;$&lt;VERSION_LESS:$&lt;CXX_COMPILER_VERSION&gt;,4.2.0&gt;:OLD_COMPILER&gt;
+          )</code></pre>
+            <p>Вышеуказанное развернется в <code>OLD_COMPILER</code>, если версия компилятора C++ меньше 4.2.0.</p>
+          
+            <h2>Пробелы и кавычки</h2>
+            <p>Генераторные выражения обычно анализируются после аргументов команды. Если генераторное выражение содержит пробелы, новые строки, точки с запятой или другие символы, которые могут интерпретироваться как разделители аргументов команды, все выражение должно быть окружено кавычками при передаче в команду. В противном случае выражение может быть разделено, и оно больше не будет распознаваться как генераторное выражение.</p>
+            <pre><code># НЕПРАВИЛЬНО: Встроенный пробел будет рассматриваться как разделитель аргументов.
+          # Это выражение не будет воспринято как генераторное.
+          add_custom_target(run_some_tool
+            COMMAND some_tool -I$&lt;JOIN:$&lt;TARGET_PROPERTY:tgt,INCLUDE_DIRECTORIES&gt;, -I&gt;
+            VERBATIM
+          )</code></pre>
+            <p>Использование переменных для создания более сложного генераторного выражения также является хорошим способом уменьшить количество ошибок и улучшить читаемость. Пример выше можно улучшить следующим образом:</p>
+            <pre><code># Выражение $<BOOL:...> предотвращает добавление чего-либо, если свойство пусто.
+          set(prop "$&lt;TARGET_PROPERTY:tgt,INCLUDE_DIRECTORIES&gt;")
+          add_custom_target(run_some_tool
+            COMMAND some_tool "$&lt;$&lt;BOOL:${prop}&gt;:-I$&lt;JOIN:${prop},;-I&gt;&gt;"
+            COMMAND_EXPAND_LISTS
+            VERBATIM
+          )</code></pre>
+            <p>В конечном счете, пример выше можно выразить более простым и надежным способом, используя альтернативное генераторное выражение:</p>
+            <pre><code>add_custom_target(run_some_tool
+            COMMAND some_tool "$&lt;LIST:TRANSFORM,$&lt;TARGET_PROPERTY:tgt,INCLUDE_DIRECTORIES&gt;,PREPEND,-I&gt;"
+            COMMAND_EXPAND_LISTS
+            VERBATIM
+          )</code></pre>
+            <p>Распространенная ошибка заключается в попытке разделить генераторное выражение на несколько строк с отступами:</p>
+            <pre><code># НЕПРАВИЛЬНО: Новые строки и пробелы будут рассматриваться как разделители аргументов, 
+          # поэтому генераторное выражение будет разделено и не будет распознано правильно.
+          target_compile_definitions(tgt PRIVATE
+            $&lt;$&lt;AND:
+                $&lt;CXX_COMPILER_ID:GNU&gt;,
+                $&lt;VERSION_GREATER_EQUAL:$&lt;CXX_COMPILER_VERSION&gt;,5&gt;
+                &gt;:HAVE_5_OR_LATER&gt;
+          )</code></pre>
+            <p>Снова используйте вспомогательные переменные с хорошо подобранными именами, чтобы создать читаемое выражение:</p>
+            <pre><code>set(is_gnu "$&lt;CXX_COMPILER_ID:GNU&gt;")
+          set(v5_or_later "$&lt;VERSION_GREATER_EQUAL:$&lt;CXX_COMPILER_VERSION>,5&gt;")
+          set(meet_requirements "$&lt;AND:${is_gnu},${v5_or_later}&gt;")
+          target_compile_definitions(tgt PRIVATE
+            "$&lt;${meet_requirements}:HAVE_5_OR_LATER&gt;"
+          )</code></pre>
+          
+            <h2>Отладка</h2>
+            <p>Поскольку генераторные выражения оцениваются во время генерации системы сборки, а не во время обработки файлов CMakeLists.txt, невозможно просмотреть их результат с помощью команды <code>message()</code>. Один из возможных способов создания отладочных сообщений — добавить пользовательскую цель:</p>
+            <pre><code>add_custom_target(genexdebug COMMAND ${CMAKE_COMMAND} -E echo "$&lt;...&gt;")</code></pre>
+            <p>После запуска cmake вы можете собрать цель genexdebug, чтобы напечатать результат выражения $&lt;...&gt; (например, выполните команду cmake --build ... --target genexdebug).</p>
+            <p>Другой способ — записать отладочные сообщения в файл с помощью file(GENERATE):</p>
+            <pre><code>file(GENERATE OUTPUT filename CONTENT "$&lt;...&gt;")</code></pre>
+
+            <h2>Логические Операторы</h2>
+            <p>Поддерживаются распространенные логические операторы:</p>
+
+            <h3>$&lt;AND:conditions&gt;</h3>
+            <p>где <code>conditions</code> - это список логических выражений, разделенных запятыми, каждое из которых должно оцениваться как 1 или 0. Всё выражение оценивается как 1, если все условия равны 1. Если хотя бы одно условие равно 0, всё выражение оценивается как 0.</p>
+
+            <h3>$&lt;OR:conditions&gt;</h3>
+            <p>где <code>conditions</code> - это список логических выражений, разделенных запятыми, каждое из которых должно оцениваться как 1 или 0. Всё выражение оценивается как 1, если хотя бы одно из условий равно 1. Если все условия оцениваются как 0, всё выражение оценивается как 0.</p>
+
+            <h3>$&lt;NOT:condition&gt;</h3>
+            <p><code>condition</code> должно быть 0 или 1. Результат выражения равен 0, если <code>condition</code> равно 1, иначе 1.</p>
+
+            <p><strong>Новое в версии 3.28:</strong> Логические операторы применяют оптимизацию короткого замыкания, что позволяет не оценивать генераторные выражения в списке аргументов, если результат можно определить заранее.</p>
+
+            <h2>Основные Выражения Сравнения</h2>
+            <p>CMake поддерживает различные генераторные выражения для сравнения. В этом разделе рассмотрены основные и наиболее широко используемые типы сравнений. Другие, более специфические типы сравнений, документированы в отдельных разделах ниже.</p>
+
+            <h3>Сравнения Строк</h3>
+            <h4>$&lt;STREQUAL:string1,string2&gt;</h4>
+            <p>Возвращает 1, если <code>string1</code> и <code>string2</code> равны, иначе 0. Сравнение чувствительно к регистру. Для нечувствительного к регистру сравнения можно использовать генераторное выражение для преобразования строки. Например, следующее выражение оценивается как 1, если <code>${foo}</code> равно любому из <code>BAR</code>, <code>Bar</code>, <code>bar</code> и т.д.</p>
+
+            <pre>$&lt;STREQUAL:$&lt;UPPER_CASE:${foo}&gt;,BAR&gt;</pre>
+
+            <h4>$&lt;EQUAL:value1,value2&gt;</h4>
+            <p>Возвращает 1, если <code>value1</code> и <code>value2</code> численно равны, иначе 0.</p>
+
+            <h3>Сравнения Версий</h3>
+            <h4>$&lt;VERSION_LESS:v1,v2&gt;</h4>
+            <p>Возвращает 1, если версия <code>v1</code> меньше версии <code>v2</code>, иначе 0.</p>
+
+            <h4>$&lt;VERSION_GREATER:v1,v2&gt;</h4>
+            <p>Возвращает 1, если версия <code>v1</code> больше версии <code>v2</code>, иначе 0.</p>
+
+            <h4>$&lt;VERSION_EQUAL:v1,v2&gt;</h4>
+            <p>Возвращает 1, если версия <code>v1</code> равна версии <code>v2</code>, иначе 0.</p>
+
+            <h4>$&lt;VERSION_LESS_EQUAL:v1,v2&gt;</h4>
+            <p><strong>Новое в версии 3.7.</strong></p>
+            <p>Возвращает 1, если версия <code>v1</code> меньше или равна версии <code>v2</code>, иначе 0.</p>
+
+            <h4>$&lt;VERSION_GREATER_EQUAL:v1,v2&gt;</h4>
+            <p><strong>Новое в версии 3.7.</strong></p>
+            <p>Возвращает 1, если версия <code>v1</code> больше или равна версии <code>v2</code>, иначе 0.</p>
+
+            <h3>Преобразования Строк</h3>
+            <h4>$&lt;LOWER_CASE:string&gt;</h4>
+            <p>Содержимое строки <code>string</code> преобразовано в нижний регистр.</p>
+
+            <h4>$&lt;UPPER_CASE:string&gt;</h4>
+            <p>Содержимое строки <code>string</code> преобразовано в верхний регистр.</p>
+
+            <h4>$&lt;MAKE_C_IDENTIFIER:...&gt;</h4>
+            <p>Содержимое <code>...</code> преобразовано в идентификатор C. Преобразование выполняется так же, как команда <code>string(MAKE_C_IDENTIFIER)</code>.</p>
+
+            <h2>Списочные Выражения</h2>
+            <p>Большинство выражений в этом разделе тесно связаны с командой <code>list()</code>, обеспечивая те же возможности, но в форме генераторного выражения.</p>
+            <p>В каждом из следующих генераторных выражений, связанных со списками, список не должен содержать запятых, если это выражение ожидает, что после списка будет что-то ещё. Например, выражение <code>$&lt;LIST:FIND,list,value&gt;</code> требует указания значения после списка. Так как запятая используется для разделения списка и значения, сам список не может содержать запятые. Это ограничение не применяется к команде <code>list()</code>, оно специфично только для генераторных выражений, работающих со списками.</p>
+
+            <h3>Сравнения Списков</h3>
+            <h4>$&lt;IN_LIST:string,list&gt;</h4>
+            <p><strong>Новое в версии 3.12.</strong></p>
+            <p>Возвращает 1, если <code>string</code> является элементом списка, разделенного точкой с запятой, иначе 0. Использует чувствительное к регистру сравнение.</p>
+
+            <h3>Запросы Списков</h3>
+            <h4>$&lt;LIST:LENGTH,list&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Количество элементов в списке.</p>
+
+            <h4>$&lt;LIST:GET,list,index,...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Возвращает список элементов, указанных индексами из списка.</p>
+
+            <h4>$&lt;LIST:SUBLIST,list,begin,length&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Подсписок заданного списка. Если <code>length</code> равно 0, будет возвращен пустой список. Если <code>length</code> равно -1 или список меньше, чем <code>begin + length</code>, будут возвращены оставшиеся элементы списка, начиная с <code>begin</code>.</p>
+
+            <h4>$&lt;LIST:FIND,list,value&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Индекс первого элемента в списке, равного <code>value</code>, или -1, если <code>value</code> не найдено в списке.</p>
+
+            <h3>Преобразования Списков</h3>
+            <h4>$&lt;LIST:JOIN,list,glue&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Преобразует список в одну строку с содержимым строки <code>glue</code>, вставленным между каждым элементом. Это концептуально та же операция, что и <code>$&lt;JOIN:list,glue&gt;</code>, но они имеют разное поведение в отношении пустых элементов. <code>$&lt;LIST:JOIN,list,glue&gt;</code> сохраняет все пустые элементы, тогда как <code>$&lt;JOIN:list,glue&gt;</code> удаляет все пустые элементы из списка.</p>
+
+            <h4>$&lt;LIST:APPEND,list,item,...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с добавленным каждым элементом. Несколько элементов должны быть разделены запятыми.</p>
+
+            <h4>$&lt;LIST:PREPEND,list,item,...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с каждым элементом, вставленным в начало. Если есть несколько элементов, они должны быть разделены запятыми, и порядок добавленных элементов будет сохранён.</p>
+
+            <h4>$&lt;LIST:INSERT,list,index,item,...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с элементом (или несколькими элементами), вставленным на указанный индекс. Несколько элементов должны быть разделены запятыми.</p>
+            <p>Ошибка возникает, если указан индекс вне допустимого диапазона. Допустимые индексы — от 0 до N, где N — длина списка, включительно. Пустой список имеет длину 0.</p>
+
+            <h4>$&lt;LIST:POP_BACK,list&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с удалённым последним элементом.</p>
+
+            <h4>$&lt;LIST:POP_FRONT,list&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с удалённым первым элементом.</p>
+
+            <h4>$&lt;LIST:REMOVE_ITEM,list,value,...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с удалёнными всеми экземплярами указанного значения (или значений). Если указано несколько значений, они должны быть разделены запятыми.</p>
+
+            <h4>$&lt;LIST:REMOVE_AT,list,index,...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с удалённым элементом по каждому указанному индексу.</p>
+
+            <h4>$&lt;LIST:REMOVE_DUPLICATES,list&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с удалёнными дублированными элементами. Относительный порядок элементов сохраняется, но если встречаются дубли, сохраняется только первый экземпляр. Результат такой же, как у <code>$&lt;REMOVE_DUPLICATES:list&gt;</code>.</p>
+
+            <h4>$&lt;LIST:FILTER,list,INCLUDE|EXCLUDE,regex&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список элементов из <code>list</code>, которые совпадают (INCLUDE) или не совпадают (EXCLUDE) с регулярным выражением <code>regex</code>. Результат такой же, как у <code>$&lt;FILTER:list,INCLUDE|EXCLUDE,regex&gt;</code>.</p>
+
+            <h4>$&lt;LIST:TRANSFORM,list,ACTION[,SELECTOR]&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список, преобразованный путём применения действия <code>ACTION</code> ко всем или, если указан <code>SELECTOR</code>, к выбранным элементам списка.</p>
+            <p><strong>Примечание:</strong> подкоманда <code>TRANSFORM</code> не изменяет количество элементов в списке. Если указан <code>SELECTOR</code>, изменятся только некоторые элементы, остальные останутся такими же, как до преобразования.</p>
+            <p><code>ACTION</code> указывает действие, которое будет применено к элементам списка. Действия имеют точно такие же семантики, как и команда <code>list(TRANSFORM)</code>. <code>ACTION</code> должно быть одним из следующих:</p>
+
+            <ul>
+                <li><strong>APPEND, PREPEND:</strong> добавляет указанное значение в конец или начало каждого элемента списка.</li>
+            </ul>
+
+            <pre>$&lt;LIST:TRANSFORM,list,(APPEND|PREPEND),value[,SELECTOR]&gt;</pre>
+
+            <ul>
+                <li><strong>TOLOWER, TOUPPER:</strong> преобразует каждый элемент списка в нижний или верхний регистр.</li>
+            </ul>
+
+            <pre>$&lt;LIST:TRANSFORM,list,(TOLOWER|TOUPPER)[,SELECTOR]&gt;</pre>
+
+            <ul>
+                <li><strong>STRIP:</strong> удаляет начальные и конечные пробелы у каждого элемента списка.</li>
+            </ul>
+
+            <pre>$&lt;LIST:TRANSFORM,list,STRIP[,SELECTOR]&gt;</pre>
+
+            <ul>
+                <li><strong>REPLACE:</strong> выполняет замену, соответствующую регулярному выражению, столько раз, сколько возможно, для каждого элемента списка.</li>
+            </ul>
+
+            <pre>$&lt;LIST:TRANSFORM,list,REPLACE,regular_expression,replace_expression[,SELECTOR]&gt;</pre>
+
+            <h5>SELECTOR определяет, какие элементы списка будут преобразованы. Одновременно можно указать только один тип селектора. При указании <code>SELECTOR</code> он должен быть одним из следующих:</h5>
+
+            <ul>
+                <li><strong>AT:</strong> указывает список индексов.</li>
+            </ul>
+
+            <pre>$&lt;LIST:TRANSFORM,list,ACTION,AT,index[,index...]&gt;</pre>
+
+            <ul>
+                <li><strong>FOR:</strong> указывает диапазон с необязательным шагом для итерации по диапазону.</li>
+            </ul>
+
+            <pre>$&lt;LIST:TRANSFORM,list,ACTION,FOR,start,stop[,step]&gt;</pre>
+
+            <ul>
+                <li><strong>REGEX:</strong> указывает регулярное выражение. Только элементы, соответствующие регулярному выражению, будут преобразованы.</li>
+            </ul>
+
+            <h4>$&lt;JOIN:list,glue&gt;</h4>
+            <p>Объединяет список с содержимым строки <code>glue</code>, вставленным между каждым элементом. Это концептуально та же операция, что и <code>$&lt;LIST:JOIN,list,glue&gt;</code>, но они имеют разное поведение в отношении пустых элементов. <code>$&lt;LIST:JOIN,list,glue&gt;</code> сохраняет все пустые элементы, тогда как <code>$&lt;JOIN,list,glue&gt;</code> удаляет все пустые элементы из списка.</p>
+
+            <h4>$&lt;REMOVE_DUPLICATES:list&gt;</h4>
+            <p><strong>Новое в версии 3.15.</strong></p>
+            <p>Удаляет дублированные элементы в данном списке. Относительный порядок элементов сохраняется, и если встречаются дубли, сохраняется только первый экземпляр. Результат такой же, как у <code>$&lt;LIST:REMOVE_DUPLICATES,list&gt;</code>.</p>
+
+            <h4>$&lt;FILTER:list,INCLUDE|EXCLUDE,regex&gt;</h4>
+            <p><strong>Новое в версии 3.15.</strong></p>
+            <p>Включает или удаляет элементы из списка, которые совпадают с регулярным выражением <code>regex</code>. Результат такой же, как у <code>$&lt;LIST:FILTER,list,INCLUDE|EXCLUDE,regex&gt;</code>.</p>
+
+            <h3>Сортировка Списков</h3>
+            <h4>$&lt;LIST:REVERSE,list&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список с элементами в обратном порядке.</p>
+
+            <h4>$&lt;LIST:SORT,list[,(COMPARE:option|CASE:option|ORDER:option)]...&gt;</h4>
+            <p><strong>Новое в версии 3.27.</strong></p>
+            <p>Список, отсортированный в соответствии с указанными опциями.</p>
+            <p>Используйте одну из опций <code>COMPARE</code>, чтобы выбрать метод сравнения для сортировки:</p>
+
+            <ul>
+                <li><strong>STRING:</strong> Сортирует список строк в алфавитном порядке. Это поведение по умолчанию, если опция <code>COMPARE</code> не указана.</li>
+                <li><strong>FILE_BASENAME:</strong> Сортирует список путей файлов по их базовым именам.</li>
+                <li><strong>NATURAL:</strong> Сортирует список строк в естественном порядке (см. man-страницу для <code>strverscmp(3)</code>), так, что последовательные цифры сравниваются как целые числа. Например, следующий список <code>10.0 1.1 2.1 8.0 2.0 3.1</code> будет отсортирован как <code>1.1 2.0 2.1 3.1 8.0 10.0</code>, если выбрано естественное сравнение, тогда как он будет отсортирован как <code>1.1 10.0 2.0 2.1 3.1 8.0</code> с использованием строкового сравнения.</li>
+            </ul>
+
+            <p>Используйте одну из опций <code>CASE</code>, чтобы выбрать режим чувствительности к регистру при сортировке:</p>
+
+            <ul>
+                <li><strong>SENSITIVE:</strong> Элементы списка сортируются с учётом регистра. Это поведение по умолчанию, если опция <code>CASE</code> не указана.</li>
+                <li><strong>INSENSITIVE:</strong> Элементы списка сортируются без учёта регистра. Порядок элементов, которые различаются только верхним/нижним регистром, не определён.</li>
+            </ul>
+
+            <p>Чтобы управлять порядком сортировки, можно указать одну из опций <code>ORDER</code>:</p>
+
+            <ul>
+                <li><strong>ASCENDING:</strong> Сортирует список в порядке возрастания. Это поведение по умолчанию, когда опция <code>ORDER</code> не указана.</li>
+                <li><strong>DESCENDING:</strong> Сортирует список в порядке убывания.</li>
+            </ul>
+
+            <p>Опции могут быть указаны в любом порядке, но ошибка возникает, если указать одну и ту же опцию несколько раз.</p>
+
+            <pre>$&lt;LIST:SORT,list,CASE:SENSITIVE,COMPARE:STRING,ORDER:DESCENDING&gt;</pre>
+
+            <h2>Выражения для работы с путями</h2>
+            <p>Большинство выражений в этом разделе тесно связаны с командой <code>cmake_path()</code>, предоставляя те же возможности, но в виде генераторных выражений.</p>
+            <p>Для всех генераторных выражений в этом разделе пути должны быть в формате CMake-style. Генераторное выражение <code>$&lt;PATH:CMAKE_PATH&gt;</code> может быть использовано для преобразования родного пути в формат CMake-style.</p>
+
+            <h3>Сравнение Путей</h3>
+            <h4>$&lt;PATH_EQUAL:path1,path2&gt;</h4>
+            <p><strong>Новое в версии 3.24.</strong></p>
+            <p>Сравнивает лексические представления двух путей. Никакой нормализации не выполняется ни для одного из путей. Возвращает 1, если пути равны, 0 в противном случае.</p>
+            <p>Подробнее см. <code>cmake_path(COMPARE)</code>.</p>
+
+            <h3>Запросы Пути</h3>
+            <p>Эти выражения предоставляют возможности на этапе генерации, эквивалентные опциям <code>Query</code> команды <code>cmake_path()</code>. Все пути должны быть в формате CMake-style.</p>
+
+            <h4>$&lt;PATH:HAS_*,path&gt;</h4>
+            <p><strong>Новое в версии 3.24.</strong></p>
+            <p>Следующие операции возвращают 1, если конкретный компонент пути присутствует, 0 в противном случае. Подробнее см. <em>Path Structure And Terminology</em> для объяснения значения каждого компонента пути.</p>
+            <ul>
+                <li><strong>$&lt;PATH:HAS_ROOT_NAME,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_ROOT_DIRECTORY,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_ROOT_PATH,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_FILENAME,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_EXTENSION,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_STEM,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_RELATIVE_PART,path&gt;</strong></li>
+                <li><strong>$&lt;PATH:HAS_PARENT_PATH,path&gt;</strong></li>
+            </ul>
+            <p><strong>Примечание о некоторых особых случаях:</strong></p>
+            <ul>
+                <li>Для <strong>HAS_ROOT_PATH</strong> истинный результат будет возвращён только если хотя бы одно из <code>root-name</code> или <code>root-directory</code> непустое.</li>
+                <li>Для <strong>HAS_PARENT_PATH</strong> корневая директория также считается имеющей родителя, которым будет она сама. Результат будет истинным, за исключением случаев, когда путь состоит только из имени файла.</li>
+            </ul>
+
+            <h4>$&lt;PATH:IS_ABSOLUTE,path&gt;</h4>
+            <p><strong>Новое в версии 3.24.</strong></p>
+            <p>Возвращает 1, если путь абсолютный, 0 в противном случае.</p>
+
+            <h4>$&lt;PATH:IS_RELATIVE,path&gt;</h4>
+            <p><strong>Новое в версии 3.24.</strong></p>
+            <p>Это выражение возвращает противоположный результат от <code>IS_ABSOLUTE</code>.</p>
+
+            <h4>$&lt;PATH:IS_PREFIX[,NORMALIZE],path,input&gt;</h4>
+            <p><strong>Новое в версии 3.24.</strong></p>
+            <p>Возвращает 1, если <code>path</code> является префиксом <code>input</code>, 0 в противном случае.</p>
+            <p>Если указана опция <code>NORMALIZE</code>, <code>path</code> и <code>input</code> будут нормализованы перед проверкой.</p>
+            
+            <h2>Разложение Пути</h2>
+            <p>Эти выражения предоставляют возможности на этапе генерации, эквивалентные опциям <strong>Decomposition</strong> команды <code>cmake_path()</code>. Ожидается, что все пути будут в формате CMake.</p>
+            <h5 class="mt-4">&lt;PATH:GET_*,...&gt;</h5>
+            <p><em>Новая функция в версии 3.24.</em></p>
+            <p>Следующие операции извлекают различные компоненты или группы компонентов из пути. Смотрите <a href="#">Структура и терминология пути</a> для объяснения каждого компонента пути.</p>
+            <p><em>Изменено в версии 3.27:</em> Все операции теперь принимают список путей в качестве аргумента. Если указан список путей, операция будет применена к каждому пути.</p>
+            
+            <ul>
+                <li>&lt;PATH:GET_ROOT_NAME,path...&gt;</li>
+                <li>&lt;PATH:GET_ROOT_DIRECTORY,path...&gt;</li>
+                <li>&lt;PATH:GET_ROOT_PATH,path...&gt;</li>
+                <li>&lt;PATH:GET_FILENAME,path...&gt;</li>
+                <li>&lt;PATH:GET_EXTENSION[,LAST_ONLY],path...&gt;</li>
+                <li>&lt;PATH:GET_STEM[,LAST_ONLY],path...&gt;</li>
+                <li>&lt;PATH:GET_RELATIVE_PART,path...&gt;</li>
+                <li>&lt;PATH:GET_PARENT_PATH,path...&gt;</li>
+            </ul>
+            <p>Если запрашиваемый компонент отсутствует в пути, возвращается пустая строка.</p>
+
+            <h2 class="mt-5">Преобразования Пути</h2>
+            <p>Эти выражения предоставляют возможности на этапе генерации, эквивалентные опциям <strong>Modification</strong> и <strong>Generation</strong> команды <code>cmake_path()</code>. Ожидается, что все пути будут в формате CMake.</p>
+            <p><em>Изменено в версии 3.27:</em> Все операции теперь принимают список путей в качестве аргумента. Если указан список путей, операция будет применена к каждому пути.</p>
+            
+            <ul>
+                <li>&lt;PATH:CMAKE_PATH[,NORMALIZE],path...&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:APPEND,path...,input,...&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:REMOVE_FILENAME,path...&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:REPLACE_FILENAME,path...,input&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:REMOVE_EXTENSION[,LAST_ONLY],path...&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:REPLACE_EXTENSION[,LAST_ONLY],path...,input&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:NORMAL_PATH,path...&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:RELATIVE_PATH,path...,base_directory&gt; <em>Новая функция в версии 3.24.</em></li>
+                <li>&lt;PATH:ABSOLUTE_PATH[,NORMALIZE],path...,base_directory&gt; <em>Новая функция в версии 3.24.</em></li>
+            </ul>
+
+            <h2 class="mt-5">Пути для Shell</h2>
+            <ul>
+                <li>&lt;SHELL_PATH:...&gt; <em>Новая функция в версии 3.4.</em></li>
+            </ul>
+            <p>Содержимое ..., преобразованное в формат пути для shell. Например, слэши заменяются на обратные слэши в Windows shell, а буквы дисков преобразуются в posix-пути в MSYS shell. ... должен быть абсолютным путем.</p>
+            <p><em>Новая функция в версии 3.14:</em> ... может быть списком путей, разделенных точкой с запятой; в этом случае каждый путь преобразуется отдельно, а результатный список формируется с использованием разделителя путей для shell (: на POSIX и ; на Windows). Обязательно заключите аргумент, содержащий это выражение, в двойные кавычки в коде CMake, чтобы ; не разделял аргументы.</p>
+
+            <h2 class="mt-5">Выражения для Конфигураций</h2>
+            <ul>
+                <li>&lt;CONFIG&gt;</li>
+                <p>Имя конфигурации. Используйте это вместо устаревшего выражения <code>CONFIGURATION</code>.</p>
+                <li>&lt;CONFIG:cfgs&gt;</li>
+                <p>Результат 1, если конфигурация соответствует одному из значений в списке cfgs, разделенных запятыми; в противном случае результат 0. Сравнение выполняется без учета регистра.</p>
+                <p><em>Изменено в версии 3.19:</em> В cfgs можно указывать несколько конфигураций. CMake 3.18 и более ранние версии принимали только одну конфигурацию.</p>
+                <li>&lt;OUTPUT_CONFIG:...&gt; <em>Новая функция в версии 3.20.</em></li>
+                <li>&lt;COMMAND_CONFIG:...&gt; <em>Новая функция в версии 3.20.</em></li>
+            </ul>
+            <p>Оба выражения действительны только в <code>add_custom_command()</code> и <code>add_custom_target()</code> как самые внешние выражения. С генератором Ninja Multi-Config выражения ... оцениваются с использованием "output config" для пользовательской команды. С другими генераторами содержимое ... оценивается нормально.</p>
+
+            <h2 class="mt-5">Выражения для Toolchain и Языка</h2>
+            <h4>Платформа</h4>
+            <ul>
+                <li>&lt;PLATFORM_ID&gt;</li>
+                <p>ID платформы текущей системы в CMake. См. также переменную <code>CMAKE_SYSTEM_NAME</code>.</p>
+                <li>&lt;PLATFORM_ID:platform_ids&gt;</li>
+                <p>Результат 1, если ID платформы CMake совпадает с любым из значений в списке platform_ids, разделенных запятыми; в противном случае результат 0.</p>
+            </ul>
+
+            <h2>Версия Компилятора</h2>
+            <p>См. также переменную <code>CMAKE_&lt;LANG&gt;_COMPILER_VERSION</code>, которая тесно связана с выражениями в этом разделе.</p>
+
+            <ul>
+                <li><code>&lt;C_COMPILER_VERSION&gt;</code></li>
+                <p>Версия используемого компилятора C.</p>
+
+                <li><code>&lt;C_COMPILER_VERSION:version&gt;</code></li>
+                <p>Возвращает 1, если версия компилятора C соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;CXX_COMPILER_VERSION&gt;</code></li>
+                <p>Версия используемого компилятора C++.</p>
+
+                <li><code>&lt;CXX_COMPILER_VERSION:version&gt;</code></li>
+                <p>Возвращает 1, если версия компилятора C++ соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;CUDA_COMPILER_VERSION&gt;</code> <em>Новое в версии 3.15.</em></li>
+                <p>Версия используемого компилятора CUDA.</p>
+
+                <li><code>&lt;CUDA_COMPILER_VERSION:version&gt;</code> <em>Новое в версии 3.15.</em></li>
+                <p>Возвращает 1, если версия компилятора CUDA соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;OBJC_COMPILER_VERSION&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>Версия используемого компилятора Objective-C.</p>
+
+                <li><code>&lt;OBJC_COMPILER_VERSION:version&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>Возвращает 1, если версия компилятора Objective-C соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;OBJCXX_COMPILER_VERSION&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>Версия используемого компилятора Objective-C++.</p>
+
+                <li><code>&lt;OBJCXX_COMPILER_VERSION:version&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>Возвращает 1, если версия компилятора Objective-C++ соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;Fortran_COMPILER_VERSION&gt;</code></li>
+                <p>Версия используемого компилятора Fortran.</p>
+
+                <li><code>&lt;Fortran_COMPILER_VERSION:version&gt;</code></li>
+                <p>Возвращает 1, если версия компилятора Fortran соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;HIP_COMPILER_VERSION&gt;</code> <em>Новое в версии 3.21.</em></li>
+                <p>Версия используемого компилятора HIP.</p>
+
+                <li><code>&lt;HIP_COMPILER_VERSION:version&gt;</code> <em>Новое в версии 3.21.</em></li>
+                <p>Возвращает 1, если версия компилятора HIP соответствует <code>version</code>, в противном случае 0.</p>
+
+                <li><code>&lt;ISPC_COMPILER_VERSION&gt;</code> <em>Новое в версии 3.19.</em></li>
+                <p>Версия используемого компилятора ISPC.</p>
+
+                <li><code>&lt;ISPC_COMPILER_VERSION:version&gt;</code> <em>Новое в версии 3.19.</em></li>
+                <p>Возвращает 1, если версия компилятора ISPC соответствует <code>version</code>, в противном случае 0.</p>
+            </ul>
+
+            <h2 class="mt-5">Язык Компиляции, ID и Вариант Фронтэнда</h2>
+            <p>См. также переменные <code>CMAKE_&lt;LANG&gt;_COMPILER_ID</code> и <code>CMAKE_&lt;LANG&gt;_COMPILER_FRONTEND_VARIANT</code>, которые тесно связаны с большинством выражений в этом разделе.</p>
+
+            <ul>
+                <li><code>&lt;C_COMPILER_ID&gt;</code></li>
+                <p>ID компилятора C, используемого в CMake.</p>
+
+                <li><code>&lt;C_COMPILER_ID:compiler_ids&gt;</code></li>
+                <p>Возвращает 1, если ID компилятора C в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+                <p><em>Изменено в версии 3.15:</em> Можно указывать несколько <code>compiler_ids</code>. В CMake 3.14 и более ранних версиях принимался только один ID компилятора.</p>
+
+                <li><code>&lt;CXX_COMPILER_ID&gt;</code></li>
+                <p>ID компилятора C++, используемого в CMake.</p>
+
+                <li><code>&lt;CXX_COMPILER_ID:compiler_ids&gt;</code></li>
+                <p>Возвращает 1, если ID компилятора C++ в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+                <p><em>Изменено в версии 3.15:</em> Можно указывать несколько <code>compiler_ids</code>. В CMake 3.14 и более ранних версиях принимался только один ID компилятора.</p>
+
+                <li><code>&lt;CUDA_COMPILER_ID&gt;</code> <em>Новое в версии 3.15.</em></li>
+                <p>ID компилятора CUDA, используемого в CMake.</p>
+
+                <li><code>&lt;CUDA_COMPILER_ID:compiler_ids&gt;</code> <em>Новое в версии 3.15.</em></li>
+                <p>Возвращает 1, если ID компилятора CUDA в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;OBJC_COMPILER_ID&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>ID компилятора Objective-C, используемого в CMake.</p>
+
+                <li><code>&lt;OBJC_COMPILER_ID:compiler_ids&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>Возвращает 1, если ID компилятора Objective-C в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;OBJCXX_COMPILER_ID&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>ID компилятора Objective-C++, используемого в CMake.</p>
+
+                <li><code>&lt;OBJCXX_COMPILER_ID:compiler_ids&gt;</code> <em>Новое в версии 3.16.</em></li>
+                <p>Возвращает 1, если ID компилятора Objective-C++ в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;Fortran_COMPILER_ID&gt;</code></li>
+                <p>ID компилятора Fortran, используемого в CMake.</p>
+
+                <li><code>&lt;Fortran_COMPILER_ID:compiler_ids&gt;</code></li>
+                <p>Возвращает 1, если ID компилятора Fortran в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+                <p><em>Изменено в версии 3.15:</em> Можно указывать несколько <code>compiler_ids</code>. В CMake 3.14 и более ранних версиях принимался только один ID компилятора.</p>
+
+                <li><code>&lt;HIP_COMPILER_ID&gt;</code> <em>Новое в версии 3.21.</em></li>
+                <p>ID компилятора HIP, используемого в CMake.</p>
+
+                <li><code>&lt;HIP_COMPILER_ID:compiler_ids&gt;</code> <em>Новое в версии 3.21.</em></li>
+                <p>Возвращает 1, если ID компилятора HIP в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;ISPC_COMPILER_ID&gt;</code> <em>Новое в версии 3.19.</em></li>
+                <p>ID компилятора ISPC, используемого в CMake.</p>
+
+                <li><code>&lt;ISPC_COMPILER_ID:compiler_ids&gt;</code> <em>Новое в версии 3.19.</em></li>
+                <p>Возвращает 1, если ID компилятора ISPC в CMake совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;C_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора C, используемого в CMake.</p>
+
+                <li><code>&lt;C_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора C совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;CXX_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора C++, используемого в CMake.</p>
+
+                <li><code>&lt;CXX_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора C++ совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;CUDA_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора CUDA, используемого в CMake.</p>
+
+                <li><code>&lt;CUDA_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора CUDA совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;OBJC_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора Objective-C, используемого в CMake.</p>
+
+                <li><code>&lt;OBJC_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора Objective-C совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;OBJCXX_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора Objective-C++, используемого в CMake.</p>
+
+                <li><code>&lt;OBJCXX_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора Objective-C++ совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;Fortran_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора Fortran, используемого в CMake.</p>
+
+                <li><code>&lt;Fortran_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора Fortran совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;HIP_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора HIP, используемого в CMake.</p>
+
+                <li><code>&lt;HIP_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</ем></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора HIP совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>&lt;ISPC_COMPILER_FRONTEND_VARIANT&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Вариант фронтэнда компилятора ISPC, используемого в CMake.</p>
+
+                <li><code>&lt;ISPC_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
+                <p>Возвращает 1, если вариант фронтэнда компилятора ISPC совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

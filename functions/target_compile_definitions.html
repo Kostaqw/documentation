@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>target_compile_definitions</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>target_compile_definitions</h2>
+            <p>Добавляет определения компиляции к целевому объекту.</p>
+            <pre><code>target_compile_definitions(&lt;target&gt;
+          &lt;INTERFACE|PUBLIC|PRIVATE&gt; [items1...]
+          [&lt;INTERFACE|PUBLIC|PRIVATE&gt; [items2...] ...])</code></pre>
+            <p>Указывает определения компиляции, которые будут использоваться при компиляции указанного <em>&lt;target&gt;</em>. Указанный <em>&lt;target&gt;</em> должен быть создан с помощью команды, такой как <code>add_executable()</code> или <code>add_library()</code>, и не должен быть целевым объектом ALIAS.</p>
+            <p>Ключевые слова <code>INTERFACE</code>, <code>PUBLIC</code> и <code>PRIVATE</code> необходимы для указания области действия следующих аргументов. Элементы <code>PRIVATE</code> и <code>PUBLIC</code> будут заполнять свойство <code>COMPILE_DEFINITIONS</code> объекта <em>&lt;target&gt;</em>. Элементы <code>PUBLIC</code> и <code>INTERFACE</code> будут заполнять свойство <code>INTERFACE_COMPILE_DEFINITIONS</code> объекта <em>&lt;target&gt;</em>. Следующие аргументы указывают определения компиляции. Повторные вызовы для одного и того же <em>&lt;target&gt;</em> добавляют элементы в порядке вызова.</p>
+            <p><strong>Новое в версии 3.11:</strong> Разрешено устанавливать элементы <code>INTERFACE</code> для целевых объектов <code>IMPORTED</code>.</p>
+            <p>Аргументы для <code>target_compile_definitions</code> могут использовать генераторные выражения с синтаксисом <code>$&lt;...&gt;</code>. См. руководство <code>cmake-generator-expressions(7)</code> для доступных выражений. См. руководство <code>cmake-buildsystem(7)</code> для получения дополнительной информации о определении свойств системы сборки.</p>
+            <p>Любой ведущий <code>-D</code> в элементе будет удален. Пустые элементы игнорируются. Например, следующие команды эквивалентны:</p>
+            <pre><code>target_compile_definitions(foo PUBLIC FOO)
+        target_compile_definitions(foo PUBLIC -DFOO)  # -D удален
+        target_compile_definitions(foo PUBLIC "" FOO) # "" игнорируется
+        target_compile_definitions(foo PUBLIC -D FOO) # -D становится "", затем игнорируется</code></pre>
+            <p>Определения могут иметь значения:</p>
+            <pre><code>target_compile_definitions(foo PUBLIC FOO=1)</code></pre>
+            <p>Обратите внимание, что многие компиляторы трактуют <code>-DFOO</code> как эквивалент <code>-DFOO=1</code>, но другие инструменты могут не распознавать это во всех случаях (например, IntelliSense).</p>
+            <h4>См. также</h4>
+            <ul>
+                <li><a href="#">add_compile_definitions()</a></li>
+                <li><a href="#">target_compile_features()</a></li>
+                <li><a href="#">target_compile_options()</a></li>
+                <li><a href="#">target_include_directories()</a></li>
+                <li><a href="#">target_link_libraries()</a></li>
+                <li><a href="#">target_link_directories()</a></li>
+                <li><a href="#">target_link_options()</a></li>
+                <li><a href="#">target_precompile_headers()</a></li>
+                <li><a href="#">target_sources()</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

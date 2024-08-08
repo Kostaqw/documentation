@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переменные</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div id="CMAKE_CXX_STANDARD" class="mt-4">
+            <h2>CMAKE_CXX_STANDARD</h2>
+            <p>Значение по умолчанию для свойства цели <code>CXX_STANDARD_REQUIRED</code>, если оно установлено при создании цели</p>
+        </div>
+        <div id="CMAKE_CXX_STANDARD_REQUIRED" class="mt-4">
+            <h2>CMAKE_CXX_STANDARD_REQUIRED</h2>
+            <p>Значение по умолчанию для свойства цели <code>CXX_STANDARD</code>, если оно установлено при создании цели</p>
+        </div>
+        <div id="CMAKE_CXX_STANDARD_REQUIRED" class="mt-4">
+            <h2>CMAKE_CXX_STANDARD_REQUIRED</h2>
+            <p>Значение по умолчанию для свойства цели <code>CXX_STANDARD</code>, если оно установлено при создании цели</p>
+        </div>
+        <div id="CMAKE_CURRENT_SOURCE_DIR" class="mt-4">
+            <h2>CMAKE_CURRENT_SOURCE_DIR</h2>
+            <p>
+                Путь к каталогу исходного кода, который в данный момент обрабатывается.
+                Это полный путь к каталогу исходного кода, который в данный момент обрабатывается CMake.
+                При запуске в режиме сценария <code>cmake -P</code>, CMake устанавливает переменные <code>CMAKE_BINARY_DIR</code>, CMAKE_SOURCE_DIR, CMAKE_CURRENT_BINARY_DIR и CMAKE_CURRENT_SOURCE_DIR</code> на текущий рабочий каталог.
+            </p>
+        </div>
+        <div id="&lt;PROJECT-NAME&gt;_VERSION_MINOR" class="mt-4">
+            <h2>&lt;PROJECT-NAME&gt;_VERSION_MINOR</h2>
+            <p>Вторая компонента номера версии переменной <code>&lt;PROJECT-NAME&gt;_VERSION</code>, установленной командой <code>project()</code></p>
+        </div>
+        <div id="project_source_dir" class="mt-4">
+            <h2>PROJECT_SOURCE_DIR</h2>
+            <p>Это исходный каталог последнего вызова команды <code>project()</code>, сделанного в текущем каталоге или одном из его родительских каталогов. Обратите внимание, что на него не влияют вызовы <code>project()</code>, сделанные в дочернем каталоге (например, в пределах вызова <code>add_subdirectory()</code> из текущего каталога).</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаг 3: Добавление требований к использованию для библиотеки</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Шаг 3: Добавление требований к использованию для библиотеки</h2>
+        
+        <h3>Упражнение 1 - Добавление требований к использованию для библиотеки</h3>
+        <p>Требования к использованию параметров цели позволяют лучше контролировать строки подключения и включения для библиотеки или исполняемого файла, а также дают больше контроля над транзитивными свойствами целей в CMake. Основные команды, использующие требования к использованию, это:</p>
+        <ul>
+            <li><a href="#">target_compile_definitions()</a></li>
+            <li><a href="#">target_compile_options()</a></li>
+            <li><a href="#">target_include_directories()</a></li>
+            <li><a href="#">target_link_directories()</a></li>
+            <li><a href="#">target_link_options()</a></li>
+            <li><a href="#">target_precompile_headers()</a></li>
+            <li><a href="#">target_sources()</a></li>
+        </ul>
+        
+        <h4>Цель</h4>
+        <p>Добавить требования к использованию для библиотеки.</p>
+        
+        <h4>Полезные материалы</h4>
+        <p>CMAKE_CURRENT_SOURCE_DIR</p>
+        
+        <h4>Файлы для редактирования</h4>
+        <ul>
+            <li>MathFunctions/CMakeLists.txt</li>
+            <li>CMakeLists.txt</li>
+        </ul>
+        
+        <h4>Начало работы</h4>
+        <p>В этом упражнении мы реорганизуем наш код из добавления библиотеки, чтобы использовать современный подход CMake. Мы позволим нашей библиотеке определять свои собственные требования к использованию, чтобы они передавались транзитивно другим целям по мере необходимости. В этом случае MathFunctions будет самостоятельно указывать любые нужные директории включения. Затем целевая Tutorial просто подключается к MathFunctions и не беспокоится о дополнительных директориях включения.</p>
+        
+        <p>Начальный исходный код предоставлен в каталоге Step3. В этом упражнении выполните TODO 1 через TODO 3.</p>
+        
+        <p>Сначала добавьте вызов target_include_directories() в MathFunctions/CMakeLists. Помните, что CMAKE_CURRENT_SOURCE_DIR это путь к каталогу исходного кода, который в данный момент обрабатывается.</p>
+        
+        <p>Затем обновите (и упростите!) вызов target_include_directories() в файле CMakeLists.txt верхнего уровня.</p>
+        
+        <h4>Сборка и запуск</h4>
+        <p>Создайте новый каталог с именем Step3_build, запустите исполняемый файл cmake или cmake-gui для настройки проекта, а затем соберите его с помощью выбранного инструмента сборки или с помощью команды cmake --build . из каталога сборки. Вот напоминание о том, как это выглядит в командной строке:</p>
+        <pre>
+    mkdir Step3_build
+    cd Step3_build
+    cmake ../Step3
+    cmake --build .
+        </pre>
+        
+        <p>Затем используйте вновь созданный Tutorial и убедитесь, что он работает как ожидается.</p>
+        
+        <h4>Решение</h4>
+        <p>Обновим код из предыдущего шага, чтобы использовать современный подход CMake к требованиям использования.</p>
+        
+        <p>Мы хотим указать, что любой, кто подключается к MathFunctions, должен включать текущий каталог исходного кода, в то время как сама MathFunctions этого не делает. Это можно выразить с помощью требования использования INTERFACE. Помните, что INTERFACE означает вещи, которые требуются потребителям, но не производителю.</p>
+        
+        <p>В конце MathFunctions/CMakeLists.txt используйте target_include_directories() с ключевым словом INTERFACE следующим образом:</p>
+        
+        <h5 class="spoiler-header">TODO 1: Показать/скрыть ответ MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_include_directories(MathFunctions INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})</code></pre>
+        </div>
+
+        <p>Теперь, когда мы указали требования к использованию для MathFunctions, мы можем безопасно удалить использование переменной EXTRA_INCLUDES из CMakeLists.txt верхнего уровня.</p>
+        <p>
+        <p>Удалите эту строку:</p>
+
+        <h5 class="spoiler-header">TODO 2: Показать/скрыть ответ CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")</code></pre>
+        </div>
+        
+        <p>И удалите EXTRA_INCLUDES из target_include_directories:</p>
+        
+        <h5 class="spoiler-header">TODO 3: Показать/скрыть ответ CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_include_directories(Tutorial PUBLIC
+                "${PROJECT_BINARY_DIR}"
+                )</code></pre>
+        </div>
+        
+        <p>Обратите внимание, что с этим методом единственное, что делает наша целевая исполняемая программа для использования нашей библиотеки, это вызов target_link_libraries() с именем целевой библиотеки. В больших проектах классический метод ручного указания зависимостей библиотек становится очень сложным очень быстро.</p>
+        
+        <h3>Упражнение 2 - Установка стандарта C++ с использованием интерфейсных библиотек</h3>
+        <p>Теперь, когда мы перешли на более современный подход, давайте продемонстрируем современную технику установки свойств для нескольких целей.</p>
+        
+        <p>Мы переработаем наш существующий код для использования интерфейсной библиотеки. Мы будем использовать эту библиотеку на следующем этапе, чтобы продемонстрировать общее использование выражений-генераторов.</p>
+        
+        <h4>Цель</h4>
+        <p>Добавить интерфейсную библиотечную цель для указания требуемого стандарта C++.</p>
+        
+        <h4>Полезные ресурсы</h4>
+        <ul>
+            <li><a href="#">add_library()</a></li>
+            <li><a href="#">target_compile_features()</a></li>
+            <li><a href="#">target_link_libraries()</a></li>
+        </ul>
+        
+        <h4>Файлы для редактирования</h4>
+        <ul>
+            <li>CMakeLists.txt</li>
+            <li>MathFunctions/CMakeLists.txt</li>
+        </ul>
+        
+        <h4>Начало работы</h4>
+        <p>В этом упражнении мы переработаем наш код для использования интерфейсной библиотеки для указания стандарта C++.</p>
+        
+        <p>Начните это упражнение с того, что мы оставили в конце упражнения 1 шага 3. Вам нужно будет выполнить TODO 4 через TODO 7.</p>
+        
+        <p>Начните с редактирования файла CMakeLists.txt верхнего уровня. Создайте интерфейсную библиотечную цель с именем tutorial_compiler_flags и укажите cxx_std_11 как функцию компилятора для цели.</p>
+        
+        <h5 class="spoiler-header">TODO 4: Показать/скрыть ответ CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_library(tutorial_compiler_flags INTERFACE)
+                target_compile_features(tutorial_compiler_flags INTERFACE cxx_std_11)</code></pre>
+        </div>
+        
+        <p>Наконец, с нашей интерфейсной библиотекой, мы должны связать нашу исполняемую программу Tutorial, нашу библиотеку SqrtLibrary и нашу библиотеку MathFunctions с нашей новой библиотекой tutorial_compiler_flags. Соответственно, код будет выглядеть так:</p>
+        
+        <h5 class="spoiler-header">TODO 5: Показать/скрыть ответ CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_link_libraries(Tutorial PUBLIC MathFunctions tutorial_compiler_flags)</code></pre>
+        </div>
+
+        <h5 class="spoiler-header">TODO 6: Показать/скрыть ответ MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_link_libraries(SqrtLibrary PUBLIC tutorial_compiler_flags)</code></pre>
+        </div>
+        
+        <h5 class="spoiler-header">TODO 7: Показать/скрыть ответ MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_link_libraries(SqrtLibrary PUBLIC tutorial_compiler_flags)</code></pre>
+        </div>
+        
+        <p>С этим все наш код по-прежнему требует C++ 11 для сборки. Обратите внимание, что с этим методом у нас есть возможность быть конкретными о том, какие цели получают конкретные требования. Кроме того, мы создаем единственный источник правды в нашей интерфейсной библиотеке.</p>
+    </div>
+</body>
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+</html>

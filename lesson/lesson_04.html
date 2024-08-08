@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаг 4: Добавление генераторных выражений</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Шаг 4: Добавление генераторных выражений</h1>
+        <p><code>Generator expressions</code> оцениваются во время генерации системы сборки для создания информации, специфичной для каждой конфигурации сборки.</p>
+        <p>Генераторные выражения разрешены в контексте многих свойств целей, таких как <code>LINK_LIBRARIES, INCLUDE_DIRECTORIES, COMPILE_DEFINITIONS</code> и других. Их также можно использовать при выполнении команд для заполнения этих свойств, таких как <code>target_link_libraries(), target_include_directories(), target_compile_definitions()</code> и другие.</p>
+        <p>Генераторные выражения могут использоваться для включения условного связывания, условных определений при компиляции, условных каталогов включения и многого другого. Условия могут основываться на конфигурации сборки, свойствах целей, информации о платформе или любой другой запрашиваемой информации.</p>
+        <p>Существует несколько типов генераторных выражений, включая логические, информационные и выходные выражения.</p>
+        <p>Логические выражения используются для создания условного вывода. Основные выражения — это выражения 0 и 1. Выражение $<0:...> приводит к пустой строке, а $<1:...> приводит к содержимому .... Их также можно вкладывать друг в друга.</p>
+        
+        <h2>Упражнение 1 - Добавление флагов предупреждений компилятора с помощью генераторных выражений</h2>
+        <p>Одним из распространенных применений генераторных выражений является условное добавление флагов компилятора, таких как флаги уровней языка или предупреждений. Хорошим шаблоном является ассоциирование этой информации с целевой библиотекой <code>INTERFACE</code>, что позволяет этой информации распространяться.</p>
+        
+        <h3>Цель</h3>
+        <p>Добавить флаги предупреждений компилятора при сборке, но не для установленных версий.</p>
+        
+        <h4>Полезные материалы</h4>
+        <ul>
+          <li><a href="">cmake-generator-expressions(7)</a></li>
+          <li><a href="">cmake_minimum_required()</a></li>
+          <li><a href="">set()</a></li>
+          <li><a href="">target_compile_options()</a></li>
+        </ul>
+        
+        <h4>Файлы для редактирования</h4>
+        <ul>
+          <li>CMakeLists.txt</li>
+        </ul>
+        
+        <h3>Начало работы</h3>
+        <p>Откройте файл Step4/CMakeLists.txt и выполните TODO 1 через TODO 4.</p>
+        <p>Сначала в файле верхнего уровня CMakeLists.txt нам нужно установить <code>cmake_minimum_required()</code> на 3.15. В этом упражнении мы будем использовать генераторное выражение, которое было введено в CMake 3.15.</p>
+        <p>Затем мы добавим желаемые флаги предупреждений компилятора для нашего проекта. Поскольку флаги предупреждений варьируются в зависимости от компилятора, мы используем генераторное выражение <code>COMPILE_LANG_AND_ID</code> для контроля, какие флаги применять в зависимости от языка и набора идентификаторов компилятора.</p>
+        
+        <h3>Сборка и запуск</h3>
+        <p>Создайте новый каталог с именем <code>Step4_build</code>, запустите исполняемый файл cmake или cmake-gui для настройки проекта, а затем соберите его с помощью выбранного инструмента сборки или с помощью <code>cmake --build .</code> из каталога сборки.</p>
+        <pre><code>mkdir Step4_build
+cd Step4_build
+cmake ../Step4
+cmake --build .</code></pre>
+        
+        <h3>Решение</h3>
+        <p>Обновите <code>cmake_minimum_required()</code> для требования как минимум версии CMake 3.15:</p>
+        
+        <h5 class="spoiler-header">TODO 1: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>cmake_minimum_required(VERSION 3.15)</code></pre>
+        </div>
+
+        <p>
+            Далее мы определяем, какой компилятор в настоящее время используется нашей системой для сборки, поскольку флаги предупреждений варьируются в зависимости от используемого компилятора. Это делается с помощью генераторного выражения <code>COMPILE_LANG_AND_ID</code>. Мы устанавливаем результат в переменные <code>gcc_like_cxx</code> и <code>msvc_cxx</code> следующим образом:
+        </p>
+
+        <h5 class="spoiler-header">TODO 2: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>set(gcc_like_cxx "$&lt;COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC&gt;")
+set(msvc_cxx "$&lt;COMPILE_LANG_AND_ID:CXX,MSVC&gt;")</code></pre>
+        </div>
+
+        <p>
+            Затем мы добавляем желаемые флаги предупреждений компилятора для нашего проекта. Используя наши переменные <code>gcc_like_cxx</code> и <code>msvc_cxx</code>, мы можем использовать другое генераторное выражение для применения соответствующих флагов только тогда, когда переменные истинны. Мы используем <code>target_compile_options</code>() для применения этих флагов к нашей интерфейсной библиотеке.
+        </p>
+
+        <h5 class="spoiler-header">TODO 3: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_compile_options(tutorial_compiler_flags INTERFACE
+"$&lt;${gcc_like_cxx}:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused&gt;"
+"$&lt;${msvc_cxx}:-W3&gt;"
+)</code></pre>
+        </div>
+
+        <p>
+            Наконец, мы хотим, чтобы эти флаги предупреждений использовались только во время сборки. Потребители нашего установленного проекта не должны наследовать наши флаги предупреждений. Чтобы указать это, мы оборачиваем наши флаги из TODO 3 в генераторное выражение, используя условие <code>BUILD_INTERFACE</code>. Результирующий полный код выглядит следующим образом:
+        </p>
+
+        <h5 class="spoiler-header">TODO 4: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_compile_options(tutorial_compiler_flags INTERFACE
+"$&lt;${gcc_like_cxx}:$&lt;BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused&gt;&gt;"
+"$&lt;${msvc_cxx}:$&lt;BUILD_INTERFACE:-W3&gt;&gt;"
+)</code></pre>
+        </div>
+    </div>
+</body>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+</html>

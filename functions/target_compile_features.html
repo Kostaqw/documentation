@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>target_compile_features</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1>target_compile_features</h1>
+            <p><strong>Новое в версии 3.1.</strong></p>
+            <p>Добавить ожидаемые возможности компилятора к цели.</p>
+            <pre><code>target_compile_features(&lt;target&gt; &lt;PRIVATE|PUBLIC|INTERFACE&gt; &lt;feature&gt; [...])</code></pre>
+            <p>Указывает возможности компилятора, необходимые при компиляции данной цели. Если функция не указана в переменных <code>CMAKE_C_COMPILE_FEATURES, CMAKE_CUDA_COMPILE_FEATURES или CMAKE_CXX_COMPILE_FEATURES</code>, CMake сообщит об ошибке. Если использование функции требует дополнительного флага компилятора, такого как <code>-std=gnu++11</code>, флаг будет добавлен автоматически.</p>
+            <p>Ключевые слова <code>INTERFACE, PUBLIC и PRIVATE</code> требуются для указания области применения функций. Элементы <code>PRIVATE и PUBLIC</code> будут заполнять свойство <code>COMPILE_FEATURES</code> цели &lt;target&gt;. Элементы <code>PUBLIC и INTERFACE</code> будут заполнять свойство <code>INTERFACE_COMPILE_FEATURES</code> цели &lt;target&gt;. Повторные вызовы для той же цели &lt;target&gt; добавляют элементы.</p>
+            <p><strong>Новое в версии 3.11:</strong> Позволяет задавать элементы <code>INTERFACE</code> для импортируемых целей.</p>
+            <p>Указанная цель &lt;target&gt; должна быть создана командой, такой как <code>add_executable()</code> или <code>add_library()</code>, и не должна быть целью-алиасом.</p>
+            <p>Для получения дополнительной информации о задании свойств системы сборки.</p>
+            <p>Аргументы к <code>target_compile_features</code> могут использовать выражения генератора с синтаксисом $&lt;...&gt;. См. руководство <code>cmake-generator-expressions(7)</code> для доступных выражений. См. руководство <code>cmake-compile-features(7)</code> для информации о функциях компиляции и списка поддерживаемых компиляторов.</p>
+            <h3>См. также</h3>
+            <ul>
+              <li><a href="#">target_compile_definitions()</a></li>
+              <li><a href="#">target_compile_options()</a></li>
+              <li><a href="#">target_include_directories()</a></li>
+              <li><a href="#">target_link_libraries()</a></li>
+              <li><a href="#">target_link_directories()</a></li>
+              <li><a href="#">target_link_options()</a></li>
+              <li><a href="#">target_precompile_headers()</a></li>
+              <li><a href="#">target_sources()</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

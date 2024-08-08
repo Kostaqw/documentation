@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>add_subdirectory</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-4">add_subdirectory</h1>
+        <div id="contents">
+            <h2>Содержание</h2>
+            <ul>
+                <li><a href="#add_subdirectory">add_subdirectory</a></li>
+            </ul>
+        </div>
+
+        <div id="add_subdirectory" class="mt-4">
+            <h2>Добавление подкаталога в сборку</h2>
+            <pre><code>add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])</code></pre>
+            <p>Добавляет подкаталог в сборку. <code>source_dir</code> указывает каталог, в котором находятся файлы <code>CMakeLists.txt</code> и исходные файлы кода. Если это относительный путь, он будет оценен относительно текущего каталога (типичное использование), но он также может быть абсолютным путем. <code>binary_dir</code> указывает каталог, в который будут помещены выходные файлы. Если это относительный путь, он будет оценен относительно текущего каталога вывода, но он также может быть абсолютным путем. Если <code>binary_dir</code> не указан, будет использовано значение <code>source_dir</code> до расширения любого относительного пути (типичное использование). Файл <code>CMakeLists.txt</code> в указанном каталоге исходных файлов будет немедленно обработан CMake до того, как обработка в текущем входном файле продолжится после этой команды.</p>
+            <p>Если аргумент <code>EXCLUDE_FROM_ALL</code> предоставлен, то свойство <code>EXCLUDE_FROM_ALL</code> будет установлено для добавленного каталога. Это исключит каталог из сборки по умолчанию. См. полное описание свойства каталога <code>EXCLUDE_FROM_ALL</code>.</p>
+            <p>Новое в версии 3.25: Если предоставлен аргумент <code>SYSTEM</code>, то свойство каталога <code>SYSTEM</code> для подкаталога будет установлено в значение <code>true</code>. Это свойство используется для инициализации свойства <code>SYSTEM</code> каждой неимпортированной цели, созданной в этом подкаталоге.</p>
+        </div>
+    </div>
+</body>
+
+</html>

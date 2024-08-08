@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаг 1: Основные понятия</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Шаг 1: Основные понятия</h1>
+        <p>
+            С чего начать с CMake? Этот шаг предоставит введение в некоторые базовые синтаксисы, команды и переменные CMake. В процессе ознакомления с этими концепциями мы выполним три упражнения и создадим простой проект CMake.
+            Каждое упражнение в этом шаге начинается с некоторой фоновой информации. Затем предоставляется цель и список полезных ресурсов. Каждый файл в разделе "Файлы для редактирования" находится в каталоге Step1 и содержит один или несколько комментариев TODO. Каждый TODO представляет собой строку или две кода для изменения или добавления. TODO следует выполнять в числовом порядке: сначала завершите TODO 1, затем TODO 2 и так далее. Раздел "Начало работы" даст полезные подсказки и проведет вас через упражнение. Затем раздел "Сборка и запуск" пошагово объяснит, как собрать и протестировать упражнение. Наконец, в конце каждого упражнения обсуждается предполагаемое решение.
+            Также обратите внимание, что каждый шаг в туториале строится на предыдущем. Например, начальный код для Step2 является полным решением Step1.
+        </p>
+        
+        <h2>Упражнение 1 - Создание базового проекта</h2>
+        <p>
+            Самый простой проект CMake — это исполняемый файл, созданный из одного исходного файла. Для таких простых проектов достаточно CMakeLists.txt файла с тремя командами.
+            Примечание: хотя CMake поддерживает команды с верхним, нижним и смешанным регистром, предпочтительны команды в нижнем регистре, и они будут использоваться на протяжении всего туториала.
+            Любой CMakeLists.txt файл верхнего уровня проекта должен начинаться с указания минимальной версии CMake с помощью команды <code>cmake_minimum_required()</code>. Это устанавливает настройки политики и гарантирует, что последующие функции CMake будут выполнены с совместимой версией CMake.
+            Чтобы начать проект, используем команду <code>project()</code> для задания имени проекта. Этот вызов обязателен для каждого проекта и должен быть выполнен вскоре после <code>cmake_minimum_required()</code>. Как мы увидим позже, эта команда также может использоваться для указания другой информации о проекте, такой как язык или номер версии.
+            Наконец, команда <code>add_executable()</code> указывает CMake создать исполняемый файл, используя указанные исходные файлы.
+        </p>
+        
+        <h3>Цель</h3>
+        <p>Понять, как создать простой проект CMake.</p>
+        
+        <h3>Полезные ресурсы</h3>
+        <ul>
+            <li><code>add_executable()</code></li>
+            <li><code>cmake_minimum_required()</code></li>
+            <li><code>project()</code></li>
+        </ul>
+        
+        <h3>Файлы для редактирования</h3>
+        <ul>
+            <li><code>CMakeLists.txt</code></li>
+        </ul>
+        
+        <h3>Начало работы</h3>
+        <p>
+            Исходный код для tutorial.cxx находится в каталоге Help/guide/tutorial/Step1 и может быть использован для вычисления квадратного корня числа. Этот файл не нужно редактировать на этом шаге.
+            В том же каталоге находится файл CMakeLists.txt, который вы будете заполнять. Начните с TODO 1 и завершите TODO 3.
+        </p>
+        
+        <h3>Сборка и запуск</h3>
+        <p>
+            После завершения TODO 1 по TODO 3, мы готовы собрать и запустить наш проект! Сначала запустите исполняемый файл cmake или cmake-gui для настройки проекта, а затем соберите его с помощью выбранного инструмента сборки.
+            Например, из командной строки мы можем перейти в каталог Help/guide/tutorial в дереве исходного кода CMake и создать каталог сборки:
+        </p>
+        
+        <pre><code>mkdir Step1_build</code></pre>
+
+        <p>Затем перейдите в этот каталог сборки и запустите cmake для настройки проекта и создания системы сборки:</p>
+        <pre><code>cmake --build .
+cmake ../Step1</code></pre>
+
+        <p>Затем вызовите эту систему сборки для фактической компиляции/связывания проекта:</p>
+        <pre><code>cmake --build .</code></pre>
+
+        <p>Для генераторов с несколькими конфигурациями (например, Visual Studio) сначала перейдите в соответствующий подкаталог, например:</p>
+        <pre><code>cd Debug</code></pre>
+
+        <p>Наконец, попробуйте использовать вновь созданный Tutorial:</p>
+        <pre><code>Tutorial 4294967296 
+Tutorial 10 
+Tutorial</code></pre>
+
+        <p><strong>Примечание:</strong> в зависимости от оболочки правильный синтаксис может быть Tutorial, ./Tutorial или .\Tutorial. Для простоты в упражнениях будет использоваться Tutorial.</p>
+
+        <h3>Решение</h3>
+
+        <p>Как упоминалось выше, для запуска нам нужен всего лишь файл CMakeLists.txt из трех строк. Первая строка - использование <code>cmake_minimum_required()</code> для установки версии CMake следующим образом:</p>
+        <h5 class="spoiler-header">TODO 1: CMakeLists.tx</h5>
+        <div class="spoiler-content">
+            <pre><code>cmake_minimum_required (VERSION 3.10)</code></pre>
+        </div>
+        <p>Следующий шаг для создания базового проекта - использование команды <code>project()</code> для задания имени проекта:</p>
+        <h5 class="spoiler-header">TODO 2: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>project (Tutorial)</code></pre>
+        </div>
+        <p>Последняя команда для вызова в базовом проекте - <code>add_executable()</code>. Мы вызываем её следующим образом:</p>
+        <h5 class="spoiler-header">TODO 3: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_executable (Tutorial tutorial.cxx)</code></pre>
+        </div>
+
+        <h2>Упражнение 2 - Указание стандарта C++</h2>
+        <p>CMake имеет специальные переменные, которые либо создаются за кулисами, либо имеют значение для CMake, когда они устанавливаются в коде проекта. Многие из этих переменных начинаются с CMAKE_. Избегайте этого соглашения об именах при создании переменных для своих проектов. Две из этих специальных переменных, устанавливаемых пользователем, — это <code>CMAKE_CXX_STANDARD</code> и <code>CMAKE_CXX_STANDARD_REQUIRED</code>. Эти переменные могут использоваться вместе для указания стандарта C++, необходимого для сборки проекта.</p>
+        
+        <p><strong>Цель</strong></p>
+        <p>Добавить функцию, требующую C++11.</p>
+        
+        <p><strong>Полезные ресурсы</strong></p>
+        <ul>
+            <li><a href="#"> CMAKE_CXX_STANDARD </a></li>
+            <li><a href="#">CMAKE_CXX_STANDARD_REQUIRED</a></li>
+            <li><a href="#">set()</a></li>
+        </ul>
+        
+        <p><strong>Файлы для редактирования</strong></p>
+        <ul>
+            <li>CMakeLists.txt</li>
+            <li>tutorial.cxx</li>
+        </ul>
+        
+        <p><strong>Начало работы</strong></p>
+        <p>Продолжайте редактировать файлы в каталоге Step1. Начните с TODO 4 и завершите TODO 6</p>
+        
+        <p>Сначала отредактируйте tutorial.cxx, добавив функцию, требующую C++11. Затем обновите CMakeLists.txt, чтобы требовать C++11.</p>
+        
+        <p><strong>Сборка и запуск</strong></p>
+        <p>Соберем наш проект снова. Так как мы уже создали каталог сборки и запустили CMake для Упражнения 1, мы можем перейти к шагу сборки:</p>
+        <pre><code>cd ../Step1_build
+cmake --build .</code></pre>
+        
+        <p>Теперь мы можем попробовать использовать вновь созданный Tutorial с теми же командами, что и раньше:</p>
+        <pre><code>Tutorial 4294967296 
+Tutorial 10 
+Tutorial</code></pre>
+        
+        <p><strong>Решение</strong></p>
+        <p>Начнем с добавления некоторых функций C++11 в наш проект, заменив atof на <code>std::stod</code> в tutorial.cxx. Это выглядит следующим образом:</p>
+        
+        <h5 class="spoiler-header">TODO 4: MathFunctions/tutorial.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>const double inputValue = std::stod(argv[1]);</code></pre>
+        </div>
+        
+        <p>Чтобы завершить TODO 5, просто удалите <code>#include &lt;cstdlib>&gt;.</code></p>
+        
+        <p>Нам нужно явно указать в коде CMake, что следует использовать правильные флаги. Один из способов включить поддержку конкретного стандарта C++ в CMake — это использование переменной <code>CMAKE_CXX_STANDARD</code>. Для этого туториала установите переменную <code>CMAKE_CXX_STANDARD</code> в CMakeLists.txt на 11 и <code>CMAKE_CXX_STANDARD_REQUIRED</code> на <code>True</code>. Убедитесь, что вы добавили объявления <code>CMAKE_CXX_STANDARD</code> выше вызова <code>add_executable()</code>.</p>
+        
+        <h5 class="spoiler-header">TODO 6: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)</code></pre>
+        </div>
+        
+        <h2>Упражнение 3 - Добавление номера версии и конфигурируемого заголовочного файла</h2>
+        <p>
+            Иногда может быть полезно иметь переменную, определенную в вашем файле CMakelists.txt, доступную также в вашем исходном коде. В данном случае мы хотели бы вывести версию проекта.
+            Один из способов достичь этого - использование конфигурируемого заголовочного файла. Мы создаем входной файл с одной или несколькими переменными для замены. Эти переменные имеют специальный синтаксис, который выглядит как <code>@VAR@</code>. Затем мы используем команду <code>configure_file()</code>, чтобы скопировать входной файл в заданный выходной файл и заменить эти переменные текущими значениями переменных из файла CMakelists.txt.
+            Хотя мы могли бы редактировать версию непосредственно в исходном коде, использование этой функции предпочтительнее, так как это создает единственный источник истины и избегает дублирования.
+        </p>
+        
+        <p><strong>Цель</strong></p>
+        <p>Определить и сообщить номер версии проекта.</p>
+        
+        <p><strong>Полезные ресурсы</strong></p>
+        <ul>
+            <li><a href="#">&lt;PROJECT-NAME&gt;_VERSION_MAJOR</a></li>
+            <li><a href="#">&lt;PROJECT-NAME&gt;_VERSION_MINOR</a></li>
+            <li><a href="#">configure_file()</a></li>
+            <li><a href="#">target_include_directories()</a></li>
+        </ul>
+        
+        <p><strong>Файлы для редактирования</strong></p>
+        <ul>
+            <li>CMakeLists.txt</li>
+            <li>tutorial.cxx</li>
+        </ul>
+        
+        <p><strong>Начало работы</strong></p>
+        <p>
+            Продолжайте редактировать файлы из Step1. Начните с TODO 7 и завершите TODO 12. В этом упражнении начнем с добавления номера версии проекта в CMakeLists.txt. В этом же файле используем <code>configure_file()</code>, чтобы скопировать заданный входной файл в выходной файл и заменить некоторые значения переменных в содержимом входного файла.
+            Затем создайте входной заголовочный файл TutorialConfig.h.in, определяющий номера версий, которые будут принимать переменные, переданные от <code>configure_file()</code>.
+            Наконец, обновите tutorial.cxx, чтобы выводить номер версии.
+        </p>
+                
+        <p><strong>Сборка и запуск</strong></p>
+        <p>Соберем наш проект снова. Как и раньше, мы уже создали каталог сборки и запустили CMake, поэтому можем перейти к шагу сборки:</p>
+        <pre><code>
+        cd ../Step1_build
+        cmake --build .
+        </code></pre>
+        
+        <p>Убедитесь, что теперь номер версии выводится при запуске исполняемого файла без аргументов.</p>
+        
+        <p><strong>Решение</strong></p>
+        <p>
+            В этом упражнении мы улучшаем наш исполняемый файл, выводя номер версии. Хотя мы могли бы сделать это исключительно в исходном коде, использование CMakeLists.txt позволяет нам поддерживать единственный источник данных для номера версии.
+            Сначала мы модифицируем файл CMakeLists.txt, чтобы использовать команду <code>project()</code> для задания как имени проекта, так и номера версии. Когда команда <code>project()</code> вызывается, CMake определяет <code>Tutorial_VERSION_MAJOR</code> и <code>Tutorial_VERSION_MINOR</code> за кулисами.
+        </p>
+        
+        <h5 class="spoiler-header">TODO 7: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>project(Tutorial VERSION 1.0)</code></pre>
+        </div>
+        
+        <p>Затем используем <code>configure_file()</code>, чтобы скопировать входной файл с заменой указанных переменных CMake:</code></p>
+        <h5 class="spoiler-header">TODO 8: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>configure_file(TutorialConfig.h.in TutorialConfig.h)</code></pre>
+        </div>
+
+        <p>
+            Поскольку сконфигурированный файл будет записан в каталог бинарных файлов проекта, мы должны добавить этот каталог в список путей для поиска файлов включения.
+            <strong>Примечание:</strong> на протяжении всего туториала мы будем ссылаться на проект сборки и каталог бинарных файлов проекта взаимозаменяемо. Это одно и то же и не подразумевает ссылку на каталог bin/.
+            Мы используем <code>target_include_directories()</code>, чтобы указать, где целевой исполняемый файл должен искать файлы включения.
+        </p>
+        <h5 class="spoiler-header">TODO 9: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_include_directories(Tutorial PUBLIC
+"${PROJECT_BINARY_DIR}")</code></pre>
+        </div>
+
+        <p>
+            TutorialConfig.h.in - это входной заголовочный файл для конфигурации. Когда configure_file() вызывается из нашего CMakeLists.txt, значения для <code>@Tutorial_VERSION_MAJOR@</code> и <code>@Tutorial_VERSION_MINOR@</code> будут заменены соответствующими номерами версий из проекта в TutorialConfig.h.
+        </p>
+
+        <h5 class="spoiler-header">TODO 10: TutorialConfig.h.in</h5>
+        <div class="spoiler-content">
+            <pre><code>// the configured options and settings for Tutorial
+#define Tutorial_VERSION_MAJOR @Tutorial_VERSION_MAJOR@
+#define Tutorial_VERSION_MINOR @Tutorial_VERSION_MINOR@</code></pre>
+        </div>
+
+        <p>Затем нам нужно изменить tutorial.cxx, чтобы включить сконфигурированный заголовочный файл, TutorialConfig.h.</p>
+        <h5 class="spoiler-header">TODO 11: tutorial.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>#include "TutorialConfig.h"</code></pre>
+        </div>
+
+        <p>Наконец, мы выводим имя исполняемого файла и номер версии, обновив tutorial.cxx следующим образом:</p>
+        <h5 class="spoiler-header">TODO 12: tutorial.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>if (argc < 2) {
+// report version
+std::cout << argv[0] << " Version " << Tutorial_VERSION_MAJOR << "."
+<< Tutorial_VERSION_MINOR << std::endl;
+std::cout << "Usage: " << argv[0] << " number" << std::endl;
+return 1;
+}</code></pre>
+        </div>
+
+    </div>
+</body>
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+</html>

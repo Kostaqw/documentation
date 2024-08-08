@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>configure_file</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1>configure_file</h1>
+            <h2>Копирование файла в другое место и изменение его содержимого</h2>
+            <pre><code>configure_file(&lt;input&gt; &lt;output&gt;
+                   [NO_SOURCE_PERMISSIONS | USE_SOURCE_PERMISSIONS |
+                    FILE_PERMISSIONS &lt;permissions&gt;...]
+                   [COPYONLY] [ESCAPE_QUOTES] [@ONLY]
+                   [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF] ])</code></pre>
+            <p>Копирует файл <code>&lt;input&gt;</code> в файл <code>&lt;output&gt;</code> с выполнением преобразований содержимого входного файла.</p>
+            <p>Если входной файл изменен, система сборки повторно выполнит CMake для повторной конфигурации файла и генерации системы сборки. Генерируемый файл изменяется, и его временная метка обновляется при последующих запусках cmake только если его содержимое изменено.</p>
+    
+            <h3>Опции</h3>
+            <ul>
+                <li><code>&lt;input&gt;</code> Путь к входному файлу. Относительный путь рассматривается относительно значения <code>CMAKE_CURRENT_SOURCE_DIR</code>. Входной путь должен быть файлом, а не директорией.</li>
+                <li><code>&lt;output&gt;</code> Путь к выходному файлу или директории. Относительный путь рассматривается относительно значения <code>CMAKE_CURRENT_BINARY_DIR</code>. Если путь указывает на существующую директорию, выходной файл размещается в этой директории с тем же именем файла, что и входной файл. Если путь содержит несуществующие директории, они создаются.</li>
+                <li><code>NO_SOURCE_PERMISSIONS</code> Новое в версии 3.19. Не переносить права доступа входного файла на выходной файл. Права скопированного файла по умолчанию устанавливаются на стандартное значение 644 (-rw-r--r--).</li>
+                <li><code>USE_SOURCE_PERMISSIONS</code> Новое в версии 3.20. Перенести права доступа входного файла на выходной файл. Это уже является поведением по умолчанию, если ни одно из трех ключевых слов, связанных с правами доступа (NO_SOURCE_PERMISSIONS, USE_SOURCE_PERMISSIONS или FILE_PERMISSIONS), не указано. Ключевое слово USE_SOURCE_PERMISSIONS в основном служит для более ясного указания предполагаемого поведения при вызове.</li>
+                <li><code>FILE_PERMISSIONS &lt;permissions&gt;...</code> Новое в версии 3.20. Игнорировать права доступа входного файла и использовать указанные права доступа для выходного файла.</li>
+                <li><code>COPYONLY</code> Копировать файл без замены ссылок на переменные или другого содержимого. Эта опция не может использоваться с <code>NEWLINE_STYLE</code>.</li>
+                <li><code>ESCAPE_QUOTES</code> Экранировать любые заменяемые кавычки с помощью обратных косых черт (C-стиль).</li>
+                <li><code>@ONLY</code> Ограничить замену переменных ссылками вида <code>@VAR@</code>. Это полезно для настройки скриптов, использующих синтаксис <code>${VAR}</code>.</li>
+                <li><code>NEWLINE_STYLE &lt;style&gt;</code> Указать стиль перевода строки для выходного файла. Укажите <code>UNIX</code> или <code>LF</code> для новых строк <code>\n</code>, или укажите <code>DOS</code>, <code>WIN32</code> или <code>CRLF</code> для новых строк <code>\r\n</code>. Эта опция не может использоваться с <code>COPYONLY</code>.</li>
+            </ul>
+    
+            <h3>Преобразования</h3>
+            <p>Переменные, упомянутые в содержимом входного файла как <code>@VAR@</code>, <code>${VAR}</code>, <code>$CACHE{VAR}</code>, и переменные окружения, упомянутые как <code>$ENV{VAR}</code>, будут заменены текущими значениями переменных или пустой строкой, если переменная не определена. Кроме того, строки входного файла вида:</p>
+            <pre><code>#cmakedefine VAR ...</code></pre>
+            <p>будут заменены либо на</p>
+            <pre><code>#define VAR ...</code></pre>
+            <p>либо на</p>
+            <pre><code>/* #undef VAR */</code></pre>
+            <p>в зависимости от того, установлена ли переменная VAR в CMake на любое значение, не считающееся ложным в команде <code>if()</code>. Содержимое "..." после имени переменной, если оно есть, обрабатывается как указано выше.</p>
+            <p>В отличие от строк вида <code>#cmakedefine VAR ...</code>, строки вида <code>#cmakedefine01 VAR</code> заменяют саму переменную VAR на VAR 0 или VAR 1, а не присваивают ей значение .... Таким образом, строки входного файла вида</p>
+            <pre><code>#cmakedefine01 VAR</code></pre>
+            <p>будут заменены либо на</p>
+            <pre><code>#define VAR 0</code></pre>
+            <p>либо на</p>
+            <pre><code>#define VAR 1</code></pre>
+            <p>Строки входного файла вида <code>#cmakedefine01 VAR ...</code> будут развернуты как <code>#cmakedefine01 VAR ... 0</code> или <code>#cmakedefine01 VAR ... 1</code>, что может привести к неопределенному поведению.</p>
+            <p><strong>Новое в версии 3.10:</strong> Результирующие строки (за исключением комментариев <code>#undef</code>) могут быть отформатированы с использованием пробелов и/или табуляций между символом <code>#</code> и словами <code>cmakedefine</code> или <code>cmakedefine01</code>. Это форматирование будет сохранено в выходных строках:</p>
+            <pre><code>#  cmakedefine VAR#  cmakedefine01 VAR</code></pre>
+            <p>будут заменены, если VAR определена, на</p>
+            <pre><code>#  define VAR#  define VAR 1</code></pre>
+    
+            <h3>Пример</h3>
+            <p>Рассмотрим дерево исходных файлов, содержащее файл <code>foo.h.in</code>:</p>
+            <pre><code>#cmakedefine FOO_ENABLE
+    #cmakedefine FOO_STRING "@FOO_STRING@"</code></pre>
+            <p>Соседний <code>CMakeLists.txt</code> может использовать <code>configure_file</code> для настройки заголовка:</p>
+            <pre><code>option(FOO_ENABLE "Enable Foo" ON)
+    if(FOO_ENABLE)
+      set(FOO_STRING "foo")
+    endif()
+    configure_file(foo.h.in foo.h @ONLY)</code></pre>
+            <p>Это создаст файл <code>foo.h</code> в каталоге сборки, соответствующем этому исходному каталогу. Если опция <code>FOO_ENABLE</code> включена, настроенный файл будет содержать:</p>
+            <pre><code>#define FOO_ENABLE
+    #define FOO_STRING "foo"</code></pre>
+            <p>В противном случае он будет содержать:</p>
+            <pre><code>/* #undef FOO_ENABLE */
+    /* #undef FOO_STRING */</code></pre>
+            <p>Затем можно использовать команду <code>target_include_directories()</code>, чтобы указать каталог вывода как каталог для включения:</p>
+            <pre><code>target_include_directories(&lt;target&gt; [SYSTEM] &lt;INTERFACE|PUBLIC|PRIVATE&gt; "${CMAKE_CURRENT_BINARY_DIR}")</code></pre>
+            <p>чтобы исходные файлы могли включать заголовок как <code>#include &lt;foo.h&gt;</code>.</p>
+        </div>
+    </div>
+</body>
+
+</html>

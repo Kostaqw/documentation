@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>project</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1>project</h1>
+            <h2>Установите имя проекта</h2>
+            <pre><code>project(&lt;PROJECT-NAME&gt; [&lt;language-name&gt;...])
+    project(&lt;PROJECT-NAME&gt;
+            [VERSION &lt;major&gt;[.&lt;minor&gt;[.&lt;patch&gt;[.&lt;tweak&gt;]]]]
+            [DESCRIPTION &lt;project-description-string&gt;]
+            [HOMEPAGE_URL &lt;url-string&gt;]
+            [LANGUAGES &lt;language-name&gt;...])</code></pre>
+            <p>Устанавливает имя проекта и сохраняет его в переменной <code>PROJECT_NAME</code>. При вызове из верхнего уровня CMakeLists.txt также сохраняет имя проекта в переменной <code>CMAKE_PROJECT_NAME</code>.</p>
+            <p>Также устанавливает переменные:</p>
+            <ul>
+                <li><code>PROJECT_SOURCE_DIR</code>, <code>&lt;PROJECT-NAME&gt;_SOURCE_DIR</code> — Абсолютный путь к исходному каталогу проекта.</li>
+                <li><code>PROJECT_BINARY_DIR</code>, <code>&lt;PROJECT-NAME&gt;_BINARY_DIR</code> — Абсолютный путь к каталогу бинарных файлов проекта.</li>
+                <li><code>PROJECT_IS_TOP_LEVEL</code>, <code>&lt;PROJECT-NAME&gt;_IS_TOP_LEVEL</code> — Новое в версии 3.21. Булево значение, указывающее, является ли проект верхнего уровня.</li>
+            </ul>
+            <p>Дополнительные переменные устанавливаются опциональными аргументами, описанными ниже. Если какой-либо из этих аргументов не используется, то соответствующие переменные устанавливаются в пустую строку.</p>
+    
+            <h3>Опции</h3>
+            <ul>
+                <li><code>VERSION &lt;version&gt;</code> — Опционально; не может быть использовано, если политика CMP0048 не установлена в NEW. Принимает аргумент <code>&lt;version&gt;</code>, состоящий из неотрицательных целых компонентов, т.е. <code>&lt;major&gt;[.&lt;minor&gt;[.&lt;patch&gt;[.&lt;tweak&gt;]]]</code>, и устанавливает переменные:
+                    <ul>
+                        <li><code>PROJECT_VERSION</code>, <code>&lt;PROJECT-NAME&gt;_VERSION</code></li>
+                        <li><code>PROJECT_VERSION_MAJOR</code>, <code>&lt;PROJECT-NAME&gt;_VERSION_MAJOR</code></li>
+                        <li><code>PROJECT_VERSION_MINOR</code>, <code>&lt;PROJECT-NAME&gt;_VERSION_MINOR</code></li>
+                        <li><code>PROJECT_VERSION_PATCH</code>, <code>&lt;PROJECT-NAME&gt;_VERSION_PATCH</code></li>
+                        <li><code>PROJECT_VERSION_TWEAK</code>, <code>&lt;PROJECT-NAME&gt;_VERSION_TWEAK</code></li>
+                    </ul>
+                    Новое в версии 3.12: Когда команда <code>project()</code> вызывается из верхнего уровня CMakeLists.txt, версия также сохраняется в переменной <code>CMAKE_PROJECT_VERSION</code>.
+                </li>
+                <li><code>DESCRIPTION &lt;project-description-string&gt;</code> — Новое в версии 3.9. Опционально. Устанавливает переменные:
+                    <ul>
+                        <li><code>PROJECT_DESCRIPTION</code>, <code>&lt;PROJECT-NAME&gt;_DESCRIPTION</code></li>
+                    </ul>
+                    в <code>&lt;project-description-string&gt;</code>. Рекомендуется, чтобы это описание было относительно короткой строкой, обычно не более нескольких слов. Когда команда <code>project()</code> вызывается из верхнего уровня CMakeLists.txt, описание также сохраняется в переменной <code>CMAKE_PROJECT_DESCRIPTION</code>.
+                    Новое в версии 3.12: Добавлена переменная <code>&lt;PROJECT-NAME&gt;_DESCRIPTION</code>.
+                </li>
+                <li><code>HOMEPAGE_URL &lt;url-string&gt;</code> — Новое в версии 3.12. Опционально. Устанавливает переменные:
+                    <ul>
+                        <li><code>PROJECT_HOMEPAGE_URL</code>, <code>&lt;PROJECT-NAME&gt;_HOMEPAGE_URL</code></li>
+                    </ul>
+                    в <code>&lt;url-string&gt;</code>, которая должна быть каноническим домашним URL для проекта. Когда команда <code>project()</code> вызывается из верхнего уровня CMakeLists.txt, URL также сохраняется в переменной <code>CMAKE_PROJECT_HOMEPAGE_URL</code>.
+                </li>
+                <li><code>LANGUAGES &lt;language-name&gt;...</code> — Опционально. Может быть также указано без ключевого слова <code>LANGUAGES</code> согласно первому, короткому синтаксису. Выбирает, какие языки программирования необходимы для сборки проекта. Поддерживаемые языки: C, CXX (т.е. C++), CSharp (т.е. C#), CUDA, OBJC (т.е. Objective-C), OBJCXX (т.е. Objective-C++), Fortran, HIP, ISPC, Swift, ASM, ASM_NASM, ASM_MARMASM, ASM_MASM и ASM-ATT.
+                    Новое в версии 3.8: Добавлена поддержка CSharp и CUDA.
+                    Новое в версии 3.15: Добавлена поддержка Swift.
+                    Новое в версии 3.16: Добавлена поддержка OBJC и OBJCXX.
+                    Новое в версии 3.18: Добавлена поддержка ISPC.
+                    Новое в версии 3.21: Добавлена поддержка HIP.
+                    Новое в версии 3.26: Добавлена поддержка ASM_MARMASM.
+                    Если включается ASM, укажите его последним, чтобы CMake мог проверить, работают ли компиляторы для других языков, таких как C, с ассемблером.
+                    По умолчанию C и CXX включены, если не указаны никакие опции языка. Укажите язык <code>NONE</code>, или используйте ключевое слово <code>LANGUAGES</code> и не указывайте языков, чтобы пропустить включение любых языков.
+                </li>
+            </ul>
+            <p>Переменные, установленные через опции <code>VERSION</code>, <code>DESCRIPTION</code> и <code>HOMEPAGE_URL</code>, предназначены для использования в качестве значений по умолчанию в метаданных пакета и документации.</p>
+    
+            <h3>Внедрение кода</h3>
+            <p>Ряд переменных может быть определен пользователем для указания файлов, которые нужно включить на разных этапах выполнения команды <code>project()</code>. Ниже приведены шаги, выполняемые во время вызова <code>project()</code>:</p>
+            <ul>
+                <li>Новое в версии 3.15: Для каждого вызова <code>project()</code>, независимо от имени проекта, включите файл(ы) и модуль(и), указанные в <code>CMAKE_PROJECT_INCLUDE_BEFORE</code>, если установлены.</li>
+                <li>Новое в версии 3.17: Если команда <code>project()</code> указывает <code>&lt;PROJECT-NAME&gt;</code> как имя проекта, включите файл(ы) и модуль(и), указанные в <code>CMAKE_PROJECT_<PROJECT-NAME>_INCLUDE_BEFORE</code>, если установлены.</li>
+                <li>Установите различные переменные, относящиеся к проекту, как описано в разделах "Синопсис" и "Опции".</li>
+                <li>Только для самого первого вызова <code>project()</code>:
+                    <ul>
+                        <li>Если <code>CMAKE_TOOLCHAIN_FILE</code> установлен, прочтите его как минимум один раз. Он может быть прочитан несколько раз и может быть прочитан снова при включении языков позже (см. ниже).</li>
+                        <li>Установите переменные, описывающие хост и целевые платформы. Языко-специфические переменные могут быть установлены или не установлены на этом этапе. При первом запуске единственные языко-специфические переменные, которые могут быть определены, это те, которые могли быть установлены файлом инструментальной цепочки. При последующих запусках могут быть установлены языко-специфические переменные, кэшированные с предыдущего запуска.</li>
+                        <li>Новое в версии 3.24: Включите каждый файл, указанный в <code>CMAKE_PROJECT_TOP_LEVEL_INCLUDES</code>, если установлен. Переменная игнорируется CMake после этого.</li>
+                        <li>Включите любые указанные языки в вызове или языки по умолчанию, если они не были указаны. Файл инструментальной цепочки может быть прочитан повторно при включении языка в первый раз.</li>
+                        <li>Новое в версии 3.15: Для каждого вызова <code>project()</code>, независимо от имени проекта, включите файл(ы) и модуль(и), указанные в <code>CMAKE_PROJECT_INCLUDE</code>, если установлены.</li>
+                        <li>Если команда <code>project()</code> указывает <code>&lt;PROJECT-NAME&gt;</code> как имя проекта, включите файл(ы) и модуль(и), указанные в <code>CMAKE_PROJECT_<PROJECT-NAME>_INCLUDE</code>, если установлены.</li>
+                    </ul>
+                </li>
+            </ul>
+    
+            <h3>Использование</h3>
+            <p>Файл верхнего уровня CMakeLists.txt для проекта должен содержать прямой вызов команды <code>project()</code>. Включение его через команду <code>include()</code> недостаточно. Если такого вызова не существует, CMake выдаст предупреждение и сделает вид, что в верхнем уровне есть проект (Project) для включения языков по умолчанию (C и CXX).</p>
+            <p><strong>Примечание:</strong> Вызовите команду <code>project()</code> в начале верхнего уровня CMakeLists.txt, но после вызова <code>cmake_minimum_required()</code>. Важно установить версии и настройки политики до вызова других команд, поведение которых они могут изменить, и по этой причине команда <code>project()</code> выдаст предупреждение, если этот порядок не соблюден. Также см. политику <code>CMP0000</code>.</p>
+    
+        </div>
+    </div>
+</body>
+
+</html>

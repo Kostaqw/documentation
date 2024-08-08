@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаг 2: Добавление библиотеки</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Шаг 2: Добавление библиотеки</h1>
+        <p>На этом этапе мы узнали, как создать базовый проект с использованием CMake. В этом шаге мы узнаем, как создать и использовать библиотеку в нашем проекте. Мы также рассмотрим, как сделать использование нашей библиотеки необязательным.</p>
+        
+        <h2>Упражнение 1 - Создание библиотеки</h2>
+        <p>Чтобы добавить библиотеку в CMake, используйте команду <code>add_library()</code> и укажите, какие файлы исходного кода должны составлять библиотеку.</p>
+        <p>Вместо того чтобы размещать все исходные файлы в одном каталоге, мы можем организовать наш проект с одним или несколькими подкаталогами. В данном случае мы создадим подкаталог специально для нашей библиотеки. Здесь мы можем добавить новый файл <code>CMakeLists.txt</code> и один или несколько исходных файлов. В файле <code>CMakeLists.txt</code> верхнего уровня мы используем команду <code>add_subdirectory()</code>, чтобы добавить подкаталог в сборку.</p>
+        <p>После создания библиотеки она подключается к нашему целевому исполняемому файлу с помощью <code>target_include_directories()</code> и <code>target_link_libraries()</code>.</p>
+        
+        <h3>Цель</h3>
+        <p>Добавить и использовать библиотеку.</p>
+        
+        <h3>Полезные ресурсы</h3>
+        <ul>
+            <li><code>add_library()</code></li>
+            <li><code>add_subdirectory()</code></li>
+            <li><code>target_include_directories()</code></li>
+            <li><code>target_link_libraries()</code></li>
+            <li><code>PROJECT_SOURCE_DIR</code></li>
+        </ul>
+        
+        <h3>Файлы для редактирования</h3>
+        <ul>
+            <li><code>CMakeLists.txt</code></li>
+            <li><code>tutorial.cxx</code></li>
+            <li><code>MathFunctions/CMakeLists.txt</code></li>
+        </ul>
+        
+        <h3>Начало работы</h3>
+        <p>В этом упражнении мы добавим библиотеку в наш проект, которая содержит нашу собственную реализацию для вычисления квадратного корня из числа. Затем исполняемый файл сможет использовать эту библиотеку вместо стандартной функции квадратного корня, предоставляемой компилятором.</p>
+        <p>Для этого учебника мы поместим библиотеку в подкаталог, называемый <code>MathFunctions</code>. Этот каталог уже содержит файлы заголовков <code>MathFunctions.h</code> и <code>mysqrt.h</code>. Также предоставлены их соответствующие исходные файлы <code>MathFunctions.cxx</code> и <code>mysqrt.cxx</code>. Нам не потребуется изменять какие-либо из этих файлов. <code>mysqrt.cxx</code> имеет одну функцию под названием <code>mysqrt</code>, которая обеспечивает функциональность, аналогичную функции <code>sqrt</code> компилятора. <code>MathFunctions.cxx</code> содержит одну функцию <code>sqrt</code>, которая служит для скрытия деталей реализации <code>sqrt</code>.</p>
+        <p>Из каталога <code>Help/guide/tutorial/Step2</code> начните с TODO 1 и выполните до TODO 6.</p>
+        
+        <p>Сначала заполните одну строку <code>CMakeLists.txt</code> в подкаталоге <code>MathFunctions</code>.</p>
+        
+        <p>Затем отредактируйте файл <code>CMakeLists.txt</code> верхнего уровня.</p>
+        
+        <p>Наконец, используйте вновь созданную библиотеку <code>MathFunctions</code> в <code>tutorial.cxx</code></p>
+        
+        <h3>Сборка и запуск</h3>
+        <p>Запустите исполняемый файл <code>cmake</code> или <code>cmake-gui</code>, чтобы настроить проект, а затем соберите его с помощью выбранного вами инструмента сборки.</p>
+        
+        <p>Ниже приведено напоминание о том, как это выглядит из командной строки:</p>
+        <pre><code>mkdir Step2_build
+cd Step2_build
+cmake ../Step2
+cmake --build .
+</code></pre>
+        <p>Попробуйте использовать только что собранный Tutorial и убедитесь, что он все еще выдает точные значения квадратного корня.</p>
+        
+        <h3>Решение</h3>
+        <p>В файле CMakeLists.txt в каталоге MathFunctions мы создаем целевую библиотеку под названием MathFunctions с помощью add_library(). Исходные файлы для библиотеки передаются как аргументы функции add_library(). Это выглядит следующим образом:</p>
+        <h5 class="spoiler-header">TODO 1: MathFunctions/CMakeLists.tx</h5>
+        <div class="spoiler-content">
+            <pre><code>add_library(MathFunctions MathFunctions.cxx mysqrt.cxx)</code></pre>
+        </div>
+        <p>Чтобы использовать новую библиотеку, мы добавим вызов add_subdirectory() в файл CMakeLists.txt верхнего уровня, чтобы библиотека была собрана.</p>
+        <h5 class="spoiler-header">TODO 2: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_subdirectory(MathFunctions)</code></pre>
+        </div>
+        <p>Затем новая целевая библиотека связывается с целевым исполняемым файлом с помощью target_link_libraries().</p>
+        <h5 class="spoiler-header">TODO 3: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_link_libraries(Tutorial PUBLIC MathFunctions)</code></pre>
+        </div>
+        <p>Наконец, нам нужно указать расположение заголовочного файла библиотеки. Измените существующий вызов target_include_directories(), чтобы добавить подкаталог MathFunctions в качестве каталога включения, чтобы файл заголовка MathFunctions.h мог быть найден.</p>
+        <h5 class="spoiler-header">TODO 4: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_include_directories(Tutorial PUBLIC
+                      "${PROJECT_BINARY_DIR}"
+                      "${PROJECT_SOURCE_DIR}/MathFunctions"
+                      )</code></pre>
+        </div>
+
+        <p>Теперь давайте используем нашу библиотеку. В tutorial.cxx включите MathFunctions.h: </p>
+        <h5 class="spoiler-header">TODO 5:  tutorial.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>#include "MathFunctions.h"</code></pre>
+        </div>
+        <p>Наконец, замените sqrt на обёртку функции mathfunctions::sqrt.</p>
+        <h5 class="spoiler-header">TODO 6:  tutorial.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>const double outputValue = mathfunctions::sqrt(inputValue);</code></pre>
+        </div>
+        <h2>Упражнение 2 - Добавление опций</h2>
+        <p>Теперь добавим опцию в библиотеку MathFunctions, чтобы разработчики могли выбрать либо пользовательскую реализацию функции квадратного корня, либо встроенную стандартную реализацию. Хотя для этого туториала в этом нет необходимости, для более крупных проектов это обычная практика.</p>
+
+        <p>CMake может сделать это с помощью команды option(). Это дает пользователям переменную, которую они могут изменить при настройке сборки CMake. Эта настройка будет сохранена в кеше, чтобы пользователю не нужно было устанавливать значение каждый раз при запуске CMake в каталоге сборки.</p>
+        
+        <p><strong>Цель</strong></p>
+        <p>Добавить опцию сборки без MathFunctions.</p>
+        
+        <p><strong>Полезные ресурсы</strong></p>
+        <ul>
+            <li>if()</li>
+            <li>option()</li>
+            <li>target_compile_definitions()</li>
+        </ul>
+        
+        <p><strong>Файлы для редактирования</strong></p>
+        <ul>
+            <li>MathFunctions/CMakeLists.txt</li>
+            <li>MathFunctions/MathFunctions.cxx</li>
+        </ul>
+        
+        <p><strong>Начало работы</strong></p>
+        <p>Начните с результирующих файлов из Упражнения 1. Выполните TODO 7 через TODO 14.</p>
+        
+        <p>Сначала создайте переменную USE_MYMATH с помощью команды option() в файле MathFunctions/CMakeLists.txt. В этом же файле используйте эту опцию для передачи определения компиляции библиотеке MathFunctions.</p>
+        
+        <p>Затем обновите MathFunctions.cxx, чтобы перенаправить компиляцию на основе USE_MYMATH.</p>
+        
+        <p>Наконец, предотвратите компиляцию mysqrt.cxx, когда USE_MYMATH включен, сделав его отдельной библиотекой внутри блока USE_MYMATH в файле MathFunctions/CMakeLists.txt.</p>
+        
+        <p><strong>Сборка и запуск</strong></p>
+        <p>Так как наш каталог сборки уже настроен из Упражнения 1, мы можем пересобрать, просто вызвав следующие команды:</p>
+        <pre><code>
+        cd ../Step2_build
+        cmake --build .
+        </code></pre>
+        
+        <p>Затем запустите исполняемый файл Tutorial на нескольких числах, чтобы убедиться, что он все еще выдает правильные значения квадратного корня.</p>
+        
+        <p>Теперь давайте обновим значение USE_MYMATH на OFF. Самый простой способ - использовать cmake-gui или ccmake, если вы в терминале. Или, как альтернатива, если вы хотите изменить опцию из командной строки, попробуйте:</p>
+        <pre><code>
+        cmake ../Step2 -DUSE_MYMATH=OFF
+        </code></pre>
+        
+        <p>Теперь пересоберите код с помощью следующей команды:</p>
+        <pre><code>
+        cmake --build .
+        </code></pre>
+        
+        <p>Затем снова запустите исполняемый файл, чтобы убедиться, что он все еще работает с выключенным USE_MYMATH. Какая функция дает лучшие результаты, sqrt или mysqrt?</p>
+        
+        <p><strong>Решение</strong></p>
+        <p>Первым шагом является добавление опции в файл MathFunctions/CMakeLists.txt. Эта опция будет отображаться в cmake-gui и ccmake со значением по умолчанию ON, которое может быть изменено пользователем.</p>
+        
+        <h5 class="spoiler-header">TODO 7: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>option(USE_MYMATH "Use tutorial provided math implementation" ON)</code></pre>
+        </div>
+        
+        <p>Далее, сделайте сборку и связывание нашей библиотеки с функцией mysqrt условной, используя эту новую опцию.</p>
+        
+        <p>Создайте оператор if(), который проверяет значение USE_MYMATH. Внутри блока if() разместите команду target_compile_definitions() с определением компиляции USE_MYMATH.</p>
+        
+        <h5 class="spoiler-header">TODO 8: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>if (USE_MYMATH)
+          target_compile_definitions(MathFunctions PRIVATE "USE_MYMATH")
+        endif()</code></pre>
+        </div>
+        
+        <p>Когда USE_MYMATH включен, будет установлено определение компиляции USE_MYMATH. Затем мы можем использовать это определение компиляции, чтобы включать или отключать части нашего исходного кода.</p>
+        
+        <p>Соответствующие изменения в исходном коде достаточно просты. В MathFunctions.cxx, мы делаем так, чтобы USE_MYMATH управлял тем, какая функция квадратного корня используется:</p>
+        
+        <h5 class="spoiler-header">TODO 9: MathFunctions/MathFunctions.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>#ifdef USE_MYMATH
+          return detail::mysqrt(x);
+        #else
+          return std::sqrt(x);
+        #endif</code></pre>
+        </div>
+        
+        <p>Далее, нам нужно включить mysqrt.h, если определен USE_MYMATH.</p>
+        
+        <h5 class="spoiler-header">TODO 10: MathFunctions/MathFunctions.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>#ifdef USE_MYMATH
+        #  include "mysqrt.h"
+        #endif</code></pre>
+        </div>
+        
+        <p>Наконец, нам нужно включить cmath, теперь, когда мы используем std::sqrt.</p>
+        
+        <h5 class="spoiler-header">TODO 11: MathFunctions/MathFunctions.cxx</h5>
+        <div class="spoiler-content">
+            <pre><code>#include &lt;cmath&gt;</code></pre>
+        </div>
+        
+        <p>На данный момент, если USE_MYMATH выключен, mysqrt.cxx не будет использоваться, но он все равно будет компилироваться, потому что цель MathFunctions имеет mysqrt.cxx, указанный в списке исходников.</p>
+        
+        <p>Есть несколько способов исправить это. Первый вариант - использовать target_sources() для добавления mysqrt.cxx из блока USE_MYMATH. Другой вариант - создать дополнительную библиотеку внутри блока USE_MYMATH, которая отвечает за компиляцию mysqrt.cxx. В рамках этого туториала мы создадим дополнительную библиотеку.</p>
+        
+        <p>Сначала, внутри блока USE_MYMATH создайте библиотеку под названием SqrtLibrary, которая содержит исходники mysqrt.cxx.</p>
+        
+        <h5 class="spoiler-header">TODO 12: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_library(SqrtLibrary STATIC
+                      mysqrt.cxx
+                      )
+        
+        target_link_libraries(MathFunctions PRIVATE SqrtLibrary)</code></pre>
+        </div>
+        
+        <p>Далее, мы связываем SqrtLibrary с MathFunctions, когда USE_MYMATH включен.</p>
+        
+        <h5 class="spoiler-header">TODO 13: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>target_link_libraries(MathFunctions PRIVATE SqrtLibrary)</code></pre>
+        </div>
+        
+        <p>Наконец, мы можем удалить mysqrt.cxx из списка исходников нашей библиотеки MathFunctions, потому что он будет подключен, когда включена SqrtLibrary.</p>
+        
+        <h5 class="spoiler-header">TODO 14: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_library(MathFunctions MathFunctions.cxx)</code></pre>
+        </div>
+        
+        <p>С этими изменениями функция mysqrt теперь полностью опциональна для тех, кто собирает и использует библиотеку MathFunctions. Пользователи могут переключать USE_MYMATH, чтобы манипулировать тем, какая библиотека используется в сборке.</p>        
+    </div>
+</body>
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+</html>

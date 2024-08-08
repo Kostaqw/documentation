@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>target_include_directories</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">target_include_directories</h1>
+        <p><strong>Добавление директорий для включения в цель.</strong></p>
+        
+        <pre><code>target_include_directories(&lt;target&gt; [SYSTEM] [AFTER|BEFORE]
+  &lt;INTERFACE|PUBLIC|PRIVATE&gt; [items1...]
+  [&lt;INTERFACE|PUBLIC|PRIVATE&gt; [items2...] ...])
+</code></pre>
+
+        <p>Команда <code>target_include_directories</code> задает директории для включения при компиляции указанной цели. Имя <code>&lt;target&gt;</code> должно быть создано командой, такой как <code>add_executable()</code> или <code>add_library()</code>, и не должно быть целью-АЛИАСОМ.</p>
+
+        <p>Используя явно ключевые слова <code>AFTER</code> или <code>BEFORE</code>, можно выбрать между добавлением в конец или начало, независимо от значения по умолчанию.</p>
+
+        <p>Ключевые слова <code>INTERFACE</code>, <code>PUBLIC</code> и <code>PRIVATE</code> необходимы для указания области действия последующих аргументов. Элементы <code>PRIVATE</code> и <code>PUBLIC</code> заполняют свойство <code>INCLUDE_DIRECTORIES</code> цели <code>&lt;target&gt;</code>. Элементы <code>PUBLIC</code> и <code>INTERFACE</code> заполняют свойство <code>INTERFACE_INCLUDE_DIRECTORIES</code> цели <code>&lt;target&gt;</code>. Последующие аргументы задают директории для включения.</p>
+
+        <p><em>Новое в версии 3.11:</em> Можно задавать элементы <code>INTERFACE</code> для целей типа <code>IMPORTED</code>.</p>
+
+        <p>Повторные вызовы для одной и той же цели <code>&lt;target&gt;</code> добавляют элементы в порядке вызова.</p>
+
+        <p>Если указан ключ <code>SYSTEM</code>, компилятору будет указано, что директории предназначены для включения системных заголовочных файлов на некоторых платформах. Это может иметь такие эффекты, как подавление предупреждений или пропуск заголовочных файлов при расчетах зависимостей (см. документацию по компилятору). Кроме того, системные директории включений ищутся после обычных директорий включений независимо от указанного порядка.</p>
+
+        <p>Если <code>SYSTEM</code> используется вместе с <code>PUBLIC</code> или <code>INTERFACE</code>, свойство <code>INTERFACE_SYSTEM_INCLUDE_DIRECTORIES</code> цели будет заполнено указанными директориями.</p>
+
+        <p>Аргументы для <code>target_include_directories</code> могут использовать генераторные выражения с синтаксисом <code>$&lt;...&gt;</code>. См. руководство по <code>cmake-generator-expressions(7)</code> для доступных выражений. См. руководство по <code>cmake-buildsystem(7)</code> для получения дополнительной информации о определении свойств системы сборки.</p>
+
+        <p>Указанные директории включений могут быть абсолютными или относительными путями. Относительный путь интерпретируется относительно текущей исходной директории (т.е. <code>CMAKE_CURRENT_SOURCE_DIR</code>) и преобразуется в абсолютный путь перед сохранением в связанном свойстве цели. Если путь начинается с генераторного выражения, он всегда будет считаться абсолютным путем (за исключением одного случая, отмеченного ниже) и будет использован без изменений.</p>
+
+        <p>Требования к использованию директорий включений часто различаются между деревом сборки и деревом установки. Генераторные выражения <code>BUILD_INTERFACE</code> и <code>INSTALL_INTERFACE</code> могут использоваться для описания различных требований к использованию в зависимости от места использования. Относительные пути разрешены в выражении <code>INSTALL_INTERFACE</code> и интерпретируются относительно префикса установки. Относительные пути не следует использовать в выражениях <code>BUILD_INTERFACE</code>, так как они не будут преобразованы в абсолютные. Например:</p>
+
+        <pre><code>target_include_directories(mylib PUBLIC
+  $&lt;BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/mylib&gt;
+  $&lt;INSTALL_INTERFACE:include/mylib&gt;  # &lt;prefix&gt;/include/mylib
+)</code></pre>
+
+        <h2>Создание перемещаемых пакетов</h2>
+        <p>Обратите внимание, что не рекомендуется заполнять <code>INSTALL_INTERFACE</code> свойства <code>INTERFACE_INCLUDE_DIRECTORIES</code> цели абсолютными путями к директориям включения зависимостей. Это жестко привяжет пути директорий включения зависимостей в установленные пакеты к путям, найденным на машине, на которой пакет был создан.</p>
+
+        <p><code>INSTALL_INTERFACE</code> свойства <code>INTERFACE_INCLUDE_DIRECTORIES</code> подходит только для указания необходимых директорий включения для заголовков, предоставляемых самой целью, а не тех, которые предоставлены транзитивными зависимостями, указанными в свойстве <code>INTERFACE_LINK_LIBRARIES</code> цели. Эти зависимости должны быть целями, которые сами указывают расположение своих заголовков в <code>INTERFACE_INCLUDE_DIRECTORIES</code>.</p>
+
+        <p>См. раздел "Создание перемещаемых пакетов" руководства <code>cmake-packages(7)</code> для обсуждения дополнительных мер предосторожности, которые необходимо соблюдать при указании требований к использованию при создании пакетов для распространения.</p>
+
+        <h3>Смотрите также</h3>
+        <ul>
+            <li><code>include_directories()</code></li>
+            <li><code>target_compile_definitions()</code></li>
+            <li><code>target_compile_features()</code></li>
+            <li><code>target_compile_options()</code></li>
+            <li><code>target_link_libraries()</code></li>
+            <li><code>target_link_directories()</code></li>
+            <li><code>target_link_options()</code></li>
+            <li><code>target_precompile_headers()</code></li>
+            <li><code>target_sources()</code></li>
+        </ul>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cmake_minimum_required</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>cmake_minimum_required</h2>
+            <p>Указание минимальной версии CMake</p>
+    
+            <pre><code>cmake_minimum_required(VERSION &lt;min&gt;[...&lt;policy_max&gt;] [FATAL_ERROR])</code></pre>
+            <p><strong>Новое в версии 3.12:</strong> Опциональная версия <code>&lt;policy_max&gt;</code>.</p>
+            <p>Задает минимально требуемую версию CMake для проекта. Также обновляет настройки политики, как описано ниже.</p>
+            <p><code>&lt;min&gt;</code> и опциональная <code>&lt;policy_max&gt;</code> - это версии CMake в формате major.minor[.patch[.tweak]], и <code>...</code> является буквальным.</p>
+            <p>Если текущая версия CMake ниже требуемой версии <code>&lt;min&gt;</code>, обработка проекта будет остановлена и будет выдано сообщение об ошибке. Опциональная версия <code>&lt;policy_max&gt;</code>, если указана, должна быть не меньше версии <code>&lt;min&gt;</code> и влияет на настройки политики, как описано в разделе "Настройки политики". Если текущая версия CMake старше 3.12, дополнительные точки <code>...</code> будут восприниматься как разделители компонентов версии, в результате чего часть <code>...&lt;max&gt;</code> будет проигнорирована, сохраняя поведение до версии 3.12, основанное на <code>&lt;min&gt;</code>.</p>
+            <p>Эта команда установит значение переменной <code>CMAKE_MINIMUM_REQUIRED_VERSION</code> на <code>&lt;min&gt;</code>.</p>
+            <p>Опция <code>FATAL_ERROR</code> принимается, но игнорируется CMake версии 2.6 и выше. Она должна быть указана, чтобы версии CMake 2.4 и ниже завершали работу с ошибкой, а не просто выдавали предупреждение.</p>
+            <p><strong>Примечание:</strong> Вызовите команду <code>cmake_minimum_required()</code> в начале верхнего уровня файла CMakeLists.txt, даже перед вызовом команды <code>project()</code>. Важно установить версии и настройки политики до вызова других команд, поведение которых они могут изменить. Также см. политику <code>CMP0000</code>.</p>
+            <p>Вызов <code>cmake_minimum_required()</code> внутри функции ограничивает некоторые эффекты областью функции при вызове. Например, переменная <code>CMAKE_MINIMUM_REQUIRED_VERSION</code> не будет установлена в вызывающей области. Функции не вводят свою собственную область политики, поэтому настройки политики вызывающей стороны будут затронуты (см. ниже). Из-за этого сочетания вещей, которые влияют и не влияют на вызывающую область, вызов <code>cmake_minimum_required()</code> внутри функции обычно не рекомендуется.</p>
+    
+            <h3>Настройки политики</h3>
+            <p>Команда <code>cmake_minimum_required(VERSION)</code> неявно вызывает команду <code>cmake_policy(VERSION)</code> для указания, что текущий проект написан для заданного диапазона версий CMake. Все политики, известные текущей версии CMake и введенные в версию <code>&lt;min&gt;</code> (или <code>&lt;max&gt;</code>, если указано) или ранее, будут установлены для использования нового поведения. Все политики, введенные в более поздних версиях, будут не установлены. Это фактически запрашивает поведение, предпочитаемое на момент данной версии CMake, и сообщает новым версиям CMake о необходимости предупреждения о своих новых политиках.</p>
+            <p>Когда указана версия <code>&lt;min&gt;</code> выше 2.4, команда неявно вызывает</p>
+            <pre><code>cmake_policy(VERSION &lt;min&gt;[...&lt;max&gt;])</code></pre>
+            <p>что устанавливает политики CMake на основе указанного диапазона версий. Когда указана версия <code>&lt;min&gt;</code> 2.4 или ниже, команда неявно вызывает</p>
+            <pre><code>cmake_policy(VERSION 2.4[...&lt;max&gt;])</code></pre>
+            <p>что включает функции совместимости с CMake 2.4 и ниже.</p>
+            <p><strong>Изменения в версии 3.27:</strong> Совместимость с версиями CMake старше 3.5 устарела. Вызовы <code>cmake_minimum_required(VERSION)</code> или <code>cmake_policy(VERSION)</code>, которые не указывают как минимум 3.5 в качестве версии политики (опционально через <code>...&lt;max&gt;</code>), будут выдавать предупреждение об устаревании в CMake 3.27 и выше.</p>
+            <p><strong>Изменения в версии 3.19:</strong> Совместимость с версиями CMake старше 2.8.12 устарела. Вызовы <code>cmake_minimum_required(VERSION)</code> или <code>cmake_policy(VERSION)</code>, которые не указывают как минимум 2.8.12 в качестве версии политики (опционально через <code>...&lt;max&gt;</code>), будут выдавать предупреждение об устаревании в CMake 3.19 и выше.</p>
+        </div>
+    </div>
+</body>
+
+</html>

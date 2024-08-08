@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>option</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>Option</h2>
+            <p>Предоставляет булеву опцию, которую пользователь может выбрать по желанию.</p>
+            <pre><code>option(&lt;переменная&gt; "&lt;текст_помощи&gt;" [значение])</code></pre>
+            <p>Если начальное <em>[значение]</em> не предоставлено, по умолчанию используется булево значение <strong>OFF</strong>. Если <em>&lt;переменная&gt;</em> уже установлена как обычная или кешированная переменная, команда ничего не делает (см. политику CMP0077).</p>
+            <p>Для опций, которые зависят от значений других опций, см. справку модуля для <code>CMakeDependentOption</code>.</p>
+            <p>В режиме проекта CMake создается кешированная булева переменная со значением опции. В скриптовом режиме CMake устанавливается булева переменная со значением опции.</p>
+        </div>
+    </div>
+</body>
+
+</html>
