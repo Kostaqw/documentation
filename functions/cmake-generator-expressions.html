@@ -597,8 +597,705 @@
 
                 <li><code>&lt;ISPC_COMPILER_FRONTEND_VARIANT:compiler_ids&gt;</code> <em>Новое в версии 3.30.</em></li>
                 <p>Возвращает 1, если вариант фронтэнда компилятора ISPC совпадает с любым из значений в списке <code>compiler_ids</code>, разделенных запятыми; в противном случае результат 0.</p>
+
+                <li><code>$&lt;COMPILE_LANGUAGE&gt;</code> <em>Новое в версии 3.3.</em></li>
+                <p>Язык компиляции исходных файлов при оценке опций компиляции. См. связанную булеву 
+                выражение <code>$&lt;COMPILE_LANGUAGE:language&gt;</code> для заметок о переносимости 
+                этого генераторного выражения.</p>
+    
+                <li><code>$&lt;COMPILE_LANGUAGE:languages&gt;</code> <em>Новое в версии 3.3.</em></li>
+                <p><em>Изменено в версии 3.15:</em> Теперь можно указывать несколько языков для 
+                <code>languages</code>. В CMake 3.14 и более ранних версиях принимался только один язык.</p>
+                <p>Возвращает 1, если язык, используемый для единицы компиляции, совпадает с любым из 
+                записей, разделенных запятыми, в <code>languages</code>, иначе 0. Это выражение может 
+                использоваться для указания опций компиляции, определений компиляции и каталогов включений 
+                для исходных файлов на определенном языке в цели. Например:</p>
+    
+                <pre><code>add_executable(myapp main.cpp foo.c bar.cpp zot.cu)
+    target_compile_options(myapp
+      PRIVATE $&lt;$&lt;COMPILE_LANGUAGE:CXX&gt;:-fno-exceptions&gt;)
+    )
+    target_compile_definitions(myapp
+      PRIVATE $&lt;$&lt;COMPILE_LANGUAGE:CXX&gt;:COMPILING_CXX&gt;
+              $&lt;$&lt;COMPILE_LANGUAGE:CUDA&gt;:COMPILING_CUDA&gt;)
+    )
+    target_include_directories(myapp
+      PRIVATE $&lt;$&lt;COMPILE_LANGUAGE:CXX,CUDA&gt;:/opt/foo/headers&gt;)
+    )</code></pre>
+                <p>Это указывает на использование опции компиляции <code>-fno-exceptions</code>, определения 
+                компиляции <code>COMPILING_CXX</code> и каталога включений <code>cxx_headers</code> только 
+                для C++ (проверка идентификатора компилятора исключена). Также указывает определение 
+                компиляции <code>COMPILING_CUDA</code> для CUDA.</p>
+                <p>Обратите внимание, что для генераторов Visual Studio и Xcode нет возможности 
+                представить определения компиляции или каталоги включений для цели отдельно для языков C и 
+                CXX. Также для генераторов Visual Studio нет возможности представить флаги для цели отдельно 
+                для языков C и CXX. В этих генераторах выражения для исходных файлов на C и C++ будут 
+                оцениваться с использованием CXX, если есть какие-либо исходные файлы на C++, и 
+                иначе - с использованием C. Обходным путем является создание отдельных библиотек для каждого 
+                языка исходного файла:</p>
+    
+                <pre><code>add_library(myapp_c foo.c)
+    add_library(myapp_cxx bar.cpp)
+    target_compile_options(myapp_cxx PUBLIC -fno-exceptions)
+    add_executable(myapp main.cpp)
+    target_link_libraries(myapp myapp_c myapp_cxx)</code></pre>
+    
+                <li><code>$&lt;COMPILE_LANG_AND_ID:language,compiler_ids&gt;</code> <em>Новое в версии 3.15.</em></li>
+                <p>Возвращает 1, если язык, используемый для единицы компиляции, совпадает с <code>language</code>, 
+                и идентификатор компилятора языка в CMake совпадает с любым из значений в 
+                <code>compiler_ids</code>, разделенных запятыми, иначе 0. Это выражение является сокращенной 
+                формой для комбинации <code>$&lt;COMPILE_LANGUAGE:language&gt;</code> и <code>$&lt;LANG_COMPILER_ID:compiler_ids&gt;</code>. 
+                Это выражение может использоваться для указания опций компиляции, определений компиляции и 
+                каталогов включений для исходных файлов на определенном языке и комбинации компилятора в цели. Например:</p>
+    
+                <pre><code>add_executable(myapp main.cpp foo.c bar.cpp zot.cu)
+    target_compile_definitions(myapp
+      PRIVATE $&lt;$&lt;COMPILE_LANG_AND_ID:CXX,AppleClang,Clang&gt;:COMPILING_CXX_WITH_CLANG&gt;
+              $&lt;$&lt;COMPILE_LANG_AND_ID:CXX,Intel&gt;:COMPILING_CXX_WITH_INTEL&gt;
+              $&lt;$&lt;COMPILE_LANG_AND_ID:C,Clang&gt;:COMPILING_C_WITH_CLANG&gt;)
+    )</code></pre>
+    
+                <p>Это указывает на использование различных определений компиляции на основе как 
+                идентификатора компилятора, так и языка компиляции. Этот пример будет иметь определение 
+                компиляции <code>COMPILING_CXX_WITH_CLANG</code>, когда компилятор CXX - Clang, и 
+                <code>COMPILING_CXX_WITH_INTEL</code>, когда компилятор CXX - Intel. Точно так же, когда 
+                компилятор C - Clang, он увидит только определение <code>COMPILING_C_WITH_CLANG</code>.</p>
+                <p>Без выражения <code>COMPILE_LANG_AND_ID</code>, та же логика была бы выражена следующим образом:</p>
+    
+                <pre><code>target_compile_definitions(myapp
+      PRIVATE $&lt;$&lt;AND:$&lt;COMPILE_LANGUAGE:CXX&gt;,$&lt;CXX_COMPILER_ID:AppleClang,Clang&gt;&gt;:COMPILING_CXX_WITH_CLANG&gt;
+              $&lt;$&lt;AND:$&lt;COMPILE_LANGUAGE:CXX&gt;,$&lt;CXX_COMPILER_ID:Intel&gt;&gt;:COMPILING_CXX_WITH_INTEL&gt;
+              $&lt;$&lt;AND:$&lt;COMPILE_LANGUAGE:C&gt;,$&lt;C_COMPILER_ID:Clang&gt;&gt;:COMPILING_C_WITH_CLANG&gt;)
+    )</code></pre>
+    
+                <h3>Особенности компиляции</h3>
+                <li><code>$&lt;COMPILE_FEATURES:features&gt;</code> <em>Новое в версии 3.1.</em></li>
+                <p>Где <code>features</code> - это список, разделенный запятыми. Возвращает 1, если все 
+                функции доступны для цели <code>'head'</code>, и 0 в противном случае. Если это выражение 
+                используется при оценке реализации ссылки на цель и если любая зависимость транзитивно 
+                увеличивает требуемый <code>C_STANDARD</code> или <code>CXX_STANDARD</code> для цели 
+                <code>'head'</code>, будет сообщено об ошибке. См. руководство <code>cmake-compile-features(7)</code> 
+                для получения информации о функциях компиляции и списка поддерживаемых компиляторов.</p>
+    
+                <h3>Контекст компиляции</h3>
+                <li><code>$&lt;COMPILE_ONLY:...&gt;</code> <em>Новое в версии 3.27.</em></li>
+                <p>Содержимое <code>...</code>, при сборе транзитивных свойств компиляции, в противном 
+                случае пустая строка. Предназначен для использования в свойствах цели 
+                <code>INTERFACE_LINK_LIBRARIES</code> и <code>LINK_LIBRARIES</code>, обычно заполняемых 
+                через команду <code>target_link_libraries()</code>. Обеспечивает требования к использованию 
+                компиляции без требований к связыванию.</p>
+                <p>Сценарии использования включают библиотеки только заголовков, где все использования 
+                известны и не требуют требований к связыванию (например, полностью встроенные или C++ 
+                библиотеки шаблонов).</p>
+                <p>Обратите внимание, что для правильной оценки этого выражения необходимо, чтобы политика 
+                <code>CMP0099</code> была установлена в значение <code>NEW</code>.</p>
             </ul>
-        </div>
+
+
+
+
+
+            <h2>Linker Language And ID</h2>
+            <h4><code>$&lt;LINK_LANGUAGE&gt;</code></h4>
+            <p><strong>Новое в версии 3.18.</strong></p>
+            <p>Язык компоновки цели при оценке опций компоновки. См. связанное булево выражение <code>$&lt;LINK_LANGUAGE:languages&gt;</code> для заметок о переносимости этого генераторного выражения.</p>
+            <div class="alert alert-warning">
+                <strong>Примечание:</strong> Это генераторное выражение не поддерживается свойствами ссылочных библиотек, чтобы избежать побочных эффектов из-за двойной оценки этих свойств.
+            </div>
+        
+            <h4><code>$&lt;LINK_LANGUAGE:languages&gt;</code></h4>
+            <p><strong>Новое в версии 3.18.</strong></p>
+            <p>Возвращает 1, если язык, используемый для этапа компоновки, совпадает с любым из записей, разделенных запятыми, в <code>languages</code>, иначе 0. Это выражение может использоваться для указания ссылочных библиотек, опций компоновки, каталогов компоновки и зависимостей компоновки определенного языка в цели. Например:</p>
+        
+            <pre><code>add_library(api_C ...)
+        add_library(api_CXX ...)
+        add_library(api INTERFACE)
+        target_link_options(api   INTERFACE $&lt;$&lt;LINK_LANGUAGE:C&gt;:-opt_c&gt;
+                                            $&lt;$&lt;LINK_LANGUAGE:CXX&gt;:-opt_cxx&gt;)
+        target_link_libraries(api INTERFACE $&lt;$&lt;LINK_LANGUAGE:C&gt;:api_C&gt;
+                                            $&lt;$&lt;LINK_LANGUAGE:CXX&gt;:api_CXX&gt;)
+        
+        add_executable(myapp1 main.c)
+        target_link_options(myapp1 PRIVATE api)
+        
+        add_executable(myapp2 main.cpp)
+        target_link_options(myapp2 PRIVATE api)</code></pre>
+        
+            <p>Это указывает использовать цель <code>api</code> для компоновки целей <code>myapp1</code> и <code>myapp2</code>. На практике <code>myapp1</code> будет ссылаться на цель <code>api_C</code> и опцию <code>-opt_c</code>, поскольку C будет использоваться в качестве языка компоновки. А <code>myapp2</code> будет ссылаться на <code>api_CXX</code> и опцию <code>-opt_cxx</code>, поскольку CXX будет языком компоновки.</p>
+        
+            <div class="alert alert-warning">
+                <strong>Примечание:</strong> Для определения языка компоновки цели требуется собрать, транзитивно, все цели, которые будут с ней связаны. Поэтому для свойств ссылочных библиотек будет выполняться двойная оценка. Во время первой оценки выражения <code>$&lt;LINK_LANGUAGE:..&gt;</code> всегда будут возвращать 0. Язык компоновки, вычисленный после этого первого прохода, будет использоваться для второго прохода. Чтобы избежать несоответствий, необходимо, чтобы второй проход не изменял язык компоновки. Кроме того, чтобы избежать неожиданных побочных эффектов, требуется указывать полные сущности как часть выражения <code>$&lt;LINK_LANGUAGE:..&gt;</code>. Например:</div>
+        
+            <pre><code>add_library(lib STATIC file.cxx)
+        add_library(libother STATIC file.c)
+        
+        # Плохое использование
+        add_executable(myapp1 main.c)
+        target_link_libraries(myapp1 PRIVATE lib$&lt;$&lt;LINK_LANGUAGE:C&gt;:other&gt;)
+        
+        # Корректное использование
+        add_executable(myapp2 main.c)
+        target_link_libraries(myapp2 PRIVATE $&lt;$&lt;LINK_LANGUAGE:C&gt;:libother&gt;)</code></pre>
+        
+            <p>В этом примере для <code>myapp1</code> первый проход неожиданно определит, что язык компоновки - CXX, поскольку оценка генераторного выражения будет пустой строкой, поэтому <code>myapp1</code> будет зависеть от цели <code>lib</code>, которая является C++. Напротив, для <code>myapp2</code> первый проход определит язык компоновки как C, поэтому второй проход правильно добавит <code>libother</code> как зависимость компоновки.</p>
+        
+            <h4><code>$&lt;LINK_LANG_AND_ID:language,compiler_ids&gt;</code></h4>
+            <p><strong>Новое в версии 3.18.</strong></p>
+            <p>Возвращает 1, если язык, используемый для этапа компоновки, совпадает с <code>language</code>, а идентификатор компилятора языка в CMake совпадает с одним из значений <code>compiler_ids</code>, разделенных запятыми, иначе 0. Это выражение является сокращенной формой для комбинации <code>$&lt;LINK_LANGUAGE:language&gt;</code> и <code>$&lt;LANG_COMPILER_ID:compiler_ids&gt;</code>. Это выражение может использоваться для указания ссылочных библиотек, опций компоновки, каталогов компоновки и зависимостей компоновки определенного языка и компоновщика в цели. Например:</p>
+        
+            <pre><code>add_library(libC_Clang ...)
+        add_library(libCXX_Clang ...)
+        add_library(libC_Intel ...)
+        add_library(libCXX_Intel ...)
+        
+        add_executable(myapp main.c)
+        if (CXX_CONFIG)
+          target_sources(myapp PRIVATE file.cxx)
+        endif()
+        target_link_libraries(myapp
+          PRIVATE $&lt;$&lt;LINK_LANG_AND_ID:CXX,Clang,AppleClang&gt;:libCXX_Clang&gt;
+                  $&lt;$&lt;LINK_LANG_AND_ID:C,Clang,AppleClang&gt;:libC_Clang&gt;
+                  $&lt;$&lt;LINK_LANG_AND_ID:CXX,Intel&gt;:libCXX_Intel&gt;
+                  $&lt;$&lt;LINK_LANG_AND_ID:C,Intel&gt;:libC_Intel&gt;)</code></pre>
+        
+            <p>Это указывает на использование различных ссылочных библиотек в зависимости как от идентификатора компилятора, так и от языка компоновки. В этом примере цель <code>libCXX_Clang</code> будет зависеть от компоновки, когда компоновщиком CXX является Clang или AppleClang, и от <code>libCXX_Intel</code>, когда компоновщиком CXX является Intel. Точно так же, когда компоновщиком C является Clang или AppleClang, цель <code>libC_Clang</code> будет добавлена как зависимость компоновки, а <code>libC_Intel</code> - когда компоновщиком C является Intel.</p>
+        
+            <p>См. примечание, касающееся <code>$&lt;LINK_LANGUAGE:language&gt;</code> для ограничений на использование этого генераторного выражения.</p>
+
+            
+
+
+
+            <h2 class="mt-4">Функции ссылок</h2>
+            <p><code>$&lt;LINK_LIBRARY:feature,library-list&gt;</code></p>
+            <p><strong>Новое в версии 3.24.</strong></p>
+            <p>Укажите набор библиотек для связывания с целью, а также функцию, которая предоставляет детали о том, как они должны быть связаны. Например:</p>
+            <pre><code>add_library(lib1 STATIC ...)
+          add_library(lib2 ...)
+          target_link_libraries(lib2 PRIVATE "$&lt;LINK_LIBRARY:WHOLE_ARCHIVE,lib1&gt;")</code></pre>
+            <p>Это указывает, что <code>lib2</code> должна быть связана с <code>lib1</code> и использовать функцию <code>WHOLE_ARCHIVE</code> при этом.</p>
+            
+            <p>Названия функций чувствительны к регистру и могут содержать только буквы, цифры и символы подчеркивания. Названия функций, определенные полностью в верхнем регистре, зарезервированы для встроенных функций CMake. Предопределенные встроенные функции библиотеки:</p>
+          
+            <h3>DEFAULT</h3>
+            <p>Эта функция соответствует стандартной линковке, эквивалентной использованию без функции. Обычно она используется только с целевыми свойствами <code>LINK_LIBRARY_OVERRIDE</code> и <code>LINK_LIBRARY_OVERRIDE_&lt;LIBRARY&gt;</code>.</p>
+          
+            <h3>WHOLE_ARCHIVE</h3>
+            <p>Принудительное включение всех членов статической библиотеки. Эта функция поддерживается только на следующих платформах, с указанными ограничениями:</p>
+            <ul>
+              <li>Linux.</li>
+              <li>Все варианты BSD.</li>
+              <li>SunOS.</li>
+              <li>Все варианты Apple. Библиотека должна быть указана как имя цели CMake, имя файла библиотеки (например, <code>libfoo.a</code>) или путь к файлу библиотеки (например, <code>/path/to/libfoo.a</code>). Из-за ограничения компоновщика Apple она не может быть указана как простое имя библиотеки, такое как <code>foo</code>, если <code>foo</code> не является целью CMake.</li>
+              <li>Windows. При использовании MSVC или подобного ему инструментария версия MSVC должна быть выше 1900.</li>
+              <li>Cygwin.</li>
+              <li>MSYS.</li>
+            </ul>
+          
+            <h3>FRAMEWORK</h3>
+            <p>Эта опция сообщает компоновщику искать указанный фреймворк с использованием опции компоновщика <code>-framework</code>. Она может использоваться только на платформах Apple и только с компоновщиком, который поддерживает данную опцию (т.е. компоновщик, поставляемый с Xcode, или совместимый с ним).</p>
+            <p>Фреймворк может быть указан как цель CMake, имя фреймворка или путь к файлу. Если указана цель, эта цель должна иметь свойство цели <code>FRAMEWORK</code>, установленное в <code>true</code>. Для пути к файлу, если он содержит часть каталога, этот каталог будет добавлен как путь поиска фреймворка.</p>
+            <pre><code>add_library(lib SHARED ...)
+          target_link_libraries(lib PRIVATE "$&lt;LINK_LIBRARY:FRAMEWORK,/path/to/my_framework&gt;")</code></pre>
+            <p>Сконструированная строка команд компоновщика будет содержать:</p>
+            <pre><code>-F/path/to -framework my_framework</code></pre>
+            <p>Пути к файлам должны соответствовать одному из следующих шаблонов (* — это подстановочный знак, а необязательные части показаны в квадратных скобках):</p>
+            <ul>
+              <li>[<code>/path/to/</code>]FwName[<code>.framework</code>]</li>
+              <li>[<code>/path/to/</code>]FwName.framework/FwName[<code>suffix</code>]</li>
+              <li>[<code>/path/to/</code>]FwName.framework/Versions/*/FwName[<code>suffix</code>]</li>
+            </ul>
+            <p>Обратите внимание, что CMake распознает и автоматически обрабатывает цели фреймворка, даже без использования выражения <code>$&lt;LINK_LIBRARY:FRAMEWORK,...&gt;</code>. Генераторное выражение все еще может использоваться с целью CMake, если проект хочет быть явным в этом вопросе, но это не обязательно. Строка команд компоновщика может иметь некоторые различия между использованием или неиспользованием генераторного выражения, но конечный результат должен быть одинаковым. С другой стороны, если указан путь к файлу, CMake распознает некоторые пути автоматически, но не во всех случаях. Проект может использовать <code>$&lt;LINK_LIBRARY:FRAMEWORK,...&gt;</code> для путей к файлам, чтобы ожидания были понятны.</p>
+            <p><strong>Новое в версии 3.25:</strong> Свойство цели <code>FRAMEWORK_MULTI_CONFIG_POSTFIX_&lt;CONFIG&gt;</code>, а также суффикс имени библиотеки фреймворка теперь поддерживаются функциями FRAMEWORK.</p>
+          
+            <h3>NEEDED_FRAMEWORK</h3>
+            <p>Похоже на функцию <code>FRAMEWORK</code>, за исключением того, что оно заставляет компоновщик связываться с фреймворком, даже если из него не используются символы. Использует опцию <code>-needed_framework</code> и имеет те же ограничения компоновщика, что и <code>FRAMEWORK</code>.</p>
+          
+            <h3>REEXPORT_FRAMEWORK</h3>
+            <p>Похоже на функцию <code>FRAMEWORK</code>, за исключением того, что оно указывает компоновщику, что фреймворк должен быть доступен клиентам, связывающимся с создаваемой библиотекой. Использует опцию <code>-reexport_framework</code> и имеет те же ограничения компоновщика, что и <code>FRAMEWORK</code>.</p>
+          
+            <h3>WEAK_FRAMEWORK</h3>
+            <p>Похоже на функцию <code>FRAMEWORK</code>, за исключением того, что оно заставляет компоновщик пометить фреймворк и все ссылки на него как слабые импорты. Использует опцию <code>-weak_framework</code> и имеет те же ограничения компоновщика, что и <code>FRAMEWORK</code>.</p>
+          
+            <h3>NEEDED_LIBRARY</h3>
+            <p>Похоже на функцию <code>NEEDED_FRAMEWORK</code>, но используется для некаркасных целей или библиотек (только платформы Apple). Использует опцию <code>-needed_library</code> или <code>-needed-l</code>, и имеет те же ограничения компоновщика, что и <code>NEEDED_FRAMEWORK</code>.</p>
+          
+            <h3>REEXPORT_LIBRARY</h3>
+            <p>Похоже на функцию <code>REEXPORT_FRAMEWORK</code>, но используется для некаркасных целей или библиотек (только платформы Apple). Использует опцию <code>-reexport_library</code> или <code>-reexport-l</code>, и имеет те же ограничения компоновщика, что и <code>REEXPORT_FRAMEWORK</code>.</p>
+          
+            <h3>WEAK_LIBRARY</h3>
+            <p>Похоже на функцию <code>WEAK_FRAMEWORK</code>, но используется для некаркасных целей или библиотек (только платформы Apple). Использует опцию <code>-weak_library</code> или <code>-weak-l</code>, и имеет те же ограничения компоновщика, что и <code>WEAK_FRAMEWORK</code>.</p>
+          
+            <h3>Встроенные и пользовательские функции библиотеки определяются в терминах следующих переменных:</h3>
+            <ul>
+              <li><code>CMAKE_&lt;LANG&gt;_LINK_LIBRARY_USING_&lt;FEATURE&gt;_SUPPORTED</code></li>
+              <li><code>CMAKE_&lt;LANG&gt;_LINK_LIBRARY_USING_&lt;FEATURE&gt;</code></li>
+              <li><code>CMAKE_LINK_LIBRARY_USING_&lt;FEATURE&gt;_SUPPORTED</code></li>
+              <li><code>CMAKE_LINK_LIBRARY_USING_&lt;FEATURE&gt;</code></li>
+            </ul>
+            <p>Значение, используемое для каждой из этих переменных, задается в конце области действия каталога, в которой была создана цель. Использование:</p>
+            <ul>
+              <li>Если переменная <code>CMAKE_&lt;LANG&gt;_LINK_LIBRARY_USING_&lt;FEATURE&gt;_SUPPORTED</code>, связанная с языком, установлена в значение <code>true</code>, функция должна быть определена соответствующей переменной <code>CMAKE_&lt;LANG&gt;_LINK_LIBRARY_USING_&lt;FEATURE&gt;</code>.</li>
+              <li>Если функция, связанная с конкретным языком, не поддерживается, переменная <code>CMAKE_LINK_LIBRARY_USING_&lt;FEATURE&gt;_SUPPORTED</code> должна быть установлена в <code>true</code>, и функция должна быть определена соответствующей переменной <code>CMAKE_LINK_LIBRARY_USING_&lt;FEATURE&gt;</code>.</li>
+            </ul>
+          
+            <h3>Следующие ограничения следует учитывать:</h3>
+            <ul>
+              <li>Список библиотек может указывать цели CMake или библиотеки. Любая цель CMake типа <code>OBJECT</code> или <code>INTERFACE</code> проигнорирует функцию выражения и будет связана стандартным способом.</li>
+              <li>Генераторное выражение <code>$&lt;LINK_LIBRARY:...&gt;</code> может использоваться только для указания библиотек. На практике это означает, что оно может появляться в свойствах цели <code>LINK_LIBRARIES</code>, <code>INTERFACE_LINK_LIBRARIES</code> и <code>INTERFACE_LINK_LIBRARIES_DIRECT</code>, а также в командах <code>target_link_libraries()</code> и <code>link_libraries()</code>.</li>
+              <li>Если генераторное выражение <code>$&lt;LINK_LIBRARY:...&gt;</code> появляется в свойстве <code>INTERFACE_LINK_LIBRARIES</code> цели, оно будет включено в импортированную цель, создаваем
+          
+                <h5>Следующие ограничения следует учитывать:</h5>
+                <ul>
+                    <li>Список библиотек может указывать цели CMake или библиотеки. Любая цель CMake типа <code>OBJECT</code> или <code>INTERFACE</code> будет игнорировать аспект функции выражения и вместо этого будет связана стандартным способом.</li>
+                    <li>Генераторное выражение <code>$&lt;LINK_LIBRARY:...&gt;</code> может использоваться только для указания библиотек связи. На практике это означает, что оно может появляться в свойствах <code>LINK_LIBRARIES</code>, <code>INTERFACE_LINK_LIBRARIES</code> и <code>INTERFACE_LINK_LIBRARIES_DIRECT</code> цели, а также использоваться в командах <code>target_link_libraries()</code> и <code>link_libraries()</code>.</li>
+                    <li>Если генераторное выражение <code>$&lt;LINK_LIBRARY:...&gt;</code> появляется в свойстве <code>INTERFACE_LINK_LIBRARIES</code> цели, оно будет включено в импортированную цель, создаваемую командой <code>install(EXPORT)</code>. Ответственность за определение используемой в этом выражении функции связи лежит на среде, которая потребляет этот импорт.</li>
+                    <li>Каждая цель или библиотека, участвующая в этапе связи, должна иметь не более одного типа функции библиотеки. Отсутствие функции также несовместимо со всеми другими функциями. Например:</li>
+                </ul>
+                <pre><code>add_library(lib1 ...)
+            add_library(lib2 ...)
+            add_library(lib3 ...)
+            
+            # lib1 будет ассоциирована с feature1
+            target_link_libraries(lib2 PUBLIC "$&lt;LINK_LIBRARY:feature1,lib1&gt;")
+            
+            # lib1 связывается здесь без функции. Это конфликтует с использованием feature1 в строке выше и приведет к ошибке.
+            target_link_libraries(lib3 PRIVATE lib1 lib2)</code></pre>
+                <p>Если невозможно использовать одну и ту же функцию на протяжении всей сборки для данной цели или библиотеки, для решения таких несовместимостей можно использовать целевые свойства <code>LINK_LIBRARY_OVERRIDE</code> и <code>LINK_LIBRARY_OVERRIDE_&lt;LIBRARY&gt;</code>.</p>
+                <p>Генераторное выражение <code>$&lt;LINK_LIBRARY:...&gt;</code> не гарантирует, что список указанных целей и библиотек будет сохранен вместе. Для управления конструкциями, такими как <code>--start-group</code> и <code>--end-group</code>, поддерживаемыми компоновщиком GNU ld, используйте генераторное выражение <code>LINK_GROUP</code>.</p>                      
+              </li>
+            </ul>
+
+            <h5><code>$&lt;LINK_GROUP:feature,library-list&gt;</code></h5>
+            <p class="text-muted">Новое в версии 3.24.</p>
+            <p>Укажите группу библиотек для связывания с целью, а также функцию, которая определяет, как эта группа должна быть связана. Например:</p>
+            <pre><code>add_library(lib1 STATIC ...)
+        add_library(lib2 ...)
+        target_link_libraries(lib2 PRIVATE "$&lt;LINK_GROUP:RESCAN,lib1,external&gt;")</code></pre>
+            <p>Это указывает, что lib2 должна быть связана с lib1 и external, и обе эти библиотеки должны быть включены в командную строку компоновщика в соответствии с определением функции RESCAN.</p>
+            
+            <p>Имена функций чувствительны к регистру и могут содержать только буквы, цифры и символы подчеркивания. Имена функций, определенные в верхнем регистре, зарезервированы для встроенных функций CMake. В настоящее время существует только одна предопределенная встроенная функция для группы:</p>
+
+            <h6>RESCAN</h6>
+            <p>Некоторые компоновщики поддерживают только одно проходное сканирование. Для таких компоновщиков циклические ссылки между библиотеками обычно приводят к неразрешенным символам. Эта функция инструктирует компоновщик повторно искать указанные статические библиотеки до тех пор, пока не будут устранены все неразрешенные ссылки.</p>
+            
+            <p>Обычно статическая библиотека сканируется только один раз в порядке, указанном на командной строке. Если символ в этой библиотеке нужен для разрешения неразрешенного символа, на который ссылается объект в библиотеке, появляющейся позже в командной строке, компоновщик не сможет разрешить эту ссылку. Группируя статические библиотеки с функцией RESCAN, они будут повторно сканироваться до тех пор, пока все возможные ссылки не будут разрешены. Это будет использовать такие опции компоновщика, как <code>--start-group</code> и <code>--end-group</code>, или на SunOS, <code>-z rescan-start</code> и <code>-z rescan-end</code>.</p>
+            
+            <p>Использование этой функции имеет значительную стоимость производительности. Лучше использовать ее только тогда, когда имеются неизбежные циклические ссылки между двумя или более статическими библиотеками.</p>
+            
+            <p>Эта функция доступна при использовании цепочек инструментов, нацеленных на Linux, BSD и SunOS. Она также может использоваться при работе с платформами Windows, если используется цепочка инструментов GNU.</p>
+            
+            <h5>Встроенные и пользовательские функции групп определяются следующими переменными:</h5>
+            <ul>
+                <li><code>CMAKE_&lt;LANG&gt;_LINK_GROUP_USING_&lt;FEATURE&gt;_SUPPORTED</code></li>
+                <li><code>CMAKE_&lt;LANG&gt;_LINK_GROUP_USING_&lt;FEATURE&gt;</code></li>
+                <li><code>CMAKE_LINK_GROUP_USING_&lt;FEATURE&gt;_SUPPORTED</code></li>
+                <li><code>CMAKE_LINK_GROUP_USING_&lt;FEATURE&gt;</code></li>
+            </ul>
+            <p>Значение, используемое для каждой из этих переменных, задается в конце области действия каталога, в котором была создана цель. Использование происходит следующим образом:</p>
+            <ul>
+                <li>Если переменная <code>CMAKE_&lt;LANG&gt;_LINK_GROUP_USING_&lt;FEATURE&gt;_SUPPORTED</code> для определенного языка равна <code>true</code>, функция должна быть определена соответствующей переменной <code>CMAKE_&lt;LANG&gt;_LINK_GROUP_USING_&lt;FEATURE&gt;</code>.</li>
+                <li>Если ни одна языковая функция не поддерживается, переменная <code>CMAKE_LINK_GROUP_USING_&lt;FEATURE&gt;_SUPPORTED</code> должна быть равна <code>true</code>, и функция должна быть определена соответствующей переменной <code>CMAKE_LINK_GROUP_USING_&lt;FEATURE&gt;</code>.</li>
+            </ul>
+
+            <p>Генераторное выражение <code>LINK_GROUP</code> совместимо с генераторным выражением <code>LINK_LIBRARY</code>. Библиотеки, участвующие в группе, могут быть указаны с использованием генераторного выражения <code>LINK_LIBRARY</code>.</p>
+
+            <p>Каждой цели или внешней библиотеке, участвующей в этапе связывания, разрешается быть частью нескольких групп, но только если все задействованные группы указывают одну и ту же функцию. Такие группы не будут объединяться в командной строке компоновщика, а индивидуальные группы останутся сохранены. Смешивание разных функций групп для одной и той же цели или библиотеки запрещено.</p>
+            
+            <pre><code>add_library(lib1 ...)
+        add_library(lib2 ...)
+        add_library(lib3 ...)
+        add_library(lib4 ...)
+        add_library(lib5 ...)
+
+        target_link_libraries(lib3 PUBLIC  "$&lt;LINK_GROUP:feature1,lib1,lib2&gt;")
+        target_link_libraries(lib4 PRIVATE "$&lt;LINK_GROUP:feature1,lib1,lib3&gt;")
+        # lib4 будет связана с группами {lib1,lib2} и {lib1,lib3}.
+        # Обе группы указывают одну и ту же функцию, так что это допустимо.
+
+        target_link_libraries(lib5 PRIVATE "$&lt;LINK_GROUP:feature2,lib1,lib3&gt;")
+        # Здесь возникнет ошибка, потому что и lib1, и lib3 являются частью
+        # двух групп с разными функциями.</code></pre>
+            
+            <p>Когда цель или внешняя библиотека участвует в этапе связывания как часть группы, а также как не часть какой-либо группы, любое появление элемента связи вне группы будет заменено группами, к которым он принадлежит.</p>
+            
+            <pre><code>add_library(lib1 ...)
+        add_library(lib2 ...)
+        add_library(lib3 ...)
+        add_library(lib4 ...)
+
+        target_link_libraries(lib3 PUBLIC lib1)
+
+        target_link_libraries(lib4 PRIVATE lib3 "$&lt;LINK_GROUP:feature1,lib1,lib2&gt;")
+        # lib4 будет связана только с lib3 и группой {lib1,lib2}</code></pre>
+            
+            <p>Поскольку lib1 является частью группы, определенной для lib4, эта группа затем применяется к использованию lib1 для lib3. Конечный результат будет таким, как если бы связь для lib3 была определена следующим образом:</p>
+            
+            <pre><code>target_link_libraries(lib3 PUBLIC "$&lt;LINK_GROUP:feature1,lib1,lib2&gt;")</code></pre>
+            
+            <p>Имейте в виду, что приоритет группы над элементом связи вне группы может привести к циклическим зависимостям между группами. Если это произойдет, возникнет фатальная ошибка, поскольку циклические зависимости для групп не допускаются.</p>
+            
+            <pre><code>add_library(lib1A ...)
+        add_library(lib1B ...)
+        add_library(lib2A ...)
+        add_library(lib2B ...)
+        add_library(lib3 ...)
+
+        # Связи вне группы, пока они не являются циклическими
+        target_link_libraries(lib1A PUBLIC lib2A)
+        target_link_libraries(lib2B PUBLIC lib1B)
+
+        # Добавление этих групп создает циклические зависимости
+        target_link_libraries(lib3 PRIVATE
+          "$&lt;LINK_GROUP:feat,lib1A,lib1B&gt;"
+          "$&lt;LINK_GROUP:feat,lib2A,lib2B&gt;"
+        )
+        # Из-за групп, определенных для lib3, связи для lib1A и lib2B фактически
+        # расширяются до эквивалента:
+        target_link_libraries(lib1A PUBLIC "$&lt;LINK_GROUP:feat,lib2A,lib2B&gt;")
+        target_link_libraries(lib2B PUBLIC "$&lt;LINK_GROUP:feat,lib1A,lib1B&gt;")
+        # Это создает циклическую зависимость между группами: lib1A --> lib2B --> lib1A.</code></pre>
+            
+            <h5>Следующие ограничения также следует учитывать:</h5>
+            <ul>
+                <li>Список библиотек может указывать цели CMake или библиотеки. Любая цель CMake типа <code>OBJECT</code> или <code>INTERFACE</code> будет игнорировать аспект функции выражения и вместо этого будет связана стандартным способом.</li>
+                <li>Генераторное выражение <code>$&lt;LINK_GROUP:...&gt;</code> может использоваться только для указания библиотек связи. На практике это означает, что оно может появляться в свойствах <code>LINK_LIBRARIES</code>, <code>INTERFACE_LINK_LIBRARIES</code> и <code>INTERFACE_LINK_LIBRARIES_DIRECT</code> цели, а также использоваться в командах <code>target_link_libraries()</code> и <code>link_libraries()</code>.</li>
+                <li>Если генераторное выражение <code>$&lt;LINK_GROUP:...&gt;</code> появляется в свойстве <code>INTERFACE_LINK_LIBRARIES</code> цели, оно будет включено в импортированную цель, создаваемую командой <code>install(EXPORT)</code>. Ответственность за определение используемой в этом выражении функции связи лежит на среде, которая потребляет этот импорт.</li>
+            </ul>
+
+
+            <h5><code>$&lt;LINK_ONLY:...&gt;</code></h5>
+            <p class="text-muted">Новое в версии 3.1.</p>
+            <p>Содержимое ..., за исключением случаев, когда происходит сбор требований к использованию из транзитивных свойств компиляции. В таком случае это будет пустая строка. Это предназначено для использования в свойстве цели <code>INTERFACE_LINK_LIBRARIES</code>, обычно заполняемом через команду <code>target_link_libraries()</code>, чтобы указать частные зависимости связывания без других требований к использованию, таких как каталоги include или опции компиляции.</p>
+            <p class="text-muted">Новое в версии 3.24: <code>LINK_ONLY</code> также может использоваться в свойстве цели <code>LINK_LIBRARIES</code>. См. политику CMP0131.</p>
+        
+            <h5><code>$&lt;DEVICE_LINK:list&gt;</code></h5>
+            <p class="text-muted">Новое в версии 3.18.</p>
+            <p>Возвращает список, если это этап связывания устройства, иначе возвращает пустой список. Этап связывания устройства управляется свойствами <code>CUDA_SEPARABLE_COMPILATION</code> и <code>CUDA_RESOLVE_DEVICE_SYMBOLS</code>, а также политикой CMP0105. Это выражение может использоваться только для указания опций связывания.</p>
+        
+            <h5><code>$&lt;HOST_LINK:list&gt;</code></h5>
+            <p class="text-muted">Новое в версии 3.18.</p>
+            <p>Возвращает список, если это обычный этап связывания, иначе возвращает пустой список. Это выражение в основном полезно, когда также задействован этап связывания устройства (см. <code>$&lt;DEVICE_LINK:list&gt;</code> генераторное выражение). Это выражение может использоваться только для указания опций связывания.</p>
+        
+            <h4>Зависимые от целей выражения</h4>
+            <h5>Метаданные целей</h5>
+            <p>Эти выражения извлекают информацию о цели.</p>
+        
+            <h5><code>$&lt;TARGET_EXISTS:tgt&gt;</code></h5>
+            <p class="text-muted">Новое в версии 3.12.</p>
+            <p>Возвращает 1, если <code>tgt</code> существует как цель CMake, иначе 0.</p>
+        
+            <h5><code>$&lt;TARGET_NAME_IF_EXISTS:tgt&gt;</code></h5>
+            <p class="text-muted">Новое в версии 3.12.</p>
+            <p>Имя цели <code>tgt</code>, если цель существует, в противном случае пустая строка.</p>
+            <p>Обратите внимание, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+        
+            <h5><code>$&lt;TARGET_NAME:tgt&gt;</code></h5>
+            <p>Имя цели <code>tgt</code> в том виде, как оно записано. Это помечает <code>tgt</code> как имя цели в составе большего выражения, что требуется при экспорте целей в несколько зависимых наборов экспорта. Текст <code>tgt</code> должен быть буквальным именем цели; он не может содержать генераторные выражения. Цель не обязательно должна существовать.</p>
+        
+            <h5><code>$&lt;TARGET_POLICY:policy&gt;</code></h5>
+            <p>Возвращает 1, если политика была новой (NEW), когда была создана цель 'head', иначе 0. Если политика не была установлена, будет выведено предупреждающее сообщение для этой политики. Это генераторное выражение работает только для подмножества политик.</p>
+        
+            <h4>Свойства целей</h4>
+            <p>Эти выражения извлекают значения свойств цели.</p>
+        
+            <h5><code>$&lt;TARGET_PROPERTY:tgt,prop&gt;</code></h5>
+            <p>Значение свойства <code>prop</code> на цели <code>tgt</code>, или пустая строка, если свойство не установлено.</p>
+            <p>Обратите внимание, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            <p class="text-muted">Изменено в версии 3.26: при оценке требований к использованию цели, обычно в свойстве цели <code>INTERFACE_*</code>, поиск имени <code>tgt</code> осуществляется в каталоге цели, задающей требование, а не в каталоге потребляющей цели, для которой оценивается выражение.</p>
+        
+            <h5><code>$&lt;TARGET_PROPERTY:prop&gt;</code></h5>
+            <p>Значение свойства <code>prop</code> на цели, для которой оценивается выражение, или пустая строка, если свойство не установлено. Обратите внимание, что для генераторных выражений в требованиях к использованию целей это потребляющая цель, а не цель, задающая требование.</p>
+        
+            <p>Эти выражения имеют специальные правила оценки для некоторых свойств:</p>
+        
+            <h5>Свойства спецификации сборки целей</h5>
+            <p>Оцениваются как список, разделенный точкой с запятой, представляющий объединение значения на самой цели с значениями соответствующих требований к использованию целей, указанных в <code>LINK_LIBRARIES</code>:</p>
+        
+            <ul>
+                <li>Для свойств компиляции целей оценка соответствующих требований к использованию транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> связанных целей, за исключением записей, защищенных генераторным выражением <code>LINK_ONLY</code>.</li>
+                <li>Для свойств связывания целей оценка соответствующих требований к использованию транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> связанных целей, включая записи, защищенные генераторным выражением <code>LINK_ONLY</code>. См. политику CMP0166.</li>
+            </ul>
+        
+            <p>Оценка самого <code>LINK_LIBRARIES</code> не является транзитивной.</p>
+        
+            <h5>Свойства требований к использованию целей</h5>
+            <p>Оцениваются как список, разделенный точкой с запятой, представляющий объединение значения на самой цели с значениями тех же свойств на целях, указанных в <code>INTERFACE_LINK_LIBRARIES</code>:</p>
+        
+            <ul>
+                <li>Для транзитивных свойств компиляции оценка транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> цели, за исключением записей, защищенных генераторным выражением <code>LINK_ONLY</code>.</li>
+                <li>Для транзитивных свойств связывания оценка транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> цели, включая записи, защищенные генераторным выражением <code>LINK_ONLY</code>. См. политику CMP0166.</li>
+            </ul>
+        
+            <p>Оценка <code>INTERFACE_LINK_LIBRARIES</code> не является транзитивной.</p>
+        
+            <h5>Пользовательские транзитивные свойства</h5>
+            <p class="text-muted">Новое в версии 3.30.</p>
+            <p>Обрабатываются во время оценки следующим образом:</p>
+        
+            <p>Оценка <code>$&lt;TARGET_PROPERTY:tgt,PROP&gt;</code> для некоторого свойства <code>PROP</code>, указанного без префикса <code>INTERFACE_</code>, проверяет свойства <code>TRANSITIVE_COMPILE_PROPERTIES</code> и <code>TRANSITIVE_LINK_PROPERTIES</code> на цели <code>tgt</code>, на целях, указанных в его <code>LINK_LIBRARIES</code>, и на транзитивном замыкании целей, указанных в <code>INTERFACE_LINK_LIBRARIES</code> связанных целей.</p>
+        
+            <p>Если <code>PROP</code> указано в одном из этих свойств, оно оценивается как список, разделенный точкой с запятой, представляющий объединение значения на самой цели с значениями соответствующего <code>INTERFACE_PROP</code> на целях, указанных в <code>LINK_LIBRARIES</code> цели:</p>
+        
+            <ul>
+                <li>Если <code>PROP</code> указано в <code>TRANSITIVE_COMPILE_PROPERTIES</code>, оценка соответствующего <code>INTERFACE_PROP</code> транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> связанных целей, за исключением записей, защищенных генераторным выражением <code>LINK_ONLY</code>.</li>
+                <li>Если <code>PROP</code> указано в <code>TRANSITIVE_LINK_PROPERTIES</code>, оценка соответствующего <code>INTERFACE_PROP</code> транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> связанных целей, включая записи, защищенные генераторным выражением <code>LINK_ONLY</code>.</li>
+            </ul>
+        
+            <p>Оценка <code>$&lt;TARGET_PROPERTY:tgt,INTERFACE_PROP&gt;</code> для свойства <code>INTERFACE_PROP</code>, указанного с префиксом <code>INTERFACE_</code>, проверяет свойства <code>TRANSITIVE_COMPILE_PROPERTIES</code> и <code>TRANSITIVE_LINK_PROPERTIES</code> на цели <code>tgt</code> и на транзитивном замыкании целей, указанных в <code>INTERFACE_LINK_LIBRARIES</code> связанных целей.</p>
+        
+            <p>Если соответствующее <code>PROP</code> указано в одном из этих свойств, тогда <code>INTERFACE_PROP</code> оценивается как список, разделенный точкой с запятой, представляющий объединение значения на самой цели со значением того же свойства на целях, указанных в <code>INTERFACE_LINK_LIBRARIES</code> цели:</p>
+        
+            <ul>
+                <li>Если <code>PROP</code> указано в <code>TRANSITIVE_COMPILE_PROPERTIES</code>, оценка соответствующего <code>INTERFACE_PROP</code> транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> цели, за исключением записей, защищенных генераторным выражением <code>LINK_ONLY</code>.</li>
+                <li>Если <code>PROP</code> указано в <code>TRANSITIVE_LINK_PROPERTIES</code>, оценка соответствующего <code>INTERFACE_PROP</code> транзитивна по замыканию <code>INTERFACE_LINK_LIBRARIES</code> цели, включая записи, защищенные генераторным выражением <code>LINK_ONLY</code>.</li>
+            </ul>
+        
+            <p>Если <code>PROP</code> указано в обоих <code>TRANSITIVE_COMPILE_PROPERTIES</code> и <code>TRANSITIVE_LINK_PROPERTIES</code>, предпочтение отдается последнему.</p>
+        
+            <h5>Совместимые свойства интерфейса</h5>
+            <p>Оцениваются как одно значение, объединенное из самой цели, из целей, указанных в <code>LINK_LIBRARIES</code> цели, и из транзитивного замыкания <code>INTERFACE_LINK_LIBRARIES</code> связанных целей. Значения совместимого свойства интерфейса из нескольких целей объединяются в зависимости от типа совместимости, требуемого свойством <code>COMPATIBLE_INTERFACE_*</code>, которое его определяет.</p>
+
+            
+
+            <h1>Целевые артефакты</h1>
+            <p>Эти выражения ищут информацию об артефактах, связанных с заданной целью <code>tgt</code>. Если не указано иное, это может быть любой исполняемый артефакт, а именно:</p>
+            <ul>
+              <li>Исполняемая цель, созданная с помощью <code>add_executable()</code>.</li>
+              <li>Цель динамической библиотеки (.so, .dll, но не их импортируемая библиотека .lib), созданная с помощью <code>add_library()</code>.</li>
+              <li>Цель статической библиотеки, созданная с помощью <code>add_library()</code>.</li>
+            </ul>
+            <p>В следующем контексте фраза "имя файла <code>tgt</code>" означает имя исполняемого файла <code>tgt</code>. Это необходимо отличать от фразы "имя цели", которая просто обозначает строку <code>tgt</code>.</p>
+            
+            <h2><code>$&lt;TARGET_FILE:tgt&gt;</code></h2>
+            <p>Полный путь к исполняемому файлу <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение, если только выражение не используется в <code>add_custom_command()</code> или <code>add_custom_target()</code>.</p>
+            
+            <h2><code>$&lt;TARGET_FILE_BASE_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.15.</p>
+            <p>Базовое имя <code>tgt</code>, т.е. <code>$&lt;TARGET_FILE_NAME:tgt&gt;</code> без префикса и суффикса. Например, если имя файла <code>tgt</code> - <code>libbase.so</code>, то базовое имя - <code>base</code>.</p>
+            <p>Смотрите также свойства цели <code>OUTPUT_NAME</code>, <code>ARCHIVE_OUTPUT_NAME</code>, <code>LIBRARY_OUTPUT_NAME</code> и <code>RUNTIME_OUTPUT_NAME</code>, а также их конфигурационно-специфические варианты <code>OUTPUT_NAME_&lt;CONFIG&gt;</code>, <code>ARCHIVE_OUTPUT_NAME_&lt;CONFIG&gt;</code>, <code>LIBRARY_OUTPUT_NAME_&lt;CONFIG&gt;</code> и <code>RUNTIME_OUTPUT_NAME_&lt;CONFIG&gt;</code>.</p>
+            <p>Также можно рассмотреть свойства цели <code>&lt;CONFIG&gt;_POSTFIX</code> и <code>DEBUG_POSTFIX</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_FILE_PREFIX:tgt&gt;</code></h2>
+            <p>Новое в версии 3.15.</p>
+            <p>Префикс имени файла <code>tgt</code> (например, <code>lib</code>).</p>
+            <p>Смотрите также свойство цели <code>PREFIX</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_FILE_SUFFIX:tgt&gt;</code></h2>
+            <p>Новое в версии 3.15.</p>
+            <p>Суффикс имени файла <code>tgt</code> (расширение, например, <code>.so</code> или <code>.exe</code>).</p>
+            <p>Смотрите также свойство цели <code>SUFFIX</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_FILE_NAME:tgt&gt;</code></h2>
+            <p>Имя файла <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение (см. политику <code>CMP0112</code>).</p>
+            
+            <h2><code>$&lt;TARGET_FILE_DIR:tgt&gt;</code></h2>
+            <p>Каталог исполняемого файла <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение (см. политику <code>CMP0112</code>).</p>
+            
+            <h2><code>$&lt;TARGET_IMPORT_FILE:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Полный путь к файлу импорта линкера. На платформах с DLL это будет файл <code>.lib</code>. Для исполняемых файлов на AIX и для динамических библиотек на macOS это может быть, соответственно, файл <code>.imp</code> или <code>.tbd</code>, в зависимости от значения свойства <code>ENABLE_EXPORTS</code>.</p>
+            <p>Это выражение разворачивается в пустую строку, если с целью не связан файл импорта.</p>
+            
+            <h2><code>$&lt;TARGET_IMPORT_FILE_BASE_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Базовое имя файла импорта линкера цели <code>tgt</code> без префикса и суффикса. Например, если имя файла цели <code>libbase.tbd</code>, базовое имя будет <code>base</code>.</p>
+            <p>Смотрите также свойства цели <code>OUTPUT_NAME</code> и <code>ARCHIVE_OUTPUT_NAME</code>, а также их конфигурационно-специфические варианты <code>OUTPUT_NAME_&lt;CONFIG&gt;</code> и <code>ARCHIVE_OUTPUT_NAME_&lt;CONFIG&gt;</code>.</p>
+            <p>Также можно рассмотреть свойства цели <code>&lt;CONFIG&gt;_POSTFIX</code> и <code>DEBUG_POSTFIX</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_IMPORT_FILE_PREFIX:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Префикс файла импорта цели <code>tgt</code>.</p>
+            <p>Смотрите также свойство цели <code>IMPORT_PREFIX</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_IMPORT_FILE_SUFFIX:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Суффикс файла импорта цели <code>tgt</code>.</p>
+            <p>Суффикс соответствует расширению файла (например, <code>.lib</code> или <code>.tbd</code>).</p>
+            <p>Смотрите также свойство цели <code>IMPORT_SUFFIX</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_IMPORT_FILE_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Имя файла импорта цели <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_IMPORT_FILE_DIR:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Каталог файла импорта цели <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_LINKER_FILE:tgt&gt;</code></h2>
+            <p>Файл, используемый при линковке с целью <code>tgt</code>. Обычно это будет библиотека, которую представляет <code>tgt</code> (<code>.so</code>, <code>.a</code> или <code>.lib</code>).</p>
+            <p>На платформах с DLL это может быть исполняемый файл <code>.dll</code>, когда целью является динамическая библиотека, и требуется прямое связывание. Например, <code>tgt</code> с использованием <code>ENABLE_EXPORTS</code> в <code>add_executable()</code>, которое затем передается <code>target_link_libraries()</code>.</p>
+            
+            <h2><code>$&lt;TARGET_LINKER_FILE_BASE_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.15.</p>
+            <p>Базовое имя файла, который используется при линковке с <code>tgt</code>. Это будет имя файла без префикса и суффикса.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_LINKER_FILE_PREFIX:tgt&gt;</code></h2>
+            <p>Новое в версии 3.15.</p>
+            <p>Префикс имени файла, который используется при линковке с <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_LINKER_FILE_SUFFIX:tgt&gt;</code></h2>
+            <p>Новое в версии 3.15.</p>
+            <p>Суффикс имени файла, который используется при линковке с <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_LINKER_FILE_NAME:tgt&gt;</code></h2>
+            <p>Имя файла, используемого при линковке с целью <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_LINKER_FILE_DIR:tgt&gt;</code></h2>
+            <p>Каталог файла, используемого при линковке с целью <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_SONAME_FILE:tgt&gt;</code></h2>
+            <p>Полный путь к файлу с именем SONAME для цели <code>tgt</code>. Если платформа не поддерживает SONAME, это выражение разворачивается в пустую строку.</p>
+            <p>Смотрите также описание свойства цели <code>BUILD_WITH_INSTALL_RPATH</code>.</p>
+            
+            <h2><code>$&lt;TARGET_PDB_FILE:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Полный путь к PDB-файлу, созданному для цели <code>tgt</code>. Если цель не создает PDB-файл, выражение разворачивается в пустую строку.</p>
+            <p>Это выражение поддерживается только для генераторов Visual Studio, Xcode и Makefile на Windows.</p>
+            
+            <h2><code>$&lt;TARGET_PDB_FILE_BASE_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Базовое имя PDB-файла, созданного для цели <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_PDB_FILE_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Имя PDB-файла, созданного для цели <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+            
+            <h2><code>$&lt;TARGET_PDB_FILE_DIR:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Каталог PDB-файла, созданного для цели <code>tgt</code>.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение.</p>
+              <!-- $<TARGET_BUNDLE_DIR:tgt> -->
+            <h2><code>$&lt;TARGET_BUNDLE_DIR:tgt&gt;</code></h2>
+            <p>Новое в версии 3.9.</p>
+            <p>Полный путь к каталогу бандла (<code>/path/to/my.app</code>, <code>/path/to/my.framework</code>, или <code>/path/to/my.bundle</code>), где <code>tgt</code> - это имя цели.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение (см. политику <code>CMP0112</code>).</p>
+            
+            <!-- $<TARGET_BUNDLE_DIR_NAME:tgt> -->
+            <h2><code>$&lt;TARGET_BUNDLE_DIR_NAME:tgt&gt;</code></h2>
+            <p>Новое в версии 3.24.</p>
+            <p>Имя каталога бандла (<code>my.app</code>, <code>my.framework</code>, или <code>my.bundle</code>), где <code>tgt</code> - это имя цели.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение (см. политику <code>CMP0112</code>).</p>
+            
+            <!-- $<TARGET_BUNDLE_CONTENT_DIR:tgt> -->
+            <h2><code>$&lt;TARGET_BUNDLE_CONTENT_DIR:tgt&gt;</code></h2>
+            <p>Новое в версии 3.9.</p>
+            <p>Полный путь к каталогу содержимого бандла, где <code>tgt</code> - это имя цели. Для macOS SDK путь будет <code>/path/to/my.app/Contents</code>, <code>/path/to/my.framework</code>, или <code>/path/to/my.bundle/Contents</code>. Для всех других SDK (например, iOS) путь будет <code>/path/to/my.app</code>, <code>/path/to/my.framework</code>, или <code>/path/to/my.bundle</code> из-за плоской структуры бандла.</p>
+            <p>Заметьте, что <code>tgt</code> не добавляется как зависимость цели, на которой оценивается это выражение (см. политику <code>CMP0112</code>).</p>
+            
+            <!-- $<TARGET_OBJECTS:tgt> -->
+            <h2><code>$&lt;TARGET_OBJECTS:tgt&gt;</code></h2>
+            <p>Новое в версии 3.1.</p>
+            <p>Список объектов, полученных в результате сборки цели <code>tgt</code>. Обычно это используется для целей объектных библиотек.</p>
+            
+            <!-- $<TARGET_RUNTIME_DLLS:tgt> -->
+            <h2><code>$&lt;TARGET_RUNTIME_DLLS:tgt&gt;</code></h2>
+            <p>Новое в версии 3.21.</p>
+            <p>Список DLL, от которых зависит цель во время выполнения. Это определяется расположением всех целей типа <code>SHARED</code> в транзитивных зависимостях цели. Если требуются только каталоги DLL, см. выражение генератора <code>TARGET_RUNTIME_DLL_DIRS</code>. Использование этого выражения генератора для целей, кроме исполняемых файлов, динамических библиотек (<code>SHARED</code>) и модульных библиотек, является ошибкой. На платформах без DLL это выражение всегда оценивается как пустая строка.</p>
+            <p>Это выражение генератора может использоваться для копирования всех DLL, от которых зависит цель, в каталог вывода с помощью команды <code>POST_BUILD</code> и <code>cmake -E copy -t</code>. Например:</p>
+            
+            <pre>
+          find_package(foo CONFIG REQUIRED) # Пакет, созданный с помощью install(EXPORT)
+
+          add_executable(exe main.c)
+          target_link_libraries(exe PRIVATE foo::foo foo::bar)
+          add_custom_command(TARGET exe POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy -t $&lt;TARGET_FILE_DIR:exe&gt; $&lt;TARGET_RUNTIME_DLLS:exe&gt;
+            COMMAND_EXPAND_LISTS
+          )
+            </pre>
+            
+            <p>Обратите внимание: Импортируемые цели поддерживаются только в том случае, если они знают местоположение своих файлов <code>.dll</code>. Импортируемая динамическая библиотека должна иметь <code>IMPORTED_LOCATION</code>, установленный на файл <code>.dll</code>. См. раздел <code>add_library</code> для импортируемых библиотек для получения подробностей. Многие модули Find создают импортируемые цели с типом <code>UNKNOWN</code>, и поэтому они будут проигнорированы.</p>
+            <p>На платформах, поддерживающих пути во время выполнения (<code>RPATH</code>), обратитесь к свойству цели <code>INSTALL_RPATH</code>. На платформах Apple обратитесь к свойству цели <code>INSTALL_NAME_DIR</code>.</p>
+            
+            <!-- $<TARGET_RUNTIME_DLL_DIRS:tgt> -->
+            <h2><code>$&lt;TARGET_RUNTIME_DLL_DIRS:tgt&gt;</code></h2>
+            <p>Новое в версии 3.27.</p>
+            <p>Список каталогов, содержащих DLL, от которых зависит цель во время выполнения (см. <code>TARGET_RUNTIME_DLLS</code>). Это определяется расположением всех целей типа <code>SHARED</code> в транзитивных зависимостях цели. Использование этого выражения генератора для целей, кроме исполняемых файлов, динамических библиотек (<code>SHARED</code>) и модульных библиотек, является ошибкой. На платформах без DLL это выражение всегда оценивается как пустая строка.</p>
+            <p>Это выражение генератора, например, может использоваться для создания batch-файла с помощью <code>file(GENERATE)</code>, который соответствующим образом устанавливает переменную окружения <code>PATH</code>.</p>
+
+            <h2 class="mb-4">Экспорт и Инсталляция Выражений</h2>
+
+            <div class="mb-3">
+                <h4>$&lt;INSTALL_INTERFACE:...&gt;</h4>
+                <p>Содержимое <code>...</code>, когда свойство экспортируется с помощью <code>install(EXPORT)</code>, и пустая строка в противном случае.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;BUILD_INTERFACE:...&gt;</h4>
+                <p>Содержимое <code>...</code>, когда свойство экспортируется с помощью <code>export()</code> или когда цель используется другой целью в той же сборочной системе. В противном случае разворачивается в пустую строку.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;BUILD_LOCAL_INTERFACE:...&gt;</h4>
+                <p><strong>Новое в версии 3.26.</strong> Содержимое <code>...</code>, когда цель используется другой целью в той же сборочной системе. В противном случае разворачивается в пустую строку.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;INSTALL_PREFIX&gt;</h4>
+                <p>Содержимое префикса установки, когда цель экспортируется через <code>install(EXPORT)</code> или когда оценивается в свойстве <code>INSTALL_NAME_DIR</code> или аргументе <code>INSTALL_NAME_DIR</code> команды <code>install(RUNTIME_DEPENDENCY_SET)</code>, и пустая строка в противном случае.</p>
+                <p><strong>Изменено в версии 3.27:</strong> Оценивается как содержимое префикса установки в аргументе <code>code</code> команды <code>install(CODE)</code> или в аргументе <code>file</code> команды <code>install(SCRIPT)</code>.</p>
+            </div>
+        
+            <h2 class="mb-4 mt-5">Многоуровневая Оценка Выражений</h2>
+        
+            <div class="mb-3">
+                <h4>$&lt;GENEX_EVAL:expr&gt;</h4>
+                <p><strong>Новое в версии 3.12.</strong> Содержимое <code>expr</code>, оцененное как выражение генератора в текущем контексте. Это позволяет использовать выражения генератора, результатом оценки которых сами являются выражения генератора.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;TARGET_GENEX_EVAL:tgt,expr&gt;</h4>
+                <p><strong>Новое в версии 3.12.</strong> Содержимое <code>expr</code>, оцененное как выражение генератора в контексте цели <code>tgt</code>. Это позволяет использовать настраиваемые свойства цели, которые сами содержат выражения генератора.</p>
+            </div>
+        
+            <h2 class="mb-4 mt-5">Символы с Экранированием</h2>
+        
+            <div class="mb-3">
+                <h4>$&lt;ANGLE-R&gt;</h4>
+                <p>Символ <code>&gt;</code>. Используется, например, для сравнения строк, содержащих символ <code>&gt;</code>.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;COMMA&gt;</h4>
+                <p>Символ <code>,</code>. Используется, например, для сравнения строк, содержащих символ <code>,</code>.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;SEMICOLON&gt;</h4>
+                <p>Символ <code>;</code>. Используется для предотвращения расширения списка на аргумент с <code>;</code>.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h4>$&lt;QUOTE&gt;</h4>
+                <p><strong>Новое в версии 3.30.</strong> Символ <code>"</code>. Используется для вставки кавычек в строку внутри выражения генератора.</p>
+            </div>
+        
+            <h2 class="mb-4 mt-5">Устаревшие Выражения</h2>
+        
+            <div class="mb-3">
+                <h4>$&lt;CONFIGURATION&gt;</h4>
+                <p>Имя конфигурации. Устарело с версии CMake 3.0. Используйте <code>CONFIG</code> вместо него.</p>
+            </div>
+         </div>
     </div>
 </body>
 
