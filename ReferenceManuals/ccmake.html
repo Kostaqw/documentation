@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ccmake</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">ccmake</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">ccmake</h1>
+
+            <h2 class="section-title">Синтаксис</h2>
+            <pre><code>ccmake [&lt;options&gt;] -B &lt;path-to-build&gt; [-S &lt;path-to-source&gt;]<br>ccmake [&lt;options&gt;] &lt;path-to-source | path-to-existing-build&gt;</code></pre>
+
+            <h2 class="section-title">Описание</h2>
+            <p>Выполняемый файл <code>ccmake</code> представляет собой интерфейс CMake на основе curses. Настройки
+                конфигурации проекта могут быть указаны интерактивно через этот GUI. Краткие инструкции отображаются в
+                нижней части терминала во время работы программы.</p>
+            <p>CMake — это генератор систем сборки, работающий на разных платформах. Проекты определяют свой процесс
+                сборки с помощью независимых от платформы CMake-файлов, которые включены в каждую директорию дерева
+                исходного кода и имеют название <code>CMakeLists.txt</code>. Пользователи создают проект, используя
+                CMake для генерации системы сборки для нативного инструмента на их платформе.</p>
+
+            <h2 class="mt-5 mb-3">Опции</h2>
+            <ul class="list-group mb-3">
+                <li class="list-group-item">
+                    <strong>-S &lt;path-to-source&gt;</strong><br>
+                    Путь к корневому каталогу проекта CMake, который нужно собрать.
+                </li>
+                <li class="list-group-item">
+                    <strong>-B &lt;path-to-build&gt;</strong><br>
+                    Путь к каталогу, который CMake будет использовать в качестве корня каталога сборки.
+                    <br>Если каталог не существует, CMake создаст его.
+                </li>
+                <li class="list-group-item">
+                    <strong>-C &lt;initial-cache&gt;</strong><br>
+                    Предварительная загрузка скрипта для заполнения кеша.
+                    <br>Когда CMake запускается в пустом дереве сборки, он создает файл <code>CMakeCache.txt</code> и
+                    заполняет его настраиваемыми параметрами проекта. Эта опция может использоваться для указания файла,
+                    из которого будут загружены записи кеша до первого прохода через CMake-файлы проекта. Загруженные
+                    записи имеют приоритет над значениями по умолчанию проекта. Указанный файл должен быть скриптом
+                    CMake, содержащим команды <code>set()</code>, использующие опцию <code>CACHE</code>, а не файлом
+                    формата кеша.
+                    <br>Ссылки на <code>CMAKE_SOURCE_DIR</code> и <code>CMAKE_BINARY_DIR</code> в скрипте будут оценены
+                    как корневой источник и дерево сборки.
+                </li>
+                <li class="list-group-item">
+                    <strong>-D &lt;var&gt;[:&lt;type&gt;]=&lt;value&gt;, -D &lt;var&gt;=&lt;value&gt;</strong><br>
+                    Создать или обновить запись в кеше CMake.
+                    <br>Когда CMake запускается в пустом дереве сборки, он создает файл <code>CMakeCache.txt</code> и
+                    заполняет его настраиваемыми параметрами проекта. Эта опция может использоваться для указания
+                    настройки, которая имеет приоритет над значением по умолчанию проекта. Опция может быть повторена
+                    для любого количества записей в кеше.
+                    <br>Если указана часть <code>:<type></code>, она должна быть одним из типов, указанных в
+                    документации команды <code>set()</code> для её кеш-сигнатуры. Если часть <code>:<type></code>
+                    опущена, запись будет создана без типа, если она не существует с уже заданным типом. Если команда в
+                    проекте устанавливает тип в <code>PATH</code> или <code>FILEPATH</code>, то
+                    <code>&lt;value&gt;</code> будет преобразовано в абсолютный путь.
+                    <br>Эту опцию также можно указать в виде одного аргумента: <code>-D<var>:<type>=<value></code> или
+                    <code>-D<var>=<value></code>.
+                    <br>Важно отметить, что порядок аргументов <code>-C</code> и <code>-D</code> имеет значение. Они
+                    будут выполнены в том порядке, в котором указаны, при этом последний аргумент имеет приоритет над
+                    предыдущими. Например, если вы укажете <code>-DCMAKE_BUILD_TYPE=Debug</code>, за которым следует
+                    аргумент <code>-C</code>, который вызывает:
+                    <br><code>set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)</code>
+                    <br>то аргумент <code>-C</code> будет иметь приоритет, и <code>CMAKE_BUILD_TYPE</code> будет
+                    установлен в Release. Однако, если аргумент <code>-D</code> следует за аргументом <code>-C</code>,
+                    он будет установлен в Debug.
+                    <br>Если вызов <code>set(... CACHE ...)</code> в файле <code>-C</code> не использует
+                    <code>FORCE</code>, и аргумент <code>-D</code> устанавливает ту же переменную, аргумент
+                    <code>-D</code> будет иметь приоритет независимо от порядка из-за природы вызовов
+                    <code>set(... CACHE ...)</code> без <code>FORCE</code>.
+                </li>
+                <li class="list-group-item">
+                    <strong>-U &lt;globbing_expr&gt;</strong><br>
+                    Удалить соответствующие записи из кеша CMake.
+                    <br>Эту опцию можно использовать для удаления одной или нескольких переменных из файла
+                    <code>CMakeCache.txt</code>, поддерживаются выражения глоббинга с использованием <code>*</code> и
+                    <code>?</code>. Опцию можно повторить для любого количества записей в кеше.
+                    <br>Используйте с осторожностью, вы можете сделать файл <code>CMakeCache.txt</code> неработающим.
+                </li>
+                <li class="list-group-item">
+                    <strong>-G &lt;generator-name&gt;</strong><br>
+                    Указать генератор системы сборки.
+                    <br>CMake может поддерживать несколько нативных систем сборки на некоторых платформах. Генератор
+                    отвечает за создание конкретной системы сборки. Возможные имена генераторов указаны в руководстве
+                    <code>cmake-generators(7)</code>.
+                    <br>Если не указано, CMake проверяет переменную окружения <code>CMAKE_GENERATOR</code>, и в
+                    противном случае возвращается к встроенному значению по умолчанию.
+                </li>
+                <li class="list-group-item">
+                    <strong>-T &lt;toolset-spec&gt;</strong><br>
+                    Спецификация инструментария для генератора, если поддерживается.
+                    <br>Некоторые генераторы CMake поддерживают спецификацию инструментария для указания системе сборки,
+                    как выбрать компилятор. Смотрите переменную <code>CMAKE_GENERATOR_TOOLSET</code> для подробностей.
+                </li>
+                <li class="list-group-item">
+                    <strong>-A &lt;platform-name&gt;</strong><br>
+                    Указать имя платформы, если поддерживается генератором.
+                    <br>Некоторые генераторы CMake поддерживают указание имени платформы для выбора компилятора или SDK.
+                    Смотрите переменную <code>CMAKE_GENERATOR_PLATFORM</code> для подробностей.
+                </li>
+                <li class="list-group-item">
+                    <strong>--toolchain &lt;path-to-file&gt;</strong><br>
+                    Новинка в версии 3.21.
+                    <br>Указать файл инструментальной цепочки для кросс-компиляции, эквивалентно установке переменной
+                    <code>CMAKE_TOOLCHAIN_FILE</code>. Относительные пути интерпретируются относительно каталога сборки,
+                    а если не найден, то относительно каталога исходных файлов.
+                </li>
+                <li class="list-group-item">
+                    <strong>--install-prefix &lt;directory&gt;</strong><br>
+                    Новинка в версии 3.21.
+                    <br>Указать каталог установки, используемый переменной <code>CMAKE_INSTALL_PREFIX</code>. Должен
+                    быть абсолютным путем.
+                </li>
+                <li class="list-group-item">
+                    <strong>-Wno-dev</strong><br>
+                    Подавить предупреждения разработчика.
+                    <br>Подавить предупреждения, предназначенные для автора файлов <code>CMakeLists.txt</code>. По
+                    умолчанию это также отключит предупреждения об устаревших функциях.
+                </li>
+                <li class="list-group-item">
+                    <strong>-Wdev</strong><br>
+                    Включить предупреждения разработчика.
+                    <br>Включить предупреждения, предназначенные для автора файлов <code>CMakeLists.txt</code>. По
+                    умолчанию это также включит предупреждения об устаревших функциях.
+                </li>
+                <li class="list-group-item">
+                    <strong>-Wdeprecated</strong><br>
+                    Включить предупреждения об устаревшей функциональности.
+                    <br>Включить предупреждения о использовании устаревшей функциональности, которые предназначены для
+                    автора файлов <code>CMakeLists.txt</code>.
+                </li>
+                <li class="list-group-item">
+                    <strong>-Wno-deprecated</strong><br>
+                    Подавить предупреждения об устаревшей функциональности.
+                    <br>Подавить предупреждения о использовании устаревшей функциональности, которые предназначены для
+                    автора файлов <code>CMakeLists.txt</code>.
+                </li>
+                <li class="list-group-item">
+                    <strong>-Werror=&lt;what&gt;</strong><br>
+                    Относиться к предупреждениям CMake как к ошибкам. <code>&lt;what&gt;</code> должно быть одним из
+                    следующих:
+                    <ul>
+                        <li><strong>dev</strong> — Сделать предупреждения разработчика ошибками.
+                            <br>Сделать предупреждения, предназначенные для автора файлов <code>CMakeLists.txt</code>,
+                            ошибками. По умолчанию это также включит предупреждения об устаревших функциях как ошибки.
+                        </li>
+                        <li><strong>deprecated</strong> — Сделать предупреждения об устаревших макросах и функциях
+                            ошибками.
+                            <br>Сделать предупреждения о использовании устаревших макросов и функций, которые
+                            предназначены для автора файлов <code>CMakeLists.txt</code>, ошибками.
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <strong>-Wno-error=&lt;what&gt;</strong><br>
+                    Не относиться к предупреждениям CMake как к ошибкам. <code>&lt;what&gt;</code> должно быть одним из
+                    следующих:
+                    <ul>
+                        <li><strong>dev</strong> — Сделать предупреждения, предназначенные для автора файлов
+                            <code>CMakeLists.txt</code>, не ошибками. По умолчанию это также отключит предупреждения об
+                            устаревших функциях как ошибки.</li>
+                        <li><strong>deprecated</strong> — Сделать предупреждения о использовании устаревших макросов и
+                            функций, предназначенные для автора файлов <code>CMakeLists.txt</code>, не ошибками.</li>
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <strong>-version [&lt;file&gt;], --version [&lt;file&gt;], /V [&lt;file&gt;]</strong><br>
+                    Показать баннер с именем/версией программы и выйти. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>-h, -H, --help, -help, -usage, /?</strong><br>
+                    Печать информации о использовании и выход.
+                    <br>Использование описывает основной интерфейс командной строки и его опции.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help &lt;keyword&gt; [&lt;file&gt;]</strong><br>
+                    Печать справки по одному ключевому слову CMake.
+                    <br><code>&lt;keyword&gt;</code> может быть свойством, переменной, командой, политикой, генератором
+                    или модулем.
+                    <br>Соответствующая запись из справочника для <code>&lt;keyword&gt;</code> печатается в
+                    удобочитаемом текстовом формате. Вывод записывается в указанный <code>&lt;file&gt;</code>, если он
+                    указан.
+                    <br>Изменено в версии 3.28: До версии CMake 3.28 эта опция поддерживала только имена команд.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-full [&lt;file&gt;]</strong><br>
+                    Печать всех справочных мануалов и выход.
+                    <br>Все мануалы печатаются в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-manual &lt;man&gt; [&lt;file&gt;]</strong><br>
+                    Печать одного справочного мануала и выход.
+                    <br>Указанный мануал печатается в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-manual-list [&lt;file&gt;]</strong><br>
+                    Список доступных справочных мануалов и выход.
+                    <br>Список содержит все мануалы, для которых можно получить справку с помощью опции
+                    <code>--help-manual</code>, за которой следует имя мануала. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-command &lt;cmd&gt; [&lt;file&gt;]</strong><br>
+                    Печать справки по одной команде и выход.
+                    <br>Запись из справочника <code>cmake-commands(7)</code> для команды <code>&lt;cmd&gt;</code>
+                    печатается в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-command-list [&lt;file&gt;]</strong><br>
+                    Список команд, для которых доступна справка, и выход.
+                    <br>Список содержит все команды, для которых можно получить справку с помощью опции
+                    <code>--help-command</code>, за которой следует имя команды. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-commands [&lt;file&gt;]</strong><br>
+                    Печать справочника <code>cmake-commands</code> и выход.
+                    <br>Справочник <code>cmake-commands(7)</code> печатается в удобочитаемом текстовом формате. Вывод
+                    записывается в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-module &lt;mod&gt; [&lt;file&gt;]</strong><br>
+                    Печать справки по одному модулю и выход.
+                    <br>Запись из справочника <code>cmake-modules(7)</code> для модуля <code>&lt;mod&gt;</code>
+                    печатается в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-module-list [&lt;file&gt;]</strong><br>
+                    Список модулей, для которых доступна справка, и выход.
+                    <br>Список содержит все модули, для которых можно получить справку с помощью опции
+                    <code>--help-module</code>, за которой следует имя модуля. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-modules [&lt;file&gt;]</strong><br>
+                    Печать справочника <code>cmake-modules</code> и выход.
+                    <br>Справочник <code>cmake-modules(7)</code> печатается в удобочитаемом текстовом формате. Вывод
+                    записывается в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-policy &lt;cmp&gt; [&lt;file&gt;]</strong><br>
+                    Печать справки по одной политике и выход.
+                    <br>Запись из справочника <code>cmake-policies(7)</code> для политики <code>&lt;cmp&gt;</code>
+                    печатается в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-policy-list [&lt;file&gt;]</strong><br>
+                    Список политик, для которых доступна справка, и выход.
+                    <br>Список содержит все политики, для которых можно получить справку с помощью опции
+                    <code>--help-policy</code>, за которой следует имя политики. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-policies [&lt;file&gt;]</strong><br>
+                    Печать справочника <code>cmake-policies</code> и выход.
+                    <br>Справочник <code>cmake-policies(7)</code> печатается в удобочитаемом текстовом формате. Вывод
+                    записывается в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-property &lt;prop&gt; [&lt;file&gt;]</strong><br>
+                    Печать справки по одному свойству и выход.
+                    <br>Запись из справочника <code>cmake-properties(7)</code> для свойства <code>&lt;prop&gt;</code>
+                    печатается в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-property-list [&lt;file&gt;]</strong><br>
+                    Список свойств, для которых доступна справка, и выход.
+                    <br>Список содержит все свойства, для которых можно получить справку с помощью опции
+                    <code>--help-property</code>, за которой следует имя свойства. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-properties [&lt;file&gt;]</strong><br>
+                    Печать справочника <code>cmake-properties</code> и выход.
+                    <br>Справочник <code>cmake-properties(7)</code> печатается в удобочитаемом текстовом формате. Вывод
+                    записывается в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-variable &lt;var&gt; [&lt;file&gt;]</strong><br>
+                    Печать справки по одной переменной и выход.
+                    <br>Запись из справочника <code>cmake-variables(7)</code> для переменной <code>&lt;var&gt;</code>
+                    печатается в удобочитаемом текстовом формате. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-variable-list [&lt;file&gt;]</strong><br>
+                    Список переменных, для которых доступна справка, и выход.
+                    <br>Список содержит все переменные, для которых можно получить справку с помощью опции
+                    <code>--help-variable</code>, за которой следует имя переменной. Вывод записывается в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-variables [&lt;file&gt;]</strong><br>
+                    Печать справочника <code>cmake-variables</code> и выход.
+                    <br>Справочник <code>cmake-variables(7)</code> печатается в удобочитаемом текстовом формате. Вывод
+                    записывается в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+            </ul>
+
+            <h2 class="section-title">См. также</h2>
+            <ul class="list-group mb-3">
+                <li class="list-group-item">
+                    <strong>Домашняя страница</strong><br>
+                    <a href="https://cmake.org" target="_blank">https://cmake.org</a><br>
+                    Основная отправная точка для изучения CMake.
+                </li>
+                <li class="list-group-item">
+                    <strong>Документация и ресурсы сообщества</strong><br>
+                    <a href="../index.html">Домашняя страница</a><br>
+                    Ссылки на доступную документацию и ресурсы сообщества можно найти на этой веб-странице.
+                </li>
+                <li class="list-group-item">
+                    <strong>Форум Discourse</strong><br>
+                    <a href="https://discourse.cmake.org" target="_blank">https://discourse.cmake.org</a><br>
+                    Форум Discourse для обсуждений и вопросов о CMake.
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">ccmake</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+
+</html>

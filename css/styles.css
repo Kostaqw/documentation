@@ -1,3 +1,64 @@
+/*
+При выборе цветовой схемы для веб-сайта важно учитывать общую эстетику и читаемость. Вот несколько предложений цветовых комбинаций для различных элементов вашего сайта:
+
+1. Фон сайта (Background Color)
+Цвет: Светло-серый или пастельный оттенок (например, #F4F4F9 или #E8E8F0)
+Почему: Нейтральный и мягкий фон, который не будет отвлекать от основного контента и будет хорошо сочетаться с более яркими элементами.
+2. Фон заголовков (Header Background Color)
+Цвет: Темно-синий или глубокий фиолетовый (например, #2C3E50 или #4A4E69)
+Почему: Контрастные и насыщенные цвета привлекают внимание к заголовкам и создают ощущение структуры.
+3. Фон блоков с кодом (Code Block Background Color)
+Цвет: Темно-серый или слегка синий оттенок (например, #1E1E1E или #2D3A4B)
+Почему: Темные фоны помогают выделить текст кода, особенно если используется светлый шрифт. Это также уменьшает нагрузку на глаза при просмотре кода.
+4. Фон с примечаниями (Note Background Color)
+Цвет: Светло-желтый или светло-зеленый (например, #FFF9C4 или #E0F7FA)
+Почему: Светлые и теплые оттенки создают акцент, но не отвлекают, помогая выделять важные примечания или советы.
+5. Цвет шрифтов (Font Color)
+Цвет: Темно-серый или почти черный (например, #333333 или #2D2D2D)
+Почему: Эти цвета обеспечивают хорошую читаемость на светлых фонах и создают четкий контраст с цветами фона.
+Пример цветовой схемы:
+
+Фон сайта: #e4ece8 
+Фон заголовков: #2C3E50 (темно-синий)
+Фон блоков с кодом: #2D3A4B (темно-синий с серым оттенком)
+Фон с примечаниями: #FFF9C4 (светло-желтый)
+Цвет шрифтов: #333333 (темно-серый)
+Советы:
+Акцентные цвета: Для кнопок и ссылок используйте яркие акцентные цвета, такие как синий (#3498DB) или красный (#E74C3C), чтобы привлечь внимание.
+Шрифты: Подберите нейтральные шрифты, такие как Arial или Roboto, чтобы они хорошо сочетались с цветами и были легко читаемыми.
+Инструменты для проверки цветовых сочетаний:
+Adobe Color: color.adobe.com
+Coolors: coolors.co
+Эти сайты помогут вам подобрать подходящие цвета и убедиться в их гармоничности.
+*/
+
+
+
+
+
+
+
+body
+{
+    background-color: #e4ece8;
+}
+
+img
+{
+    margin-left: 10px;
+}
+.section-title {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #003564;
+    border-bottom: 1px solid #ccc;
+    margin: 20px -20px 10px -20px;
+    padding: 3px 0 3px 10px;
+}
+.container 
+{
+    background-color: #F4F4F9;
+}
 .spoiler-header {
     cursor: pointer;
     color: #efefef;
@@ -10,18 +71,19 @@
     background-color: #eeeeee;
 }
 
+pre {
+    padding: 5px;
+    background-color: #eeeeee;
+    color: #333333;
+    line-height: 120%;
+    border: 1px solid #ac9;
+    border-left: none;
+    border-right: none;
+}
 pre code {
     display: block;
-    padding: 1em;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding-left: 10px; /* Отступ от края */
     white-space: pre-wrap;
-    word-wrap: break-word; 
-}
-
-pre {
-    overflow: auto;
 }
 
 code {
@@ -31,4 +93,55 @@ code {
     margin: 0;
     font-size: 85%;
     border-radius: 3px;
+}
+
+.note
+{
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem
+}
+
+.warn
+{
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
 }

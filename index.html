@@ -7,17 +7,113 @@
     <title>index</title>
     <link href="lib/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
-    <script src="js/jquery-3.5.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
-</head>
 
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Documentation</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMake Reference Documentation</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
 <body>
     <div class="container">
         <div class="container mt-5">
+            <h1 class="section-title">Введение</h1>
+            <p>CMake — это инструмент для управления сборкой исходного кода. Изначально CMake был разработан как генератор для различных диалектов Makefile, сегодня CMake генерирует современные системы сборки, такие как Ninja, а также проектные файлы для IDE, таких как Visual Studio и Xcode.</p>
+            <p>CMake широко используется для языков C и C++, но также может быть использован для сборки исходного кода других языков.</p>
+            <p>Люди, впервые сталкивающиеся с CMake, могут иметь разные начальные цели. Чтобы узнать, как собирать пакет исходного кода, загруженный из интернета, начните с <a href="Guides/UserInteractionGuide.html">Руководства по взаимодействию с пользователем</a>. Это руководство детализирует шаги, необходимые для запуска исполняемых файлов <code>cmake(1)</code> или <code>cmake-gui(1)</code>, выбора генератора и завершения сборки.</p>
+            <p>Руководство по зависимостям предназначено для разработчиков, желающих начать использовать стороннюю библиотеку.</p>
+            <p>Для разработчиков, начинающих проект с использованием CMake, подходящим отправной точкой является <a href="#">Учебное пособие по CMake</a>. Руководство <code>cmake-buildsystem(7)</code> предназначено для разработчиков, расширяющих свои знания по поддержке системы сборки и знакомящихся с целями сборки, которые могут быть представлены в CMake. Руководство <code>cmake-packages(7)</code> объясняет, как создавать пакеты, которые можно легко использовать в сторонних системах сборки на основе CMake.</p>
+    
+            <h2 class="section-title">Командные Инструменты</h2>
+            <ul>
+                <li><a href="CommandLineTools/cmake.html" class="nav-link"><strong>cmake(1)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>ctest(1)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cpack(1)</strong></a></li>
+            </ul>
+            <h2 class="section-title">Интерактивные Диалоги</h2>
+            <ul>
+                <li><a href="InteractiveDialogs/cmake-gui.html" class="nav-link"><strong>cmake-gui(1)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>ccmake(1)</strong></a></li>
+            </ul>
+            <h2 class="section-title">Справочные Руководства</h2>
+            <ul>
+                <li><a href="#" class="nav-link"><strong>cmake-buildsystem(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-commands(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-compile-features(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-configure-log(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-cxxmodules(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-developer(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-env-variables(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-file-api(7)</strong></a></li>
+                <li><a href="articles/cmake-generator-expressions.html" class="nav-link"><strong>cmake-generator-expressions(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-generators(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-language(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-modules(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-packages(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-policies(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-presets(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-properties(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-qt(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-server(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-toolchains(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cmake-variables(7)</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>cpack-generators(7)</strong></a></li>
+            </ul>
+            <h2 class="section-title">Руководства</h2>
+            <ul>
+                <li><a href="#" class="nav-link"><strong>Учебное пособие по CMake</strong></a></li>
+                <li><a href="Guides/UserInteractionGuide.html" class="nav-link"><strong>Руководство по взаимодействию с пользователем</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>Руководство по зависимостям</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>Руководство по импорту и экспорту</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>Руководство по интеграции с IDE</strong></a></li>
+            </ul>
+    
+            <h2 class="section-title">Примечания к Релизам</h2>
+            <ul>
+                <li><a href="#" class="nav-link"><strong>Примечания к релизам CMake</strong></a></li>
+            </ul>
+    
+            <h2 class="section-title">Индекс и Поиск</h2>
+            <ul>
+                <li><a href="#" class="nav-link"><strong>Индекс</strong></a></li>
+                <li><a href="#" class="nav-link"><strong>Страница поиска</strong></a></li>
+            </ul>
         </div>
     </div>
 </body>
 
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Documentation</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMake Reference Documentation</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="js/jquery-3.5.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
 </html>

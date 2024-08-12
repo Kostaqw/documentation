@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIMEOUT</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>TIMEOUT</h2>
+
+            <p>Количество секунд, разрешенных для выполнения этого теста.</p>
+        
+            <p>Если это свойство установлено, оно ограничивает выполнение теста, чтобы он не занимал больше указанного количества секунд. Если время выполнения превышает этот лимит, процесс теста будет принудительно завершен, и <code>ctest</code> перейдет к следующему тесту. Этот параметр имеет приоритет над <code>CTEST_TEST_TIMEOUT</code>.</p>
+        
+            <p>Явное значение <code>0</code> означает, что у теста нет тайм-аута, за исключением случаев, когда необходимо учитывать параметр <code>ctest --stop-time</code>.</p>
+        
+            <h3>См. также</h3>
+            <ul>
+                <li><a href="https://cmake.org/cmake/help/latest/command/set_tests_properties.html#command:TIMEOUT_AFTER_MATCH"><code>TIMEOUT_AFTER_MATCH</code></a></li>
+                <li><a href="https://cmake.org/cmake/help/latest/command/set_tests_properties.html#command:TIMEOUT_SIGNAL_NAME"><code>TIMEOUT_SIGNAL_NAME</code></a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>

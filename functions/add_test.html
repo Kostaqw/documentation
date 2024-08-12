@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>add_test</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>add_test</h2>
+
+            <p>Добавляет тест в проект для выполнения с помощью <code>ctest(1)</code>.</p>
+        
+            <pre><code>add_test(NAME &lt;name&gt; COMMAND &lt;command&gt; [<arg>...]
+                 [CONFIGURATIONS &lt;config&gt;...]
+                 [WORKING_DIRECTORY &lt;dir&gt;]
+                 [COMMAND_EXPAND_LISTS])
+            </code></pre>
+        
+            <p>Добавляет тест с именем <code>&lt;name&gt;</code>. Имя теста может содержать произвольные символы, которые, при необходимости, должны быть указаны как Заключенный в кавычки или в фигурные скобки аргумент. См. политику <code>CMP0110</code>.</p>
+        
+            <p>CMake создает тесты только в том случае, если команда <code>enable_testing()</code> была вызвана. Модуль <code>CTest</code> вызывает <code>enable_testing</code> автоматически, если <code>BUILD_TESTING</code> не установлен в <code>OFF</code>.</p>
+        
+            <p>Тесты, добавленные с подписью <code>add_test(NAME)</code>, поддерживают использование генераторных выражений в свойствах теста, установленных с помощью <code>set_property(TEST)</code> или <code>set_tests_properties()</code>. Свойства тестов могут быть установлены только в каталоге, в котором создан тест.</p>
+        
+            <h3>Опции add_test:</h3>
+        
+            <h4>COMMAND</h4>
+            <p>Указывает командную строку теста.</p>
+            <p>Если <code>&lt;command&gt;</code> указывает на исполняемую цель, созданную с помощью <code>add_executable()</code>:</p>
+            <ul>
+                <li>Она автоматически будет заменена на расположение исполняемого файла, созданного во время сборки.</li>
+                <li><strong>Новое в версии 3.3:</strong> Если установлено, будет использоваться <code>CROSSCOMPILING_EMULATOR</code> цели для выполнения команды на хосте:</li>
+                <pre><code>&lt;emulator&gt; &lt;command&gt;</code></pre>
+                <li><strong>Изменено в версии 3.29:</strong> Эмулятор используется только при кросс-компиляции. См. политику <code>CMP0158</code>.</li>
+                <li><strong>Новое в версии 3.29:</strong> Если установлено, будет использоваться <code>TEST_LAUNCHER</code> цели для запуска команды:</li>
+                <pre><code>&lt;launcher&gt; &lt;command&gt;</code></pre>
+                <li>Если также установлен <code>CROSSCOMPILING_EMULATOR</code>, будут использоваться оба:</li>
+                <pre><code>&lt;launcher&gt; &lt;emulator&gt; &lt;command&gt;</code></pre>
+            </ul>
+            <p>Команда может быть указана с использованием генераторных выражений.</p>
+        
+            <h4>CONFIGURATIONS</h4>
+            <p>Ограничивает выполнение теста только указанными конфигурациями.</p>
+        
+            <h4>WORKING_DIRECTORY</h4>
+            <p>Устанавливает свойство теста <code>WORKING_DIRECTORY</code>, в котором будет выполняться тест. Если не указано, тест будет выполняться в <code>CMAKE_CURRENT_BINARY_DIR</code>. Рабочий каталог может быть указан с использованием генераторных выражений.</p>
+        
+            <h4>COMMAND_EXPAND_LISTS</h4>
+            <p><strong>Новое в версии 3.16:</strong></p>
+            <p>Списки в аргументах <code>COMMAND</code> будут разворачиваться, включая те, которые созданы с помощью генераторных выражений.</p>
+        
+            <p>Если команда теста завершится с кодом 0, тест считается пройденным. Ненулевой код завершения означает "неудачный" тест. Свойство теста <code>WILL_FAIL</code> инвертирует эту логику. Учтите, что системные ошибки тестов, такие как ошибки сегментации или ошибки кучи, все равно приведут к неудаче теста, даже если <code>WILL_FAIL</code> установлено в <code>true</code>. Вывод, записанный в <code>stdout</code> или <code>stderr</code>, захватывается <code>ctest(1)</code> и влияет на статус прохождения теста только через свойства теста <code>PASS_REGULAR_EXPRESSION</code>, <code>FAIL_REGULAR_EXPRESSION</code> или <code>SKIP_REGULAR_EXPRESSION</code>.</p>
+        
+            <p><strong>Новое в версии 3.16:</strong> Добавлено свойство <code>SKIP_REGULAR_EXPRESSION</code>.</p>
+        
+            <h4>Пример использования:</h4>
+            <pre><code>add_test(NAME mytest
+                 COMMAND testDriver --config $&lt;CONFIG&gt;
+                                    --exe $&lt;TARGET_FILE:myexe&gt;)
+            </code></pre>
+        
+            <p>Это создает тест <code>mytest</code>, команда которого запускает инструмент <code>testDriver</code>, передавая имя конфигурации и полный путь к исполняемому файлу, созданному целью <code>myexe</code>.</p>
+        
+            <p>Синтаксис команды выше рекомендуется по сравнению со старой, менее гибкой формой:</p>
+            <pre><code>add_test(&lt;name&gt; &lt;command&gt; [<arg>...])</code></pre>
+        
+            <p>Добавляет тест с именем <code>&lt;name&gt;</code> с указанной командной строкой.</p>
+        
+            <p>В отличие от подписи <code>NAME</code> выше, имена целей не поддерживаются в командной строке. Более того, тесты, добавленные с этой подписью, не поддерживают генераторные выражения в командной строке или свойствах тестов.</p>
+        
+        </div>
+    </div>
+</body>
+
+</html>

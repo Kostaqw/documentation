@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>function</h2>
+
+            <p>Начинает запись функции для последующего вызова как команды.</p>
+        
+            <pre><code>function(&lt;name&gt; [<arg1> ...])
+          &lt;commands&gt;
+        endfunction()
+            </code></pre>
+        
+            <p>Определяет функцию с именем <code>&lt;name&gt;</code>, которая принимает аргументы с именами <code>&lt;arg1&gt;</code> и т.д. Команды внутри определения функции записываются; они не выполняются до тех пор, пока функция не будет вызвана.</p>
+        
+            <p>В соответствии с устаревшей практикой, команда <code>endfunction()</code> допускает необязательный аргумент <code>&lt;name&gt;</code>. Если он используется, он должен точно повторять аргумент открывающей команды <code>function</code>.</p>
+        
+            <p>Функция открывает новую область видимости: см. <code>set(var PARENT_SCOPE)</code> для деталей.</p>
+        
+            <p>См. документацию команды <code>cmake_policy()</code> для поведения политик внутри функций.</p>
+        
+            <p>См. документацию команды <code>macro()</code> для различий между функциями и макросами CMake.</p>
+        
+            <h3>Вызов</h3>
+        
+            <p>Вызов функции нечувствителен к регистру. Функция, определенная как:</p>
+        
+            <pre><code>function(foo)
+          &lt;commands&gt;
+        endfunction()
+            </code></pre>
+        
+            <p>Может быть вызвана любым из следующих способов:</p>
+        
+            <pre><code>foo()
+        Foo()
+        FOO()
+        cmake_language(CALL foo)
+            </code></pre>
+        
+            <p>и т.д. Однако настоятельно рекомендуется придерживаться регистра, выбранного в определении функции. Как правило, функции используют имена в нижнем регистре.</p>
+        
+            <p><strong>Новое в версии 3.18:</strong> Команда <code>cmake_language(CALL ...)</code> также может быть использована для вызова функции.</p>
+        
+            <h3>Аргументы</h3>
+        
+            <p>Когда функция вызывается, записанные <code>&lt;commands&gt;</code> сначала модифицируются путем замены формальных параметров (<code>${arg1}</code>, и т.д.) на переданные аргументы, а затем выполняются как обычные команды.</p>
+        
+            <p>Помимо обращения к формальным параметрам, вы можете использовать переменную <code>ARGC</code>, которая будет содержать количество аргументов, переданных функции, а также <code>ARGV0</code>, <code>ARGV1</code>, <code>ARGV2</code> и т.д., которые будут содержать фактические значения переданных аргументов. Это упрощает создание функций с необязательными аргументами.</p>
+        
+            <p>Кроме того, <code>ARGV</code> содержит список всех аргументов, переданных функции, а <code>ARGN</code> содержит список аргументов после последнего ожидаемого аргумента. Обращение к <code>ARGV#</code> для аргументов за пределами <code>ARGC</code> имеет неопределенное поведение. Проверка того, что <code>ARGC</code> больше, чем <code>#</code>, — единственный способ убедиться, что <code>ARGV#</code> был передан функции в качестве дополнительного аргумента.</p>
+        
+            <h3>См. также</h3>
+        
+            <ul>
+                <li><a href="https://cmake.org/cmake/help/latest/command/cmake_parse_arguments.html"><code>cmake_parse_arguments()</code></a></li>
+                <li><a href="https://cmake.org/cmake/help/latest/command/endfunction.html"><code>endfunction()</code></a></li>
+                <li><a href="https://cmake.org/cmake/help/latest/command/return.html"><code>return()</code></a></li>
+            </ul>        </div>
+    </div>
+</body>
+
+</html>

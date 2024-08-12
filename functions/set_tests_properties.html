@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>set_tests_properties</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>set_tests_properties</h2>
+
+            <p>Устанавливает свойство для тестов.</p>
+        
+            <pre><code>set_tests_properties(&lt;tests&gt;...
+                             [DIRECTORY &lt;dir&gt;]
+                             PROPERTIES &lt;prop1&gt; &lt;value1&gt;
+                             [&lt;prop2&gt; &lt;value2&gt;]...)
+            </code></pre>
+        
+            <p>Устанавливает свойство для тестов. Если тест не найден, CMake сообщит об ошибке.</p>
+        
+            <p>Значения свойств теста могут быть указаны с использованием генераторных выражений для тестов, созданных с помощью подписи <code>add_test(NAME)</code>.</p>
+        
+            <p><strong>Новое в версии 3.28:</strong> Видимость может быть установлена в других областях видимости каталогов с использованием следующей опции:</p>
+        
+            <h3>DIRECTORY &lt;dir&gt;</h3>
+            <p>Свойства теста будут установлены в области видимости каталога <code>&lt;dir&gt;</code>. CMake должен уже знать об этом каталоге, либо через вызов <code>add_subdirectory()</code>, либо через указание его в качестве исходного каталога верхнего уровня. Относительные пути рассматриваются как относительные к текущему исходному каталогу. <code>&lt;dir&gt;</code> может ссылаться на бинарный каталог.</p>
+        
+            <h3>См. также</h3>
+            <ul>
+                <li><a href="https://cmake.org/cmake/help/latest/command/add_test.html"><code>add_test()</code></a></li>
+                <li><a href="https://cmake.org/cmake/help/latest/command/define_property.html"><code>define_property()</code></a></li>
+                <li><a href="https://cmake.org/cmake/help/latest/command/set_property.html"><code>set_property()</code></a> — более общая команда</li>
+                <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-properties.7.html#properties-on-tests">Свойства тестов</a> для списка свойств, известных CMake</li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+</html>

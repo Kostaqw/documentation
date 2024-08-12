@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cmake-gui</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">cmake-gui</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">cmake-gui</h1>
+
+            <h2 class="section-title">Синтаксис</h2>
+            <pre><code>cmake-gui [&lt;options&gt;]<br>cmake-gui [&lt;options&gt;] -B &lt;path-to-build&gt; [-S &lt;path-to-source&gt;]<br>cmake-gui [&lt;options&gt;] &lt;path-to-source | path-to-existing-build&gt;<br>cmake-gui [&lt;options&gt;] --browse-manual [&lt;filename&gt;]</code></pre>
+
+            <h2 class="section-title">Описание</h2>
+            <p>Выполняемый файл <code>cmake-gui</code> представляет собой графический интерфейс CMake. Настройки
+                конфигурации проекта могут быть указаны в интерактивном режиме. Краткие инструкции отображаются в нижней
+                части окна во время работы программы.</p>
+            <p>CMake — это генератор систем сборки, работающий на разных платформах. Проекты определяют свой процесс
+                сборки с помощью независимых от платформы CMake-файлов, которые включены в каждую директорию дерева
+                исходного кода и имеют название <code>CMakeLists.txt</code>. Пользователи создают проект, используя
+                CMake для генерации системы сборки для нативного инструмента на их платформе.</p>
+
+            <h2 class="section-title">Опции</h2>
+            <ul class="list-group mb-3">
+                <li class="list-group-item">
+                    <strong>-S &lt;path-to-source&gt;</strong><br>
+                    Путь к корневому каталогу проекта CMake, который нужно собрать.
+                </li>
+                <li class="list-group-item">
+                    <strong>-B &lt;path-to-build&gt;</strong><br>
+                    Путь к каталогу, который CMake будет использовать в качестве корня каталога сборки.
+                    <br>Если каталог не существует, CMake создаст его.
+                </li>
+                <li class="list-group-item">
+                    <strong>--preset=&lt;preset-name&gt;</strong><br>
+                    Имя предустановки, которую нужно использовать из файлов предустановок проекта, если они существуют.
+                </li>
+                <li class="list-group-item">
+                    <strong>--browse-manual [&lt;filename&gt;]</strong><br>
+                    Открывает справочник CMake в браузере и сразу завершает работу. Если указан
+                    <code>&lt;filename&gt;</code>, открывает этот файл внутри справочника вместо
+                    <code>index.html</code>.
+                </li>
+                <li class="list-group-item">
+                    <strong>-version [&lt;file&gt;], --version [&lt;file&gt;], /V [&lt;file&gt;]</strong><br>
+                    Показывает баннер с названием программы и версией, затем завершает работу. Вывод сохраняется в
+                    указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>-h, -H, --help, -help, -usage, /?</strong><br>
+                    Печатает справочную информацию по использованию и завершает работу.
+                    <br>Описание использования включает интерфейс командной строки и её опции.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help &lt;keyword&gt; [&lt;file&gt;]</strong><br>
+                    Печатает справку по одному из ключевых слов CMake.
+                    <br><code>&lt;keyword&gt;</code> может быть свойством, переменной, командой, политикой, генератором
+                    или модулем.
+                    <br>Соответствующая справочная запись выводится в удобочитаемом текстовом формате. Вывод сохраняется
+                    в указанный <code>&lt;file&gt;</code>, если он указан.
+                    <br><em>Изменено в версии 3.28:</em> до CMake 3.28 эта опция поддерживала только имена команд.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-full [&lt;file&gt;]</strong><br>
+                    Печатает все справочные руководства и завершает работу.
+                    <br>Все руководства выводятся в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-manual &lt;man&gt; [&lt;file&gt;]</strong><br>
+                    Печатает одно справочное руководство и завершает работу.
+                    <br>Указанное руководство выводится в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-manual-list [&lt;file&gt;]</strong><br>
+                    Список доступных справочных руководств и завершение работы.
+                    <br>Список содержит все руководства, для которых можно получить справку с помощью опции
+                    <code>--help-manual</code>, за которой следует имя руководства. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-command &lt;cmd&gt; [&lt;file&gt;]</strong><br>
+                    Печатает справку по одной команде и завершает работу.
+                    <br>Запись из справочника <code>cmake-commands(7)</code> для команды <code>&lt;cmd&gt;</code>
+                    выводится в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-command-list [&lt;file&gt;]</strong><br>
+                    Список команд, для которых доступна справка, и завершение работы.
+                    <br>Список содержит все команды, для которых можно получить справку с помощью опции
+                    <code>--help-command</code>, за которой следует имя команды. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-commands [&lt;file&gt;]</strong><br>
+                    Печатает справочник <code>cmake-commands</code> и завершает работу.
+                    <br>Справочник <code>cmake-commands(7)</code> выводится в удобочитаемом текстовом формате. Вывод
+                    сохраняется в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-module &lt;mod&gt; [&lt;file&gt;]</strong><br>
+                    Печатает справку по одному модулю и завершает работу.
+                    <br>Запись из справочника <code>cmake-modules(7)</code> для модуля <code>&lt;mod&gt;</code>
+                    выводится в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-module-list [&lt;file&gt;]</strong><br>
+                    Список модулей, для которых доступна справка, и завершение работы.
+                    <br>Список содержит все модули, для которых можно получить справку с помощью опции
+                    <code>--help-module</code>, за которой следует имя модуля. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-modules [&lt;file&gt;]</strong><br>
+                    Печатает справочник <code>cmake-modules</code> и завершает работу.
+                    <br>Справочник <code>cmake-modules(7)</code> выводится в удобочитаемом текстовом формате. Вывод
+                    сохраняется в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-policy &lt;cmp&gt; [&lt;file&gt;]</strong><br>
+                    Печатает справку по одной политике и завершает работу.
+                    <br>Запись из справочника <code>cmake-policies(7)</code> для политики <code>&lt;cmp&gt;</code>
+                    выводится в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-policy-list [&lt;file&gt;]</strong><br>
+                    Список политик, для которых доступна справка, и завершение работы.
+                    <br>Список содержит все политики, для которых можно получить справку с помощью опции
+                    <code>--help-policy</code>, за которой следует имя политики. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-policies [&lt;file&gt;]</strong><br>
+                    Печатает справочник <code>cmake-policies</code> и завершает работу.
+                    <br>Справочник <code>cmake-policies(7)</code> выводится в удобочитаемом текстовом формате. Вывод
+                    сохраняется в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-property &lt;prop&gt; [&lt;file&gt;]</strong><br>
+                    Печатает справку по одному свойству и завершает работу.
+                    <br>Записи из справочника <code>cmake-properties(7)</code> для свойства <code>&lt;prop&gt;</code>
+                    выводятся в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-property-list [&lt;file&gt;]</strong><br>
+                    Список свойств, для которых доступна справка, и завершение работы.
+                    <br>Список содержит все свойства, для которых можно получить справку с помощью опции
+                    <code>--help-property</code>, за которой следует имя свойства. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-properties [&lt;file&gt;]</strong><br>
+                    Печатает справочник <code>cmake-properties</code> и завершает работу.
+                    <br>Справочник <code>cmake-properties(7)</code> выводится в удобочитаемом текстовом формате. Вывод
+                    сохраняется в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-variable &lt;var&gt; [&lt;file&gt;]</strong><br>
+                    Печатает справку по одной переменной и завершает работу.
+                    <br>Запись из справочника <code>cmake-variables(7)</code> для переменной <code>&lt;var&gt;</code>
+                    выводится в удобочитаемом текстовом формате. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-variable-list [&lt;file&gt;]</strong><br>
+                    Список переменных, для которых доступна справка, и завершение работы.
+                    <br>Список содержит все переменные, для которых можно получить справку с помощью опции
+                    <code>--help-variable</code>, за которой следует имя переменной. Вывод сохраняется в указанный
+                    <code>&lt;file&gt;</code>, если он указан.
+                </li>
+                <li class="list-group-item">
+                    <strong>--help-variables [&lt;file&gt;]</strong><br>
+                    Печатает справочник <code>cmake-variables</code> и завершает работу.
+                    <br>Справочник <code>cmake-variables(7)</code> выводится в удобочитаемом текстовом формате. Вывод
+                    сохраняется в указанный <code>&lt;file&gt;</code>, если он указан.
+                </li>
+            </ul>
+            <h2 class="section-title">См. также</h2>
+            <ul class="list-group mb-3">
+                <li class="list-group-item">
+                    <strong>Домашняя страница</strong><br>
+                    <a href="https://cmake.org" target="_blank">https://cmake.org</a><br>
+                    Основная отправная точка для изучения CMake.
+                </li>
+                <li class="list-group-item">
+                    <strong>Документация и ресурсы сообщества</strong><br>
+                    <a href="../index.html">Домашняя страница</a><br>
+                    Ссылки на доступную документацию и ресурсы сообщества можно найти на этой веб-странице.
+                </li>
+                <li class="list-group-item">
+                    <strong>Форум Discourse</strong><br>
+                    <a href="https://discourse.cmake.org" target="_blank">https://discourse.cmake.org</a><br>
+                    Форум Discourse для обсуждений и вопросов о CMake.
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">cmake-gui</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+
+</html>

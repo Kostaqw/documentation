@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKIP_RETURN_CODE</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>SKIP_RETURN_CODE</h2>
+
+            <p>Код возврата для пометки теста как пропущенного.</p>
+
+            <p>Иногда только сам тест может определить, выполнены ли все требования для его выполнения. Если такая
+                ситуация не должна рассматриваться как серьезная ошибка, можно указать код возврата процесса, который
+                пометит тест как не выполненный, если он будет встречен. Допустимые значения находятся в диапазоне от 0
+                до 255 включительно.</p>
+
+            <p>Тесты, которые превышают время ожидания, указанное с помощью <code>TIMEOUT</code>, все равно считаются
+                неудачными, независимо от <code>SKIP_RETURN_CODE</code>. Системные ошибки тестов, включая ошибки
+                сегментации, аварийное завершение по сигналу или ошибки кучи, могут привести к неудаче теста, даже если
+                код возврата совпадает.</p>
+
+            <h3>Пример:</h3>
+
+            <pre><code># cmake (1) определяет это как код возврата 1
+        add_test(NAME r1 COMMAND ${CMAKE_COMMAND} -E false)
+        
+        set_tests_properties(r1 PROPERTIES SKIP_RETURN_CODE 1)
+            </code></pre>
+
+            <p>Чтобы запустить тест, который может потерпеть неудачу на системном уровне, но все же пропустить его, если
+                <code>SKIP_RETURN_CODE</code> совпадает, используйте команду CMake для обертки выполнения исполняемого
+                файла. Учтите, что это предотвратит автоматическую обработку свойств цели
+                <code>CROSSCOMPILING_EMULATOR</code> и <code>TEST_LAUNCHER</code>.</p>
+
+            <pre><code>add_executable(main main.c)
+        
+        # cmake -E env &lt;command&gt; возвращает 1, если команда завершилась неудачно
+        add_test(NAME sigabrt COMMAND ${CMAKE_COMMAND} -E env $&lt;TARGET_FILE:main&gt;)
+        
+        set_property(TEST sigabrt PROPERTY SKIP_RETURN_CODE 1)
+            </code></pre>
+
+            <h3>Пример кода на C:</h3>
+
+            <pre><code>#include &lt;signal.h&gt;
+        
+        int main(void){
+            raise(SIGABRT);
+            return 0;
+        }
+            </code></pre>
+
+            <p>Для обработки нескольких типов случаев, которые могут потребовать пропуска, рассмотрите возможность
+                использования свойства <code>SKIP_REGULAR_EXPRESSION</code>.</p>
+
+        </div>
+    </div>
+</body>
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>

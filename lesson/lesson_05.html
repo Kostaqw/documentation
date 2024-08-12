@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаг 5: Установка и тестирование</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mt-5">Шаг 5: Установка и тестирование</h1>
+    
+        <h2 class="mt-4">Упражнение 1 - Правила установки</h2>
+        <p>Часто бывает недостаточно просто собрать исполняемый файл, его также нужно уметь установить. С помощью CMake мы можем указать правила установки, используя команду <code>install()</code>. Поддержка локальных установок для ваших сборок в CMake часто сводится к указанию места установки и целей, которые нужно установить.</p>
+        
+        <h3>Цель</h3>
+        <p>Установить исполняемый файл Tutorial и библиотеку MathFunctions.</p>
+    
+        <h3>Полезные материалы</h3>
+        <ul>
+            <li><a href="#" >install()</a></li>
+        </ul>
+    
+        <h3>Файлы для редактирования</h3>
+        <ul>
+            <li><a href="#" >MathFunctions/CMakeLists.txt</a></li>
+            <li><a href="#" >CMakeLists.txt</a></li>
+        </ul>
+    
+        <h3>Начало работы</h3>
+        <p>Исходный код находится в каталоге Step5. В этом упражнении выполните TODO 1 - TODO 4.</p>
+        <p>Сначала обновите <code>MathFunctions/CMakeLists.txt</code>, чтобы установить библиотеки MathFunctions и <code>tutorial_compiler_flags</code> в каталог <code>lib</code>. В том же файле укажите правила установки, необходимые для установки <code>MathFunctions.h</code> в каталог <code>include</code>.</p>
+        <p>Затем обновите файл <code>CMakeLists.txt</code> верхнего уровня, чтобы установить исполняемый файл Tutorial в каталог <code>bin</code>. Наконец, все заголовочные файлы должны быть установлены в каталог <code>include</code>. Не забудьте, что <code>TutorialConfig.h</code> находится в <code>PROJECT_BINARY_DIR</code>.</p>
+    
+        <h3>Сборка и запуск</h3>
+        <p>Создайте новый каталог под названием <code>Step5_build</code>. Запустите исполняемый файл <code>cmake</code> или <code>cmake-gui</code> для конфигурации проекта, а затем соберите его с помощью выбранного инструмента сборки.</p>
+        <p>Затем выполните шаг установки, используя опцию <code>--install</code> команды <code>cmake</code> (введена в версии 3.15, для старых версий CMake необходимо использовать <code>make install</code>) из командной строки. Этот шаг установит соответствующие заголовочные файлы, библиотеки и исполняемые файлы. Например:</p>
+    
+        <div class="code-block">
+            <pre><code>cmake --install .</code></pre>
+        </div>
+    
+        <p>Для многоконфигурационных инструментов не забудьте использовать аргумент <code>--config</code> для указания конфигурации.</p>
+    
+        <div class="code-block">
+            <pre><code>cmake --install . --config Release</code></pre>
+        </div>
+    
+        <p>Если вы используете IDE, просто соберите цель INSTALL. Вы можете собрать ту же цель установки из командной строки следующим образом:</p>
+    
+        <div class="code-block">
+            <pre><code>cmake --build . --target install --config Debug</code></pre>
+        </div>
+    
+        <p>Переменная CMake <code>CMAKE_INSTALL_PREFIX</code> используется для определения корня, в который будут установлены файлы. Если вы используете команду <code>cmake --install</code>, префикс установки можно переопределить с помощью аргумента <code>--prefix</code>. Например:</p>
+    
+        <div class="code-block">
+            <pre><code>cmake --install . --prefix "/home/myuser/installdir"</code></pre>
+        </div>
+    
+        <p>Перейдите в каталог установки и убедитесь, что установленный Tutorial запускается.</p>
+    
+        <h3>Решение</h3>
+        <p>Правила установки для нашего проекта достаточно просты:</p>
+        <p>Для MathFunctions мы хотим установить библиотеки и заголовочный файл в каталоги <code>lib</code> и <code>include</code> соответственно.</p>
+        <p>Для исполняемого файла Tutorial мы хотим установить исполняемый файл и сконфигурированный заголовочный файл в каталоги <code>bin</code> и <code>include</code> соответственно.</p>
+        
+        <h5 class="spoiler-header">TODO 1: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>set(installable_libs MathFunctions tutorial_compiler_flags)
+    if(TARGET SqrtLibrary)
+      list(APPEND installable_libs SqrtLibrary)
+    endif()
+    install(TARGETS ${installable_libs} DESTINATION lib)</code></pre>
+        </div>
+    
+        <h5 class="spoiler-header">TODO 2: MathFunctions/CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>install(FILES MathFunctions.h DESTINATION include)</code></pre>
+        </div>
+    
+        <p>Правила установки для исполняемого файла Tutorial и сконфигурированного заголовочного файла аналогичны. В конец файла <code>CMakeLists.txt</code> верхнего уровня добавьте:</p>
+        
+        <h5 class="spoiler-header">TODO 3,4: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>install(TARGETS Tutorial DESTINATION bin)
+    install(FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h"
+      DESTINATION include
+      )</code></pre>
+        </div>
+    
+        <p>Этого достаточно для создания базовой локальной установки для данного руководства.</p>
+    
+        <h2 class="mt-4">Упражнение 2 - Поддержка тестирования</h2>
+        <p>CTest предлагает способ легко управлять тестами для вашего проекта. Тесты могут быть добавлены с помощью команды <code>add_test()</code>. Хотя это не рассматривается в этом руководстве, CTest имеет много совместимости с другими фреймворками тестирования, такими как GoogleTest.</p>
+    
+        <h3>Цель</h3>
+        <p>Создать модульные тесты для нашего исполняемого файла с использованием CTest.</p>
+    
+        <h3>Полезные материалы</h3>
+        <ul>
+            <li><a href="#" >enable_testing()</a></li>
+            <li><a href="#" >add_test()</a></li>
+            <li><a href="#" >function()</a></li>
+            <li><a href="#" >set_tests_properties()</a></li>
+            <li><a href="#" >ctest</a></li>
+        </ul>
+    
+        <h3>Файлы для редактирования</h3>
+        <ul>
+            <li><a href="#" >CMakeLists.txt</a></li>
+        </ul>
+    
+        <h3>Начало работы</h3>
+        <p>Исходный код находится в каталоге Step5. В этом упражнении выполните TODO 5 - TODO 9.</p>
+        <p>Сначала нужно включить поддержку тестирования. Далее, добавьте тесты в наш проект, используя <code>add_test()</code>. Мы пройдем через добавление 3 простых тестов, после чего вы сможете добавить дополнительные тесты по своему усмотрению.</p>
+    
+        <h3>Сборка и запуск</h3>
+        <p>Перейдите в каталог сборки и пересоберите приложение. Затем запустите исполняемый файл <code>ctest</code>: <code>ctest -N</code> и <code>ctest -VV</code>. Для генераторов с несколькими конфигурациями (например, Visual Studio) необходимо указать тип конфигурации с флагом <code>-C &lt;mode&gt;</code>. Например, для запуска тестов в режиме отладки используйте <code>ctest -C Debug -VV</code> из каталога сборки (не из подкаталога Debug!). Режим Release будет выполнен из того же местоположения, но с флагом <code>-C Release</code>. В качестве альтернативы, постройте цель <code>RUN_TESTS</code> из IDE.</p>
+    
+        <h3>Решение</h3>
+        <p>Давайте протестируем наше приложение. В конце файла <code>CMakeLists.txt</code> верхнего уровня нам сначала нужно включить поддержку тестирования с помощью команды <code>enable_testing()</code>.</p>
+        
+        <h5 class="spoiler-header">TODO 5: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>enable_testing()</code></pre>
+        </div>
+    
+        <p>С включенной поддержкой тестирования мы добавим несколько базовых тестов, чтобы убедиться, что приложение работает корректно. Сначала мы создадим тест, используя <code>add_test()</code>, который запускает исполняемый файл Tutorial с параметром 25. Для этого теста мы не будем проверять вычисленный ответ исполняемого файла. Этот тест проверяет, что приложение запускается, не падает и возвращает нулевое значение. Это базовая форма теста CTest.</p>
+    
+        <h5 class="spoiler-header">TODO 6: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_test(NAME Runs COMMAND Tutorial 25)</code></pre>
+        </div>
+    
+        <p>Далее, давайте использовать свойство теста <code>PASS_REGULAR_EXPRESSION</code> для проверки того, что выходные данные теста содержат определенные строки. В этом случае проверяем, что сообщение о неправильном использовании выводится, когда предоставлено неправильное количество аргументов.</p>
+    
+        <h5 class="spoiler-header">TODO 7: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_test(NAME Usage COMMAND Tutorial)
+    set_tests_properties(Usage
+      PROPERTIES PASS_REGULAR_EXPRESSION "Usage:.*number"
+      )</code></pre>
+        </div>
+    
+        <p>Следующий тест проверяет, что вычисленное значение действительно является квадратным корнем.</p>
+    
+        <h5 class="spoiler-header">TODO 8: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>add_test(NAME StandardUse COMMAND Tutorial 4)
+    set_tests_properties(StandardUse
+      PROPERTIES PASS_REGULAR_EXPRESSION "4 is 2"
+      )</code></pre>
+        </div>
+    
+        <p>Одного этого теста недостаточно, чтобы быть уверенным, что он будет работать для всех переданных значений. Мы должны добавить больше тестов, чтобы это проверить. Для легкого добавления большего количества тестов мы создадим функцию под названием <code>do_test</code>, которая запускает приложение и проверяет, что вычисленный квадратный корень верен для данного ввода. Для каждого вызова <code>do_test</code> в проект добавляется еще один тест с именем, входными данными и ожидаемыми результатами на основе переданных аргументов.</p>
+    
+        <h5 class="spoiler-header">TODO 9: CMakeLists.txt</h5>
+        <div class="spoiler-content">
+            <pre><code>function(do_test target arg result)
+      add_test(NAME Comp${arg} COMMAND ${target} ${arg})
+      set_tests_properties(Comp${arg}
+        PROPERTIES PASS_REGULAR_EXPRESSION ${result}
+        )
+    endfunction()
+    
+    # do a bunch of result based tests
+    do_test(Tutorial 4 "4 is 2")
+    do_test(Tutorial 9 "9 is 3")
+    do_test(Tutorial 5 "5 is 2.236")
+    do_test(Tutorial 7 "7 is 2.645")
+    do_test(Tutorial 25 "25 is 5")
+    do_test(Tutorial -25 "-25 is (-nan|nan|0)")
+    do_test(Tutorial 0.0001 "0.0001 is 0.01")</code></pre>
+        </div>
+    </div>
+</body>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+</html>

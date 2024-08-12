@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PASS_REGULAR_EXPRESSION</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>PASS_REGULAR_EXPRESSION</h2>
+
+            <p>Вывод теста (<code>stdout</code> или <code>stderr</code>) должен соответствовать этому регулярному выражению, чтобы тест считался пройденным. Код выхода процесса игнорируется. Тесты, которые превышают время ожидания, указанное с помощью <code>TIMEOUT</code>, все равно считаются неудачными, независимо от <code>PASS_REGULAR_EXPRESSION</code>. Системные ошибки тестов, включая ошибки сегментации, аварийное завершение по сигналу или ошибки кучи, могут привести к неудаче теста, даже если <code>PASS_REGULAR_EXPRESSION</code> совпадает.</p>
+        
+            <h3>Пример:</h3>
+        
+            <pre><code>add_test(NAME mytest COMMAND ${CMAKE_COMMAND} -E echo "Passed this test")
+        
+        set_property(TEST mytest PROPERTY
+          PASS_REGULAR_EXPRESSION "pass;Passed")
+            </code></pre>
+        
+            <p><code>PASS_REGULAR_EXPRESSION</code> ожидает список регулярных выражений.</p>
+        
+            <p>Чтобы запустить тест, который может потерпеть неудачу на системном уровне, но все же считаться пройденным, если <code>PASS_REGULAR_EXPRESSION</code> совпадает, используйте команду CMake для обертки выполнения исполняемого файла. Учтите, что это предотвратит автоматическую обработку свойств цели <code>CROSSCOMPILING_EMULATOR</code> и <code>TEST_LAUNCHER</code>.</p>
+        
+            <pre><code>add_executable(main main.c)
+        
+        add_test(NAME sigabrt COMMAND ${CMAKE_COMMAND} -E env $&lt;TARGET_FILE:main&gt;)
+        
+        set_property(TEST sigabrt PROPERTY PASS_REGULAR_EXPRESSION "pass;Passed")
+            </code></pre>
+                
+            <pre><code>#include &lt;signal.h&gt;
+#include &lt;stdio.h&gt;
+        
+        int main(void){
+            fprintf(stdout, "Passed\n");
+            fflush(stdout);  /* ensure the output buffer is seen */
+            raise(SIGABRT);
+            return 0;
+        }
+            </code></pre>
+        
+            <p>См. также свойства тестов <code>FAIL_REGULAR_EXPRESSION</code> и <code>SKIP_REGULAR_EXPRESSION</code>.</p>
+                </div>
+    </div>
+</body>
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+</html>

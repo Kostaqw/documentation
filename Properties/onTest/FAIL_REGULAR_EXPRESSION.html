@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAIL_REGULAR_EXPRESSION</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h2>FAIL_REGULAR_EXPRESSION</h2>
+
+            <p>Если вывод теста (<code>stdout</code> или <code>stderr</code>) соответствует этому регулярному выражению,
+                тест будет считаться неудачным, независимо от кода выхода процесса. Тесты, которые превышают время
+                ожидания, указанное с помощью <code>TIMEOUT</code>, считаются неудачными, независимо от
+                <code>FAIL_REGULAR_EXPRESSION</code>. Любой ненулевой код возврата или системные ошибки тестов, включая
+                ошибки сегментации, аварийное завершение по сигналу или ошибки кучи, приводят к неудаче теста, даже если
+                регулярное выражение не совпадает.</p>
+
+            <p>Если установлено, и вывод соответствует одному из указанных регулярных выражений, тест завершится
+                неудачно. Пример:</p>
+
+            <pre><code># test would pass, except for FAIL_REGULAR_EXPRESSION
+        add_test(NAME mytest COMMAND ${CMAKE_COMMAND} -E echo "Failed")
+        
+        set_property(TEST mytest PROPERTY
+          FAIL_REGULAR_EXPRESSION "[^a-z]Error;ERROR;Failed")
+            </code></pre>
+
+            <p><code>FAIL_REGULAR_EXPRESSION</code> ожидает список регулярных выражений.</p>
+
+            <h3>См. также</h3>
+            <ul>
+                <li><a
+                        href="https://cmake.org/cmake/help/latest/command/set_tests_properties.html#command:PASS_REGULAR_EXPRESSION"><code>PASS_REGULAR_EXPRESSION</code></a>
+                </li>
+                <li><a
+                        href="https://cmake.org/cmake/help/latest/command/set_tests_properties.html#command:SKIP_REGULAR_EXPRESSION"><code>SKIP_REGULAR_EXPRESSION</code></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>
