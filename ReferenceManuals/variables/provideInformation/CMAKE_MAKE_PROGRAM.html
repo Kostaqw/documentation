@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMAKE_MAKE_PROGRAM</title>
+    <link href="../../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_MAKE_PROGRAM</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+                <h1 class="section-title">CMAKE_MAKE_PROGRAMM</h1>
+                <p>Инструмент, который может запускать нативную систему сборки. Значение может быть полным путём к исполняемому файлу или просто именем инструмента, если предполагается, что он находится в PATH.</p>
+                <p>Выбор инструмента зависит от <code>CMAKE_GENERATOR</code>, используемого для конфигурации проекта:</p>
+                <ul>
+                    <li><strong>Makefile Generators</strong> устанавливают это значение в <code>make</code>, <code>gmake</code> или генератор-специфический инструмент (например, <code>nmake</code> для NMake Makefiles).</li>
+                    <ul>
+                        <li>Эти генераторы сохраняют <code>CMAKE_MAKE_PROGRAM</code> в кэше CMake, чтобы его мог редактировать пользователь.</li>
+                    </ul>
+                    <li><strong>Ninja generator</strong> устанавливает это значение в <code>ninja</code>.</li>
+                    <ul>
+                        <li>Этот генератор также сохраняет <code>CMAKE_MAKE_PROGRAM</code> в кэше CMake для редактирования пользователем.</li>
+                    </ul>
+                    <li><strong>Xcode generator</strong> устанавливает это значение в <code>xcodebuild</code>.</li>
+                    <ul>
+                        <li>Этот генератор предпочитает искать инструмент сборки во время сборки, а не сохранять <code>CMAKE_MAKE_PROGRAM</code> в кэше CMake заранее, так как <code>xcodebuild</code> легко найти.</li>
+                    </ul>
+                    <li>Для совместимости с версиями CMake до 3.2, если пользователь или проект явно добавляют <code>CMAKE_MAKE_PROGRAM</code> в кэш CMake, то CMake будет использовать указанное значение.</li>
+                    <li><strong>Visual Studio Generators</strong> устанавливают это значение на полный путь к <code>MSBuild.exe</code> (VS >= 10), <code>devenv.com</code> (VS 7,8,9) или <code>VCExpress.exe</code> (VS Express 8,9).</li>
+                    <ul>
+                        <li>Эти генераторы предпочитают искать инструмент сборки во время сборки, а не сохранять <code>CMAKE_MAKE_PROGRAM</code> в кэше CMake заранее, так как инструменты зависят от версии и могут быть найдены с использованием реестра Windows. Это также необходимо, так как правильный инструмент сборки может зависеть от содержимого проекта (например, плагин Intel Fortran для VS 10 и 11 требует <code>devenv.com</code> для сборки файлов <code>.vfproj</code>, даже если <code>MSBuild.exe</code> обычно предпочтителен для поддержки <code>CMAKE_GENERATOR_TOOLSET</code>).</li>
+                    </ul>
+                    <li>Для совместимости с версиями CMake до 3.0, если пользователь или проект явно добавляют <code>CMAKE_MAKE_PROGRAM</code> в кэш CMake, то CMake будет использовать указанное значение, если это возможно.</li>
+                    <li><strong>Green Hills MULTI generator</strong> устанавливает это значение на полный путь к <code>gbuild.exe</code> (Windows) или <code>gbuild</code> (Linux) в зависимости от используемого набора инструментов.</li>
+                </ul>
+                <p>Как только генератор инициализирует определённое значение для этой переменной, изменение этого значения приведёт к неопределённому поведению.</p>
+                <p>Переменная <code>CMAKE_MAKE_PROGRAM</code> установлена для использования в коде проекта. Значение также используется инструментами <code>cmake --build</code> и <code>ctest --build-and-test</code> для запуска нативного процесса сборки.</p>
+            </div>
+        </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_MAKE_PROGRAM</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../../js/jquery-3.5.1.min.js"></script>
+<script src="../../../js/popper.min.js"></script>
+<script src="../../../js/bootstrap.min.js"></script>
+<script src="../../../js/scripts.js"></script>
+
+</html>

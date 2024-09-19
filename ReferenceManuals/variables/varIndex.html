@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>variables</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Переменные</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <div class="container mt-5">
+
+                <h1 class="section-title">Переменные CMake</h1>
+
+                <div class="list-group">
+                    <h3>Оглавление</h3>
+                    <ul>
+                        <li><a href="#variables-that-provide-information">Переменные, предоставляющие информацию</a>
+                        </li>
+                        <li><a href="#variables-that-change-behavior">Переменные, изменяющие поведение</a></li>
+                        <li><a href="#variables-that-describe-the-system">Переменные, описывающие систему</a></li>
+                        <li><a href="#variables-that-control-the-build">Переменные, управляющие сборкой</a></li>
+                        <li><a href="#variables-for-languages">Переменные для языков</a></li>
+                        <li><a href="#variables-for-ctest">Переменные для CTest</a></li>
+                        <li><a href="#variables-for-cpack">Переменные для CPack</a></li>
+                        <li><a href="#variable-expansion-operators">Операторы расширения переменных</a></li>
+                        <li><a href="#internal-variables">Внутренние переменные</a></li>
+                        <li><a href="#deprecated-provide-information">Устаревшие переменные, предоставляющие информацию</a></li>
+                        <li><a href="#deprecated-variables-change-behavior">Устаревшие переменные, меняющие поведение</a></li>
+                        <li><a href="#deprecated-variables-describe-the-system">Устаревшие переменные, описывающие систему</a></li>
+                        <li><a href="#deprecated-variables-control-the-build">Устаревшие переменные, управляющие сборкой</a></li>
+                        <li><a href="#deprecated-variables-for-languages">Устаревшие переменные, языков</a></li>
+                        <li><a href="#deprecated-variables-for-ctest">Устаревшие переменные, для тестов</a></li>
+                    </ul>
+                </div>
+
+                <h2 id="variables-that-provide-information" class="section-title">Переменные, предоставляющие информацию
+                </h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href=""> CMAKE_AR</a></li>
+                    <li class="list-group-item"><a href="#"> CMAKE_ARGC</a></li>
+                    <li class="list-group-item"><a href="#"> CMAKE_ARGV0</a></li>
+                    <li class="list-group-item"><a href="#"> CMAKE_BINARY_DIR</a></li>
+                    <li class="list-group-item"><a href="#"> CMAKE_BUILD_TOOL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CACHE_MAJOR_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CACHE_MINOR_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CACHE_PATCH_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CACHEFILE_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CFG_INTDIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CPACK_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CROSSCOMPILING</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CROSSCOMPILING_EMULATOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CTEST_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_BINARY_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_FUNCTION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_FUNCTION_LIST_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_FUNCTION_LIST_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_FUNCTION_LIST_LINE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_LIST_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_LIST_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_LIST_LINE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CURRENT_SOURCE_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DEBUG_TARGET_PROPERTIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DIRECTORY_LABELS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DL_LIBS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DOTNET_SDK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DOTNET_TARGET_FRAMEWORK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EDIT_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXECUTABLE_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXECUTABLE_SUFFIX_&lt;LANG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXTRA_SHARED_LIBRARY_SUFFIXES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_DEBUG_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_REDIRECTS_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_SORT_DIRECTION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_SORT_ORDER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GENERATOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GENERATOR_INSTANCE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GENERATOR_PLATFORM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GENERATOR_TOOLSET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_IMPORT_LIBRARY_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_IMPORT_LIBRARY_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_JOB_POOL_COMPILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_JOB_POOL_LINK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_JOB_POOL_PRECOMPILE_HEADER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_JOB_POOLS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_AR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_FRONTEND_VARIANT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_LINKER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_LINKER_FRONTEND_VARIANT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_LINKER_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_LINKER_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_RANLIB</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_LIBRARY_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARY_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_SEARCH_END_STATIC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_SEARCH_START_STATIC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MAJOR_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MAKE_PROGRAM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MATCH_COUNT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MATCH_&lt;n&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MINIMUM_REQUIRED_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MINOR_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_NETRC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_NETRC_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PARENT_LIST_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PATCH_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_DESCRIPTION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_HOMEPAGE_URL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_VERSION_MAJOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_VERSION_MINOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_VERSION_PATCH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_VERSION_TWEAK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_RANLIB</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ROOT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_RULE_MESSAGES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SCRIPT_MODE_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LIBRARY_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LIBRARY_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_MODULE_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_MODULE_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SIZEOF_VOID_P</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SKIP_INSTALL_RULES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SKIP_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SOURCE_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STATIC_LIBRARY_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STATIC_LIBRARY_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Swift_COMPILATION_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Swift_MODULE_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Swift_NUM_THREADS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TEST_LAUNCHER</a></li>
+                    <li class="list-group-item"><a href="provideInformation/CMAKE_TOOLCHAIN_FILE.html">CMAKE_TOOLCHAIN_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TWEAK_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VERBOSE_MAKEFILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_DEVENV_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_MSBUILD_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_NsightTegra_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_NUGET_PACKAGE_RESTORE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_NAME_DEFAULT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_TOOLSET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_TOOLSET_CUDA</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_TOOLSET_CUDA_CUSTOM_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_TOOLSET_FORTRAN</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_PLATFORM_TOOLSET_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_TARGET_FRAMEWORK_IDENTIFIER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_TARGET_FRAMEWORK_TARGETS_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_TARGET_FRAMEWORK_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_USE_DEBUG_LIBRARIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_VERSION_BUILD_NUMBER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_WINDOWS_TARGET_PLATFORM_MIN_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION_MAXIMUM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_BUILD_SYSTEM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_PLATFORM_TOOLSET</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_BINARY_DIR</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_DESCRIPTION</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_HOMEPAGE_URL</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_IS_TOP_LEVEL</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_SOURCE_DIR</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_VERSION_MAJOR</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_VERSION_MINOR</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_VERSION_PATCH</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PROJECT-NAME&gt;_VERSION_TWEAK</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_BINARY_DIR</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_DESCRIPTION</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_HOMEPAGE_URL</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_IS_TOP_LEVEL</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_NAME</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_SOURCE_DIR</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_VERSION_MAJOR</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_VERSION_MINOR</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_VERSION_PATCH</a></li>
+                    <li class="list-group-item"><a href="#">PROJECT_VERSION_TWEAK</a></li>
+                </ul>
+
+                <h2 id="variables-that-change-behavior" class="section-title">Переменные, изменяющие поведение</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="changeBehaivor/BUILD_SHARED_LIBS.html">BUILD_SHARED_LIBS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ABSOLUTE_DESTINATION_FILES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ADD_CUSTOM_COMMAND_DEPENDS_EXPLICIT_ONLY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_APPBUNDLE_PATH</a></li>
+                    <li class="list-group-item"><a href="changeBehaivor/CMAKE_BUILD_TYPE.html">CMAKE_BUILD_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CLANG_VFS_OVERLAY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CODEBLOCKS_COMPILER_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CODEBLOCKS_EXCLUDE_EXTERNAL_FILES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CODELITE_USE_TARGETS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COLOR_DIAGNOSTICS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COLOR_MAKEFILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CONFIGURATION_TYPES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DEPENDS_IN_PROJECT_ONLY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DISABLE_FIND_PACKAGE_&lt;PackageName&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ECLIPSE_GENERATE_LINKED_RESOURCES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ECLIPSE_MAKE_ARGUMENTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ECLIPSE_RESOURCE_ENCODING</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ECLIPSE_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ERROR_DEPRECATED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXECUTE_PROCESS_COMMAND_ECHO</a></li>
+                    <li class="list-group-item"><a href="changeBehaivor/CMAKE_EXPORT_COMPILE_COMMANDS.html">CMAKE_EXPORT_COMPILE_COMMANDS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXPORT_PACKAGE_REGISTRY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXPORT_NO_PACKAGE_REGISTRY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_APPBUNDLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_FRAMEWORK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_LIBRARY_PREFIXES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_LIBRARY_SUFFIXES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_NO_INSTALL_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_PREFER_CONFIG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_RESOLVE_SYMLINKS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_TARGETS_GLOBAL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_WARN_NO_MODULE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_ROOT_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_ROOT_PATH_MODE_INCLUDE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_ROOT_PATH_MODE_LIBRARY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_ROOT_PATH_MODE_PACKAGE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_ROOT_PATH_MODE_PROGRAM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_CMAKE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_CMAKE_SYSTEM_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_INSTALL_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_PACKAGE_REGISTRY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_PACKAGE_ROOT_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FRAMEWORK_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_IGNORE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_IGNORE_PREFIX_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INCLUDE_DIRECTORIES_BEFORE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INCLUDE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_DEFAULT_COMPONENT_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_MESSAGE</a></li>
+                    <li class="list-group-item"><a href="changeBehaivor/CMAKE_INSTALL_PREFIX.html">CMAKE_INSTALL_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_KATE_FILES_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_KATE_MAKE_ARGUMENTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LIBRARY_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_DIRECTORIES_BEFORE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARIES_ONLY_TARGETS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MAXIMUM_RECURSION_DEPTH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MESSAGE_CONTEXT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MESSAGE_CONTEXT_SHOW</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MESSAGE_INDENT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MESSAGE_LOG_LEVEL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MFC_FLAG</a></li>
+                    <li class="list-group-item"><a href="changeBehaivor/CMAKE_MODULE_PATH.html">CMAKE_MODULE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_POLICY_DEFAULT_CMP&lt;NNNN&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_POLICY_WARNING_CMP&lt;NNNN&gt;</a></li>
+                    <li class="list-group-item"><a href="changeBehaivor/CMAKE_PREFIX_PATH.html">CMAKE_PREFIX_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROGRAM_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_INCLUDE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_INCLUDE_BEFORE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_&lt;PROJECT-NAME&gt;_INCLUDE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_&lt;PROJECT-NAME&gt;_INCLUDE_BEFORE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PROJECT_TOP_LEVEL_INCLUDES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_REQUIRE_FIND_PACKAGE_&lt;PackageName&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SKIP_INSTALL_ALL_DEPENDENCY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SKIP_TEST_ALL_DEPENDENCY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STAGING_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SUBLIME_TEXT_2_ENV_SETTINGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SUBLIME_TEXT_2_EXCLUDE_BUILD_TREE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SUPPRESS_REGENERATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSROOT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSROOT_COMPILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSROOT_LINK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_APPBUNDLE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_FRAMEWORK_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_IGNORE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_IGNORE_PREFIX_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_INCLUDE_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_LIBRARY_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_PREFIX_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_PROGRAM_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TLS_CAINFO</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TLS_VERIFY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TLS_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_USER_MAKE_RULES_OVERRIDE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_WARN_DEPRECATED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_GENERATE_SCHEME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_GENERATE_TOP_LEVEL_PROJECT_ONLY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_LINK_BUILD_PHASE_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER_USE_AFTER_RETURN</a>
+                    </li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_DEBUG_DOCUMENT_VERSIONING</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_DISABLE_MAIN_THREAD_CHECKER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_DYNAMIC_LIBRARY_LOADS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_DYNAMIC_LINKER_API_USAGE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ENABLE_GPU_API_VALIDATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ENABLE_GPU_FRAME_CAPTURE_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ENABLE_GPU_SHADER_VALIDATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ENVIRONMENT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_GUARD_MALLOC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_LAUNCH_CONFIGURATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_LAUNCH_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_MAIN_THREAD_CHECKER_STOP</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_MALLOC_GUARD_EDGES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_MALLOC_SCRIBBLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_MALLOC_STACK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_THREAD_SANITIZER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_THREAD_SANITIZER_STOP</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_UNDEFINED_BEHAVIOUR_SANITIZER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_UNDEFINED_BEHAVIOUR_SANITIZER_STOP</a>
+                    </li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_WORKING_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_SCHEME_ZOMBIE_OBJECTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_XCCONFIG</a></li>
+                    <li class="list-group-item"><a href="#">&lt;PackageName&gt;_ROOT</a></li>
+                </ul>
+
+                <h2 id="variables-that-describe-the-system" class="section-title">Переменные, описывающие систему</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">ANDROID</a></li>
+                    <li class="list-group-item"><a href="#">APPLE</a></li>
+                    <li class="list-group-item"><a href="#">BORLAND</a></li>
+                    <li class="list-group-item"><a href="#">BSD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NDK_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CL_64</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COMPILER_2005</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_APPLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_BSD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_LINUX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_SOLARIS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_SYSTEM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_SYSTEM_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_SYSTEM_PROCESSOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_SYSTEM_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_UNIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HOST_WIN32</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LIBRARY_ARCHITECTURE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LIBRARY_ARCHITECTURE_REGEX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJECT_PATH_MAX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_PROCESSOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SYSTEM_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CYGWIN</a></li>
+                    <li class="list-group-item"><a href="#">GHSMULTI</a></li>
+                    <li class="list-group-item"><a href="#">IOS</a></li>
+                    <li class="list-group-item"><a href="#">LINUX</a></li>
+                    <li class="list-group-item"><a href="#">MINGW</a></li>
+                    <li class="list-group-item"><a href="#">MSVC</a></li>
+                    <li class="list-group-item"><a href="#">MSVC_IDE</a></li>
+                    <li class="list-group-item"><a href="#">MSVC_TOOLSET_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">MSVC_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">MSYS</a></li>
+                    <li class="list-group-item"><a href="#">UNIX</a></li>
+                    <li class="list-group-item"><a href="#">WIN32</a></li>
+                    <li class="list-group-item"><a href="#">WINCE</a></li>
+                    <li class="list-group-item"><a href="#">WINDOWS_PHONE</a></li>
+                    <li class="list-group-item"><a href="#">WINDOWS_STORE</a></li>
+                    <li class="list-group-item"><a href="#">XCODE</a></li>
+                    <li class="list-group-item"><a href="#">XCODE_VERSION</a></li>
+                </ul>
+
+                <h2 id="variables-that-control-the-build" class="section-title">Переменные, управляющие сборкой</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CMAKE_ADSP_ROOT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AIX_EXPORT_ALL_SYMBOLS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_ANT_ADDITIONAL_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_API</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_API_MIN</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_ARCH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_ARCH_ABI</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_ARM_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_ARM_NEON</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_ASSETS_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_EXCEPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_GUI</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_JAR_DEPENDENCIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_JAR_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_JAVA_SOURCE_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NATIVE_LIB_DEPENDENCIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NATIVE_LIB_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NDK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NDK_DEPRECATED_HEADERS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_PROCESS_MAX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_PROGUARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_PROGUARD_CONFIG_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_RTTI</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_SECURE_PROPS_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_SKIP_ANT_STEP</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_STANDALONE_TOOLCHAIN</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ANDROID_STL_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_APPLE_SILICON_PROCESSOR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ARCHIVE_OUTPUT_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ARCHIVE_OUTPUT_DIRECTORY_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOGEN_BETTER_GRAPH_MULTI_CONFIG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOGEN_COMMAND_LINE_LENGTH_MAX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOGEN_ORIGIN_DEPENDS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOGEN_PARALLEL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOGEN_USE_SYSTEM_INCLUDE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOGEN_VERBOSE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_COMPILER_PREDEFINES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_DEPEND_FILTERS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_MACRO_NAMES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_MOC_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_PATH_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_EXECUTABLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTORCC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTORCC_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTORCC_EXECUTABLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOUIC</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOUIC_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOUIC_SEARCH_PATHS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOUIC_EXECUTABLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_BUILD_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_BUILD_RPATH_USE_ORIGIN</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_BUILD_WITH_INSTALL_NAME_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_BUILD_WITH_INSTALL_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COMPILE_PDB_OUTPUT_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COMPILE_PDB_OUTPUT_DIRECTORY_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_COMPILE_WARNING_AS_ERROR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;CONFIG&gt;_POSTFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CROSS_CONFIGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CTEST_ARGUMENTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_RESOLVE_DEVICE_SYMBOLS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_RUNTIME_LIBRARY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_SEPARABLE_COMPILATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_MODULE_STD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_SCAN_FOR_MODULES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DEBUG_POSTFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DEFAULT_BUILD_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DEFAULT_CONFIGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DEPENDS_USE_COMPILER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DISABLE_PRECOMPILE_HEADERS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_DLL_NAME_WITH_SOVERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ENABLE_EXPORTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXECUTABLE_ENABLE_EXPORTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXE_LINKER_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXE_LINKER_FLAGS_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXE_LINKER_FLAGS_&lt;CONFIG&gt;_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXE_LINKER_FLAGS_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_EXPORT_FIND_PACKAGE_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FOLDER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Fortran_FORMAT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Fortran_MODULE_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Fortran_PREPROCESS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FRAMEWORK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FRAMEWORK_MULTI_CONFIG_POSTFIX_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GHS_NO_SOURCE_GROUP_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GLOBAL_AUTOGEN_TARGET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GLOBAL_AUTOGEN_TARGET_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GLOBAL_AUTORCC_TARGET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GLOBAL_AUTORCC_TARGET_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_GNUtoMS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INCLUDE_CURRENT_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_NAME_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_REMOVE_ENVIRONMENT_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INSTALL_RPATH_USE_LINK_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INTERPROCEDURAL_OPTIMIZATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INTERPROCEDURAL_OPTIMIZATION_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CLANG_TIDY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CLANG_TIDY_EXPORT_FIXES_DIR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_LAUNCHER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CPPCHECK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CPPLINT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_INCLUDE_WHAT_YOU_USE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_GROUP_USING_&lt;FEATURE&gt;</a></li>
+                    <li class="list-group-item"><a
+                            href="#">CMAKE_&lt;LANG&gt;_LINK_GROUP_USING_&lt;FEATURE&gt;_SUPPORTED</a></li>
+                    <li class="list-group-item"><a
+                            href="#">CMAKE_&lt;LANG&gt;_LINK_LIBRARY_&lt;FEATURE&gt;_ATTRIBUTES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_LIBRARY_FILE_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_LIBRARY_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_LIBRARY_USING_&lt;FEATURE&gt;</a>
+                    </li>
+                    <li class="list-group-item"><a
+                            href="#">CMAKE_&lt;LANG&gt;_LINK_LIBRARY_USING_&lt;FEATURE&gt;_SUPPORTED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_WHAT_YOU_USE_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINKER_LAUNCHER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_USING_LINKER_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_USING_LINKER_<TYPE></a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_VISIBILITY_PRESET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LIBRARY_OUTPUT_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LIBRARY_OUTPUT_DIRECTORY_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LIBRARY_PATH_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_DEF_FILE_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_DEPENDS_NO_SHARED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_DEPENDS_USE_LINKER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_GROUP_USING_&lt;FEATURE&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_GROUP_USING_&lt;FEATURE&gt;_SUPPORTED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_INTERFACE_LIBRARIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARY_&lt;FEATURE&gt;_ATTRIBUTES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARY_FILE_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARY_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARY_USING_&lt;FEATURE&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_LIBRARY_USING_&lt;FEATURE&gt;_SUPPORTED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_WHAT_YOU_USE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINK_WHAT_YOU_USE_CHECK</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_LINKER_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MACOSX_BUNDLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MACOSX_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MAP_IMPORTED_CONFIG_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MODULE_LINKER_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MODULE_LINKER_FLAGS_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MODULE_LINKER_FLAGS_&lt;CONFIG&gt;_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MODULE_LINKER_FLAGS_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MSVC_DEBUG_INFORMATION_FORMAT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MSVC_RUNTIME_LIBRARY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_MSVCIDE_RUN_PATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_NINJA_OUTPUT_PATH_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_NO_BUILTIN_CHRPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_NO_SYSTEM_FROM_IMPORTED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OPTIMIZE_DEPENDENCIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OSX_ARCHITECTURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OSX_DEPLOYMENT_TARGET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OSX_SYSROOT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PCH_INSTANTIATE_TEMPLATES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PCH_WARN_INVALID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PDB_OUTPUT_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PDB_OUTPUT_DIRECTORY_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_PLATFORM_NO_VERSIONED_SONAME</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_POSITION_INDEPENDENT_CODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_RUNTIME_OUTPUT_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_RUNTIME_OUTPUT_DIRECTORY_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LIBRARY_ENABLE_EXPORTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LINKER_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LINKER_FLAGS_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LINKER_FLAGS_&lt;CONFIG&gt;_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SHARED_LINKER_FLAGS_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SKIP_BUILD_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_SKIP_INSTALL_RPATH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STATIC_LINKER_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STATIC_LINKER_FLAGS_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STATIC_LINKER_FLAGS_&lt;CONFIG&gt;_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_STATIC_LINKER_FLAGS_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TASKING_TOOLSET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TRY_COMPILE_CONFIGURATION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TRY_COMPILE_NO_PLATFORM_VARIABLES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TRY_COMPILE_PLATFORM_VARIABLES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_TRY_COMPILE_TARGET_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_UNITY_BUILD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_UNITY_BUILD_BATCH_SIZE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_UNITY_BUILD_UNIQUE_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VERIFY_INTERFACE_HEADER_SETS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VISIBILITY_INLINES_HIDDEN</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_DEBUGGER_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_DEBUGGER_COMMAND_ARGUMENTS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_DEBUGGER_ENVIRONMENT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_DEBUGGER_WORKING_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_GLOBALS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_INCLUDE_PACKAGE_TO_DEFAULT_BUILD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_JUST_MY_CODE_DEBUGGING</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_NO_COMPILE_BATCHING</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_EXCLUDE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_EXECUTABLE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_INCLUDE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_LIBRARY_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_LIBRARY_WINRT_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_REFERENCE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_SDK_SOURCE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_WINRT_BY_DEFAULT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_WATCOM_RUNTIME_LIBRARY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_WIN32_EXECUTABLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_XCODE_ATTRIBUTE_&lt;an-attribute&gt;</a></li>
+                    <li class="list-group-item"><a href="#">EXECUTABLE_OUTPUT_PATH</a></li>
+                    <li class="list-group-item"><a href="#">LIBRARY_OUTPUT_PATH</a></li>
+                </ul>
+
+                <h2 id="variables-for-languages" class="section-title">Переменные для языков</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CMAKE_C_COMPILE_FEATURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_C_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_C_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_C_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_ARCHITECTURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_COMPILE_FEATURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_HOST_COMPILER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_COMPILE_FEATURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_COMPILER_IMPORT_STD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_CXX_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Fortran_MODDIR_DEFAULT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Fortran_MODDIR_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Fortran_MODOUT_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HIP_ARCHITECTURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HIP_COMPILE_FEATURES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HIP_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HIP_PLATFORM</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HIP_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_HIP_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ISPC_HEADER_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ISPC_HEADER_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_ISPC_INSTRUCTION_SETS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_ANDROID_TOOLCHAIN_MACHINE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_ANDROID_TOOLCHAIN_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_ANDROID_TOOLCHAIN_SUFFIX</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_ARCHIVE_APPEND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_ARCHIVE_CREATE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_ARCHIVE_FINISH</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_BYTE_ORDER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILE_OBJECT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_EXTERNAL_TOOLCHAIN</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_LOADED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_PREDEFINES_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_TARGET</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CREATE_SHARED_LIBRARY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CREATE_SHARED_MODULE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_CREATE_STATIC_LIBRARY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_EXTENSIONS_DEFAULT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_&lt;CONFIG&gt;</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_&lt;CONFIG&gt;_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_DEBUG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_DEBUG_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_MINSIZEREL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_MINSIZEREL_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_RELEASE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_RELEASE_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_RELWITHDEBINFO</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_FLAGS_RELWITHDEBINFO_INIT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_HOST_COMPILER</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_IGNORE_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_IMPLICIT_INCLUDE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_IMPLICIT_LINK_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES</a>
+                    </li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_IMPLICIT_LINK_LIBRARIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LIBRARY_ARCHITECTURE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINK_EXECUTABLE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINKER_WRAPPER_FLAG</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINKER_WRAPPER_FLAG_SEP</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_OUTPUT_EXTENSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_SIMULATE_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_SIMULATE_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_SIZEOF_DATA_PTR</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_SOURCE_FILE_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_STANDARD_DEFAULT</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_STANDARD_INCLUDE_DIRECTORIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_STANDARD_LATEST</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_STANDARD_LIBRARIES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJC_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJC_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJC_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJCXX_EXTENSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJCXX_STANDARD</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_OBJCXX_STANDARD_REQUIRED</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_Swift_LANGUAGE_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_USER_MAKE_RULES_OVERRIDE_&lt;LANG&gt;</a></li>
+                </ul>
+
+                <h2 id="variables-for-ctest" class="section-title">Переменные для CTest</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CTEST_BINARY_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_BUILD_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_BUILD_NAME</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_BZR_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_BZR_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CHANGE_ID</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CHECKOUT_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CONFIGURATION_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CONFIGURE_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_COVERAGE_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_COVERAGE_EXTRA_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_COVERAGE_EXCLUDE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_ERROR_EXCEPTION</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_ERROR_MATCH</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_ERROR_POST_CONTEXT</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_ERROR_PRE_CONTEXT</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_MEMCHECK_IGNORE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_POST_MEMCHECK</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_POST_TEST</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_PRE_MEMCHECK</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_PRE_TEST</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_TEST_OUTPUT_TRUNCATION</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_TESTS_IGNORE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_WARNING_EXCEPTION</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CUSTOM_WARNING_MATCH</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CVS_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_CVS_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_DROP_LOCATION</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_DROP_METHOD</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_DROP_SITE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_DROP_SITE_CDASH</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_DROP_SITE_PASSWORD</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_DROP_SITE_USER</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_EXTRA_COVERAGE_GLOB</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_GIT_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_GIT_INIT_SUBMODULES</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_GIT_UPDATE_CUSTOM</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_GIT_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_HG_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_HG_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_LABELS_FOR_SUBPROJECTS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_MEMORYCHECK_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_MEMORYCHECK_COMMAND_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_MEMORYCHECK_SANITIZER_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_MEMORYCHECK_SUPPRESSIONS_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_MEMORYCHECK_TYPE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_NIGHTLY_START_TIME</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_P4_CLIENT</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_P4_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_P4_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_P4_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_RESOURCE_SPEC_FILE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_RUN_CURRENT_SCRIPT</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SCRIPT_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SITE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SOURCE_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SUBMIT_INACTIVITY_TIMEOUT</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SUBMIT_URL</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SVN_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SVN_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_SVN_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_TEST_LOAD</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_TEST_TIMEOUT</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_TLS_VERIFY</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_TLS_VERSION</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_UPDATE_COMMAND</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_UPDATE_OPTIONS</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_UPDATE_VERSION_ONLY</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_UPDATE_VERSION_OVERRIDE</a></li>
+                    <li class="list-group-item"><a href="#">CTEST_USE_LAUNCHERS</a></li>
+                </ul>
+
+                <h2 id="variables-for-cpack" class="section-title">Переменные для CPack</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CPACK_ABSOLUTE_DESTINATION_FILES</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_CUSTOM_INSTALL_VARIABLES</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_INCLUDE_TOPLEVEL_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_PACKAGING_INSTALL_PREFIX</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_SET_DESTDIR</a></li>
+                    <li class="list-group-item"><a href="#">CPACK_WARN_ON_ABSOLUTE_INSTALL_DESTINATION</a></li>
+                </ul>
+
+                <h2 id="variable-expansion-operators" class="section-title">Операторы расширения переменных</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CACHE</a></li>
+                    <li class="list-group-item"><a href="#">ENV</a></li>
+                </ul>
+
+                <h2 id="internal-variables" class="section-title">Внутренние переменные</h2>
+                <p>CMake имеет множество внутренних переменных. Большинство из них не задокументированы. Тем не менее,
+                    некоторые из них в какой-то момент были описаны как обычные переменные, и поэтому могут встретиться
+                    в устаревшем коде. Эти переменные могут изменяться, и их не рекомендуется использовать в проектном
+                    коде.</p>
+
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CMAKE_HOME_DIRECTORY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_INTERNAL_PLATFORM_ABI</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_ABI</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_ARCHITECTURE_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_COMPILER_VERSION_INTERNAL</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINKER_PREFERENCE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_LINKER_PREFERENCE_PROPAGATES</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_&lt;LANG&gt;_PLATFORM_ID</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_NOT_USING_CONFIG_FLAGS</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_VS_INTEL_Fortran_PROJECT_VERSION</a></li>
+                </ul>
+
+                <h2 id="deprecated-provide-information" class="section-title">Устаревшие переменные, предоставляющие
+                    информацию</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CMAKE_EXTRA_GENERATOR</a></li>
+                </ul>
+
+                <h2 id="deprecated-variables-change-behavior" class="section-title">Устаревшие переменные, меняющие
+                    поведение</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><a href="#">CMAKE_AUTOMOC_RELAXED_MODE</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_BACKWARDS_COMPATIBILITY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY</a></li>
+                    <li class="list-group-item"><a href="#">CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY</a></li>
+                </ul>
+                <h2 id="deprecated-variables-describe-the-system" class="section-title">Устаревшие переменные, описывающие систему</h2>
+                <ul class="list-group mb-3">
+                     <li class="list-group-item"><a href="#">MSVC10</a></li>
+                     <li class="list-group-item"><a href="#">MSVC11</a></li>
+                     <li class="list-group-item"><a href="#">MSVC12</a></li>
+                     <li class="list-group-item"><a href="#">MSVC14</a></li>
+                     <li class="list-group-item"><a href="#">MSVC60</a></li>
+                     <li class="list-group-item"><a href="#">MSVC70</a></li>
+                     <li class="list-group-item"><a href="#">MSVC71</a></li>
+                     <li class="list-group-item"><a href="#">MSVC80</a></li>
+                     <li class="list-group-item"><a href="#">MSVC90</a></li>              
+                </ul>
+                <h2 id="deprecated-variables-control-the-build" class="section-title">Устаревшие переменные, управляющие сборкой</h2>
+                <ul class="list-group mb-3">
+                     <li class="list-group-item"><a href="#">CMAKE_IOS_INSTALL_COMBINED</a></li>
+                     <li class="list-group-item"><a href="#">CMAKE_USE_RELATIVE_PATHS</a></li>
+                </ul>
+                <h2 id="deprecated-variables-for-languages" class="section-title">Устаревшие переменные, языков</h2>
+                <ul class="list-group mb-3">
+                     <li class="list-group-item"><a href="#">CMAKE_COMPILER_IS_GNUCC</a></li>
+                     <li class="list-group-item"><a href="#">CMAKE_COMPILER_IS_GNUCXX</a></li>
+                     <li class="list-group-item"><a href="#">CMAKE_COMPILER_IS_GNUG77</a></li>
+                </ul>
+                <h2 id="deprecated-variables-for-ctest" class="section-title">Устаревшие переменные, для тестов</h2>
+                <ul class="list-group mb-3">
+                     <li class="list-group-item"><a href="#">CTEST_CURL_OPTIONS</a></li>
+                     <li class="list-group-item"><a href="#">CTEST_CVS_CHECKOUT</a></li>
+                     <li class="list-group-item"><a href="#">CTEST_SCP_COMMAND</a></li>
+                     <li class="list-group-item"><a href="#">CTEST_TRIGGER_SITE</a></li>
+                </ul>
+            </div>
+        </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Переменные</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>

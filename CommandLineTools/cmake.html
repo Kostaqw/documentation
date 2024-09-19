@@ -35,32 +35,15 @@
             <h3 class="section-title">Синопсис</h3>
 
             <h4>Создание сборочной системы проекта</h4>
-            <pre><code>cmake [&lt;options&gt;] -B &lt;path-to-build&gt; [-S &lt;path-to-source&gt;]</code></pre>
-            <pre><code>cmake [&lt;options&gt;] &lt;path-to-source | path-to-existing-build&gt;</code></pre>
-
-            <h4>Сборка проекта</h4>
-            <pre><code>cmake --build &lt;dir&gt; [&lt;options&gt;] [-- &lt;build-tool-options&gt;]</code></pre>
-
-            <h4>Установка проекта</h4>
-            <pre><code>cmake --install &lt;dir&gt; [&lt;options&gt;]</code></pre>
-
-            <h4>Открытие проекта</h4>
-            <pre><code>cmake --open &lt;dir&gt;</code></pre>
-
-            <h4>Запуск скрипта</h4>
-            <pre><code>cmake [-D &lt;var&gt;=&lt;value&gt;]... -P &lt;cmake-script-file&gt;</code></pre>
-
-            <h4>Запуск командной утилиты</h4>
-            <pre><code>cmake -E &lt;command&gt; [&lt;options&gt;]</code></pre>
-
-            <h4>Запуск инструмента поиска пакетов</h4>
-            <pre><code>cmake --find-package [&lt;options&gt;]</code></pre>
-
-            <h4>Запуск предустановленного рабочего процесса</h4>
-            <pre><code>cmake --workflow [&lt;options&gt;]</code></pre>
-
-            <h4>Просмотр справки</h4>
-            <pre><code>cmake --help[-&lt;topic&gt;]</code></pre>
+            <pre><code>cmake [&lt;options&gt;] -B &lt;path-to-build&gt; [-S &lt;path-to-source&gt;]<br>cmake [&lt;options&gt;] &lt;path-to-source | path-to-existing-build&gt;<br>
+            <br>#Сборка проекта<br>cmake --build &lt;dir&gt; [&lt;options&gt;] [-- &lt;build-tool-options&gt;]
+            <br>#Установка проекта<br>cmake --install &lt;dir&gt; [&lt;options&gt;]
+            <br>#Открытие проектаcmake<br> --open &lt;dir&gt;
+            <br>#Запуск скрипта<br>cmake [-D &lt;var&gt;=&lt;value&gt;]... -P &lt;cmake-script-file&gt;
+            <br>#Запуск командной утилиты<br>cmake -E &lt;command&gt; [&lt;options&gt;]
+            <br>#Запуск инструмента поиска пакетов<br>cmake --find-package [&lt;options&gt;]
+            <br>#Запуск предустановленного рабочего процесса<br>cmake --workflow [&lt;options&gt;]
+            <br>#Просмотр справки<br>cmake --help[-&lt;topic&gt;]</code></pre>
 
             <h3 class="section-title">Описание</h3>
             <p>Исполняемый файл <code>cmake</code> представляет собой интерфейс командной строки для кросс-платформенной
@@ -630,7 +613,8 @@
 
             <h5 class="text-secondary">--clean-first</h5>
             <p>Сначала собрать цель clean, затем собрать. (Для очистки без сборки используйте
-                <code>--target clean</code>.)</p>
+                <code>--target clean</code>.)
+            </p>
 
             <h5 class="text-secondary">--resolve-package-references=&lt;value&gt;</h5>
             <p><strong>Новое в версии 3.23.</strong></p>
@@ -641,13 +625,15 @@
             <p>Если цель не определяет никаких ссылок на пакеты, эта опция ничего не делает.</p>
             <p>Эта настройка может быть указана в пресете сборки (с использованием
                 <code>resolvePackageReferences</code>). Настройка пресета будет игнорироваться, если указана эта опция
-                командной строки.</p>
+                командной строки.
+            </p>
             <p>Если не указаны параметры командной строки или параметры пресета, будет оцениваться специфическая для
                 среды переменная кеша, чтобы решить, следует ли выполнять восстановление пакетов.</p>
             <p>При использовании генератора Visual Studio ссылки на пакеты определяются с использованием свойства
                 <code>VS_PACKAGE_REFERENCES</code>. Восстановление пакетов выполняется с использованием NuGet. Оно может
                 быть отключено путем установки переменной <code>CMAKE_VS_NUGET_PACKAGE_RESTORE</code> в значение
-                <code>OFF</code>.</p>
+                <code>OFF</code>.
+            </p>
 
             <h5 class="text-secondary">--use-stderr</h5>
             <p>Игнорируется. Поведение по умолчанию в CMake >= 3.0.</p>
@@ -655,7 +641,8 @@
             <h5 class="text-secondary">-v, --verbose</h5>
             <p>Включить подробный вывод - если поддерживается - включая команды сборки, которые будут выполнены.</p>
             <p>Эта опция может быть опущена, если установлена переменная среды <code>VERBOSE</code> или кеш-переменная
-                <code>CMAKE_VERBOSE_MAKEFILE</code>.</p>
+                <code>CMAKE_VERBOSE_MAKEFILE</code>.
+            </p>
 
             <h5 class="text-secondary">--</h5>
             <p>Передать оставшиеся опции нативному инструменту.</p>
@@ -706,7 +693,8 @@
                 сделано перед аргументом <code>-P</code>.</p>
 
             <p>Любые опции после <code>--</code> не анализируются CMake, но они все равно включаются в набор переменных
-                <code>CMAKE_ARGV&lt;n&gt;</code>, передаваемых скрипту (включая сам <code>--</code>).</p>
+                <code>CMAKE_ARGV&lt;n&gt;</code>, передаваемых скрипту (включая сам <code>--</code>).
+            </p>
 
             <h2 class="section-title">Запуск инструментов командной строки</h2>
             <p>CMake предоставляет встроенные командные утилиты через следующую сигнатуру:</p>
@@ -726,7 +714,8 @@
                     <li><strong>version</strong>: JSON-объект с информацией о версии. Ключи:
                         <ul>
                             <li><strong>string</strong>: Полная строка версии, как отображается при выполнении
-                                <code>cmake --version</code>.</li>
+                                <code>cmake --version</code>.
+                            </li>
                             <li><strong>major</strong>: Основной номер версии в виде целого числа.</li>
                             <li><strong>minor</strong>: Второстепенный номер версии в виде целого числа.</li>
                             <li><strong>patch</strong>: Патч-уровень в виде целого числа.</li>
@@ -751,7 +740,8 @@
                     </li>
                     <li><strong>fileApi</strong>: Опциональный член, присутствующий при наличии
                         <code>cmake-file-api(7)</code>. Значение — JSON-объект с ключом <strong>requests</strong>,
-                        содержащим массив поддерживаемых запросов.</li>
+                        содержащим массив поддерживаемых запросов.
+                    </li>
                     <li><strong>serverMode</strong>: Логическое значение, указывающее на поддержку серверного режима.
                         Всегда <code>false</code> с версии CMake 3.20.</li>
                     <li><strong>tls</strong>: <em>Новая опция в версии 3.25.</em> Логическое значение, указывающее
@@ -767,7 +757,8 @@
                     <li><strong>--</strong>: <em>Новая опция в версии 3.24.</em> Указывает конец опций, что позволяет
                         использовать файлы, начинающиеся с символа <code>-</code>.</li>
                     <li><em>Новая опция в версии 3.29:</em> возможность вывода стандартного ввода при передаче аргумента
-                        <code>-</code>.</li>
+                        <code>-</code>.
+                    </li>
                 </ul>
 
                 <h4>chdir &lt;dir&gt; &lt;cmd&gt; [&lt;arg&gt;...]</h4>
@@ -793,7 +784,8 @@
                 <h4>copy_directory &lt;dir&gt;... &lt;destination&gt;</h4>
                 <p>Копирует содержимое каталогов <code>&lt;dir&gt;...</code> в каталог <code>&lt;destination&gt;</code>.
                     Если каталог <code>&lt;destination&gt;</code> не существует, он будет создан. Команда
-                    <code>copy_directory</code> следует за символическими ссылками.</p>
+                    <code>copy_directory</code> следует за символическими ссылками.
+                </p>
                 <ul>
                     <li><em>Новая опция в версии 3.5:</em> Поддержка нескольких входных каталогов.</li>
                     <li><em>Новая опция в версии 3.15:</em> Команда теперь завершается с ошибкой, если исходный каталог
@@ -805,7 +797,8 @@
                 <p>Копирует измененное содержимое каталогов <code>&lt;dir&gt;...</code> в каталог
                     <code>&lt;destination&gt;</code>. Если каталог <code>&lt;destination&gt;</code> не существует, он
                     будет создан. Команда <code>copy_directory_if_different</code> следует за символическими ссылками.
-                    Команда завершается с ошибкой, если исходный каталог не существует.</p>
+                    Команда завершается с ошибкой, если исходный каталог не существует.
+                </p>
 
                 <h4>copy_if_different &lt;file&gt;... &lt;destination&gt;</h4>
                 <p>Копирует файлы в <code>&lt;destination&gt;</code> (файл или каталог) только в случае, если они
@@ -845,7 +838,8 @@
                 <p>Запускает команду в измененной среде. Доступные опции:</p>
                 <ul>
                     <li><strong>NAME=VALUE</strong>: Заменяет текущее значение переменной среды <code>NAME</code> на
-                        <code>VALUE</code>.</li>
+                        <code>VALUE</code>.
+                    </li>
                     <li><strong>--unset=NAME</strong>: Удаляет текущее значение переменной среды <code>NAME</code>.</li>
                     <li><strong>--modify ENVIRONMENT_MODIFICATION</strong>: <em>Новая опция в версии 3.25.</em>
                         Применяет единичную операцию модификации среды к измененной среде. Опции <code>NAME=VALUE</code>
@@ -853,11 +847,13 @@
                         <code>--modify NAME=unset:</code> соответственно. Обратите внимание, что
                         <code>--modify NAME=reset:</code> сбрасывает <code>NAME</code> к значению, которое оно имело при
                         запуске CMake (или удаляет его), а не к последнему значению, установленному через
-                        <code>NAME=VALUE</code>.</li>
+                        <code>NAME=VALUE</code>.
+                    </li>
                     <li><strong>--</strong>: <em>Новая опция в версии 3.24.</em> Добавлена поддержка аргумента с двойным
                         дефисом <code>--</code>. Используйте <code>--</code>, чтобы прекратить интерпретацию
                         опций/переменных среды и рассматривать следующий аргумент как команду, даже если он начинается с
-                        <code>-</code> или содержит <code>=</code>.</li>
+                        <code>-</code> или содержит <code>=</code>.
+                    </li>
                 </ul>
 
                 <h4>environment</h4>
@@ -936,7 +932,8 @@
                     из перечисленных файлов/каталогов не существует, команда возвращает код выхода, не равный нулю, но
                     без вывода сообщений. Опция <code>-f</code> изменяет поведение, возвращая нулевой код выхода (т.е.
                     успех) в таких ситуациях. Используйте <code>--</code>, чтобы прекратить интерпретацию опций и
-                    рассматривать все оставшиеся аргументы как пути, даже если они начинаются с <code>-</code>.</p>
+                    рассматривать все оставшиеся аргументы как пути, даже если они начинаются с <code>-</code>.
+                </p>
 
                 <h4>sleep &lt;number&gt;</h4>
                 <p><strong>Новая команда в версии 3.0.</strong></p>
@@ -950,7 +947,8 @@
                 <p>Создает или извлекает архив tar или zip. Доступные опции:</p>
                 <ul>
                     <li><strong>c</strong>: Создает новый архив, содержащий указанные файлы. При использовании аргумент
-                        <code>&lt;pathname&gt;...</code> обязателен.</li>
+                        <code>&lt;pathname&gt;...</code> обязателен.
+                    </li>
                     <li><strong>x</strong>: Извлекает содержимое архива на диск.
                         <ul>
                             <li><em>Новая опция в версии 3.15:</em> Аргумент <code>&lt;pathname&gt;...</code> может
@@ -985,7 +983,8 @@
                         временную метку вместо извлечения временных меток файлов из архива.</li>
                     <li><strong>--</strong>: <em>Новая опция в версии 3.1.</em> Прекращает интерпретацию опций и
                         рассматривает все оставшиеся аргументы как имена файлов, даже если они начинаются с
-                        <code>-</code>.</li>
+                        <code>-</code>.
+                    </li>
                 </ul>
                 <ul>
                     <li><em>Новая опция в версии 3.1:</em> Поддержка LZMA (7zip).</li>
@@ -1060,17 +1059,21 @@
                 <h4>cmake --workflow [&lt;опции&gt;]</h4>
                 <p>Опции:</p>
                 <ul>
-                    <li><strong>--workflow</strong>: Выбрать предустановку рабочего процесса, используя одну из следующих
+                    <li><strong>--workflow</strong>: Выбрать предустановку рабочего процесса, используя одну из
+                        следующих
                         опций.</li>
                     <li><strong>--preset &lt;предустановка&gt;</strong>, <code>--preset=&lt;предустановка&gt;</code>:
                         Использовать предустановку рабочего процесса для указания рабочего процесса. Директория
                         бинарного проекта определяется исходя из начальной конфигурации предустановки. Текущая рабочая
                         директория должна содержать файлы предустановок CMake. См. <code>preset</code> для получения
                         более подробной информации.</li>
-                    <li><strong>--list-presets</strong>: Список доступных предустановок рабочего процесса. Текущая рабочая
+                    <li><strong>--list-presets</strong>: Список доступных предустановок рабочего процесса. Текущая
+                        рабочая
                         директория должна содержать файлы предустановок CMake.</li>
-                    <li><strong>--fresh</strong>: Провести новую конфигурацию дерева сборки, что имеет тот же эффект, что и
-                        <strong>cmake --fresh</strong>.</li>
+                    <li><strong>--fresh</strong>: Провести новую конфигурацию дерева сборки, что имеет тот же эффект,
+                        что и
+                        <strong>cmake --fresh</strong>.
+                    </li>
                 </ul>
 
                 <h2 class="section-title">Просмотр справки</h2>
@@ -1082,44 +1085,58 @@
                 <ul>
                     <li><strong>-version [&lt;файл&gt;]</strong>, <strong>--version [&lt;файл&gt;]</strong>,
                         <strong>/V [&lt;файл&gt;]</strong>: Показать баннер с названием программы/версией и выйти. Вывод
-                        записывается в указанный <strong>&lt;файл&gt;</strong>, если он указан.</li>
-                    <li><strong>-h</strong>, <strong>-H</strong>, <strong>--help</strong>, <strong>-help</strong>, <strong>-usage</strong>,
-                        <strong>/?</strong>: Показать справочную информацию и выйти.</li>
-                    <li><strong>--help &lt;ключевое_слово&gt; [&lt;файл&gt;]</strong>: Показать справку по одному ключевому
+                        записывается в указанный <strong>&lt;файл&gt;</strong>, если он указан.
+                    </li>
+                    <li><strong>-h</strong>, <strong>-H</strong>, <strong>--help</strong>, <strong>-help</strong>,
+                        <strong>-usage</strong>,
+                        <strong>/?</strong>: Показать справочную информацию и выйти.
+                    </li>
+                    <li><strong>--help &lt;ключевое_слово&gt; [&lt;файл&gt;]</strong>: Показать справку по одному
+                        ключевому
                         слову CMake. <strong>&lt;ключевое_слово&gt;</strong> может быть свойством, переменной, командой,
                         политикой, генератором или модулем. Соответствующая справочная запись выводится в читаемом
                         формате. Вывод записывается в указанный <strong>&lt;файл&gt;</strong>, если он указан.</li>
                     <li><strong>--help-full [&lt;файл&gt;]</strong>: Печать всех справочных руководств и выход.</li>
                     <li><strong>--help-manual &lt;руководство&gt; [&lt;файл&gt;]</strong>: Печать одного справочного
                         руководства и выход.</li>
-                    <li><strong>--help-manual-list [&lt;файл&gt;]</strong>: Список доступных справочных руководств и выход.
+                    <li><strong>--help-manual-list [&lt;файл&gt;]</strong>: Список доступных справочных руководств и
+                        выход.
                     </li>
-                    <li><strong>--help-command &lt;команда&gt; [&lt;файл&gt;]</strong>: Показать справку по одной команде и
+                    <li><strong>--help-command &lt;команда&gt; [&lt;файл&gt;]</strong>: Показать справку по одной
+                        команде и
                         выйти.</li>
                     <li><strong>--help-command-list [&lt;файл&gt;]</strong>: Список команд с доступной справкой и выход.
                     </li>
-                    <li><strong>--help-commands [&lt;файл&gt;]</strong>: Печать руководства по командам CMake и выход.</li>
-                    <li><strong>--help-module &lt;модуль&gt; [&lt;файл&gt;]</strong>: Показать справку по одному модулю и
+                    <li><strong>--help-commands [&lt;файл&gt;]</strong>: Печать руководства по командам CMake и выход.
+                    </li>
+                    <li><strong>--help-module &lt;модуль&gt; [&lt;файл&gt;]</strong>: Показать справку по одному модулю
+                        и
                         выйти.</li>
                     <li><strong>--help-module-list [&lt;файл&gt;]</strong>: Список модулей с доступной справкой и выход.
                     </li>
-                    <li><strong>--help-modules [&lt;файл&gt;]</strong>: Печать руководства по модулям CMake и выход.</li>
-                    <li><strong>--help-policy &lt;политика&gt; [&lt;файл&gt;</strong>: Показать справку по одной политике и
+                    <li><strong>--help-modules [&lt;файл&gt;]</strong>: Печать руководства по модулям CMake и выход.
+                    </li>
+                    <li><strong>--help-policy &lt;политика&gt; [&lt;файл&gt;</strong>: Показать справку по одной
+                        политике и
                         выйти.</li>
                     <li><strong>--help-policy-list [&lt;файл&gt;]</strong>: Список политик с доступной справкой и выход.
                     </li>
-                    <li><strong>--help-policies [&lt;файл&gt;]</strong>: Печать руководства по политикам CMake и выход.</li>
+                    <li><strong>--help-policies [&lt;файл&gt;]</strong>: Печать руководства по политикам CMake и выход.
+                    </li>
                     <li><strong>--help-property &lt;свойство&gt; [&lt;файл&gt;]</strong>: Показать справку по одному
                         свойству и выйти.</li>
-                    <li><strong>--help-property-list [&lt;файл&gt;]</strong>: Список свойств с доступной справкой и выход.
+                    <li><strong>--help-property-list [&lt;файл&gt;]</strong>: Список свойств с доступной справкой и
+                        выход.
                     </li>
-                    <li><strong>--help-properties [&lt;файл&gt;]</strong>: Печать руководства по свойствам CMake и выход.
+                    <li><strong>--help-properties [&lt;файл&gt;]</strong>: Печать руководства по свойствам CMake и
+                        выход.
                     </li>
                     <li><strong>--help-variable &lt;переменная&gt; [&lt;файл&gt;]</strong>: Показать справку по одной
                         переменной и выйти.</li>
                     <li><strong>--help-variable-list [&lt;файл&gt;]</strong>: Список переменных с доступной справкой и
                         выход.</li>
-                    <li><strong>--help-variables [&lt;файл&gt;]</strong>: Печать руководства по переменным CMake и выход.
+                    <li><strong>--help-variables [&lt;файл&gt;]</strong>: Печать руководства по переменным CMake и
+                        выход.
                     </li>
                 </ul>
 
@@ -1128,27 +1145,30 @@
 
                 <h2 class="section-title">Возвращаемое значение (Код завершения)</h2>
 
-                <p>При нормальном завершении выполнение <code>cmake</code> возвращает код завершения <strong>0</strong>.</p>
-        
-                <p>Если завершение вызвано командой <code>message(FATAL_ERROR)</code> или другой ошибочной ситуацией, то возвращается ненулевой код завершения.</p>
-        
+                <p>При нормальном завершении выполнение <code>cmake</code> возвращает код завершения <strong>0</strong>.
+                </p>
+
+                <p>Если завершение вызвано командой <code>message(FATAL_ERROR)</code> или другой ошибочной ситуацией, то
+                    возвращается ненулевой код завершения.</p>
+
                 <h3 class="section-title">См. также</h3>
-        
+
                 <p>Следующие ресурсы доступны для получения помощи по использованию CMake:</p>
-        
+
                 <ul class="list-group mb-3">
                     <li class="list-group-item">
                         <h4 class="mb-1">Домашняя страница</h4>
                         <p><a href="https://cmake.org" target="_blank">https://cmake.org</a></p>
                         <p>Основная точка начала для изучения CMake.</p>
                     </li>
-        
+
                     <li class="list-group-item">
                         <h4 class="mb-1">Онлайн-документация и ресурсы сообщества</h4>
-                        <p><a href="https://cmake.org/documentation" target="_blank">https://cmake.org/documentation</a></p>
+                        <p><a href="https://cmake.org/documentation" target="_blank">https://cmake.org/documentation</a>
+                        </p>
                         <p>Ссылки на доступную документацию и ресурсы сообщества можно найти на этой веб-странице.</p>
                     </li>
-        
+
                     <li class="list-group-item">
                         <h4 class="mb-1">Форум Discourse</h4>
                         <p><a href="https://discourse.cmake.org" target="_blank">https://discourse.cmake.org</a></p>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMAKE_TOOLCHAIN_FILE</title>
+    <link href="../../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_TOOLCHAIN_FILE</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">CMAKE_TOOLCHAIN_FILE</h1>
+            <h2>CMAKE_TOOLCHAIN_FILE</h2>
+            <p><code>CMAKE_TOOLCHAIN_FILE</code> путь к файлу toolchain, предоставленному в <code>cmake(1)</code>.</p>
+            <p>Эта переменная указывается в командной строке при кросс-компиляции с CMake. Это путь к файлу, который
+                считывается на ранних этапах запуска CMake и который указывает расположение компиляторов и утилит
+                инструментальной цепочки, а также другую информацию, связанную с целевой платформой и компилятором.</p>
+            <p>Разрешены относительные пути, которые сначала интерпретируются как относительные к каталогу сборки, а
+                если не найдены, то относительно исходного каталога.</p>
+            <p>Это инициализируется <code>CMAKE_TOOLCHAIN_FILE</code> переменной окружения, если она установлена при
+                первом создании нового дерева сборки.</p>
+            <p>Смотрите переменную <code>CMAKE_PROJECT_TOP_LEVEL_INCLUDES</code> для настройки других параметров, не
+                связанных напрямую с набором инструментов.</p>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_TOOLCHAIN_FILE</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../../js/jquery-3.5.1.min.js"></script>
+<script src="../../../js/popper.min.js"></script>
+<script src="../../../js/bootstrap.min.js"></script>
+<script src="../../../js/scripts.js"></script>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMAKE_BUILD_TYPE</title>
+    <link href="../../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_BUILD_TYPE</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">CMAKE_BUILD_TYPE</h1>
+            <p>Определяет тип сборки для генераторов с одной конфигурацией (например, генераторы Makefile или Ninja).
+                Типичные значения включают <code>Debug</code>, <code>Release</code>, <code>RelWithDebInfo</code> и
+                <code>MinSizeRel</code>, но также могут быть определены пользовательские типы сборки.</p>
+
+            <p>Эта переменная инициализируется первой командой <code>project()</code> или
+                <code>enable_language()</code>, вызываемой в проекте при первом создании нового дерева сборки. Если
+                задана переменная окружения <code>CMAKE_BUILD_TYPE</code>, используется ее значение. В противном случае
+                при включении языка выбирается значение по умолчанию для конкретной цепочки инструментов. Значение по
+                умолчанию часто представляет собой пустую строку, но обычно это нежелательно, и чаще всего более
+                подходит один из других стандартных типов сборки.</p>
+
+            <p>В зависимости от ситуации значение этой переменной может обрабатываться с учетом или без учета регистра.
+                Обсуждение этого и других связанных тем см. в разделе <a href="#">Конфигурации сборки</a>.</p>
+
+            <p>О генераторах с несколькими конфигурациями см. <a href="#">CMAKE_CONFIGURATION_TYPES</a>.</p>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_BUILD_TYPE</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../../js/jquery-3.5.1.min.js"></script>
+<script src="../../../js/popper.min.js"></script>
+<script src="../../../js/bootstrap.min.js"></script>
+<script src="../../../js/scripts.js"></script>
+
+</html>

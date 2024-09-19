@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninja</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="genIndex.html" class="text-white">Генераторы</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Ninja</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">Ninja</h1>
+
+            <p>Генерирует файл <code>build.ninja</code> в дерево сборки.</p>
+
+            <h3 class="section-title">Встроенные цели</h3>
+        
+            <div class="mb-3">
+                <h5>all</h5>
+                <p>Зависит от всех целей, необходимых для проекта, за исключением тех, у которых установлен флаг <code>EXCLUDE_FROM_ALL</code> в значение true.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>install</h5>
+                <p>Выполняет шаг установки.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>install/strip</h5>
+                <p>Новое в версии 3.7: Выполняет установку, за которой следует команда <code>CMAKE_STRIP</code>, если она присутствует.</p>
+                <p>Переменная <code>CMAKE_STRIP</code> будет содержать утилиту <em>strip</em> платформы, которая удаляет символы информации из сгенерированных бинарных файлов.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>install/parallel</h5>
+                <p>Новое в версии 3.30: Создается только если глобальное свойство <code>INSTALL_PARALLEL</code> включено. Выполняет шаг установки для каждого подкаталога независимо и параллельно.</p>
+            </div>
+        
+            <p>Для каждого подкаталога <code>sub/dir</code> проекта генерируются дополнительные цели:</p>
+        
+            <div class="mb-3">
+                <h5>sub/dir/all</h5>
+                <p>Новое в версии 3.6: Зависит от всех целей, необходимых для подкаталога.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>sub/dir/install</h5>
+                <p>Новое в версии 3.7: Выполняет шаг установки в подкаталоге, если он есть.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>sub/dir/install/strip</h5>
+                <p>Новое в версии 3.7: Выполняет шаг установки в подкаталоге, за которым следует команда <code>CMAKE_STRIP</code>, если она есть.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>sub/dir/test</h5>
+                <p>Новое в версии 3.7: Выполняет шаг тестирования в подкаталоге, если он есть.</p>
+            </div>
+        
+            <div class="mb-3">
+                <h5>sub/dir/package</h5>
+                <p>Новое в версии 3.7: Выполняет шаг упаковки в подкаталоге, если он есть.</p>
+            </div>
+        
+            <h3 class="section-title">Поддержка Fortran</h3>
+            <p>Новое в версии 3.7.</p>
+            <p>Генератор Ninja условно поддерживает Fortran, если версия инструмента <code>ninja</code> составляет как минимум 1.10 (которая имеет необходимые функции).</p>
+        
+            <h3 class="section-title">Поддержка Swift</h3>
+            <p>Новое в версии 3.15.</p>
+            <p>Поддержка Swift является экспериментальной, не считается стабильной и может измениться в будущих выпусках CMake.</p>
+        
+            <h3 class="section-title">Смотрите также</h3>
+            <p>Новое в версии 3.17: Генератор Ninja Multi-Config аналогичен генератору Ninja, но генерирует несколько конфигураций одновременно.</p>
+        
+
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="genIndex.html" class="text-white">Генераторы</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Ninja</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUILD_SHARED_LIBS</title>
+    <link href="../../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">BUILD_SHARED_LIBS</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">BUILD_SHARED_LIBS</h1>
+            <p>При вызове без явного типа библиотеки укажите, <code>add_library()</code> чтобы по умолчанию
+                использовались <code>SHARED</code> библиотеки, а не <code>STATIC</code> libraries.</p>
+            <p>Вызовы <code>add_library()</code> без какого-либо явного типа библиотеки проверяют текущее значение
+                <code>BUILD_SHARED_LIBS</code> переменной. Если оно равно <code>true</code>, то тип библиотеки по
+                умолчанию - <code>SHARED</code>. В противном случае значение по умолчанию равно <code>STATIC</code>.</p>
+            <p>Например, код:</p>
+            <pre><code>add_library(example ${sources})</code></pre>
+            <p>ведет себя так, как будто написано:</p>
+            <pre><code>if(BUILD_SHARED_LIBS)<br>   add_library(example SHARED ${sources})<br>else()<br>   add_library(example STATIC ${sources})<br>endif()</code></pre>
+            <p>CMake не определяет <code>BUILD_SHARED_LIBS</code> по умолчанию, но проекты часто создают для него запись
+                в кэше с помощью команды <code>option()</code>:</p>
+            <pre><code>option(BUILD_SHARED_LIBS "Build using shared libraries" ON)</code></pre>
+            <p>Это предоставляет переключатель, которым пользователи могут управлять, например, с помощью
+                <code>cmake -D</code>. При добавлении такой опции в проект, сделайте это в файле
+                <code>CMakeLists.txt</code> верхнего уровня перед любыми <code>add_library()</code> вызовами. Обратите
+                внимание, что при добавлении внешних зависимостей непосредственно в сборку, например с помощью
+                <code>FetchContent</code> или прямого вызова <code>add_subdirectory()</code>, и одна из этих
+                зависимостей имеет такой вызов <code>option(BUILD_SHARED_LIBS ...)</code>, проект верхнего уровня также
+                должен вызвать <code>option(BUILD_SHARED_LIBS ...)</code> перед добавлением своих зависимостей.
+                Невыполнение этого требования может привести к различному поведению между первым и последующими
+                запусками CMake.</p>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">BUILD_SHARED_LIBS</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../../js/jquery-3.5.1.min.js"></script>
+<script src="../../../js/popper.min.js"></script>
+<script src="../../../js/bootstrap.min.js"></script>
+<script src="../../../js/scripts.js"></script>
+
+</html>

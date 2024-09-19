@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cmake-toolchains</title>
+    <link href="../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">cmake-toolchains</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">cmake-toolchains</h1>
+
+            <ul>
+                <li>
+                    <h4><a href="#introdution">Введение</a></h4>
+                </li>
+                <li>
+                    <h4><a href="#lang">Языки</a></h4>
+                </li>
+                <li>
+                    <h4><a href="#varAndProp">Переменные и свойства</a></h4>
+                </li>
+                <li>
+                    <h4><a href="#functions">Функции tollchain</a></h4>
+                </li>
+                <li>
+                    <h4><a href="#crossCompile">Кросс-компиляция</a></h4>
+                </li>
+            </ul>
+
+
+
+            <h2 id="introduction" class="section-title">Введение</h2>
+            <p>CMake использует набор утилит для компиляции, связывания библиотек и создания архивов, а также для
+                выполнения других задач, связанных со сборкой. Доступные утилиты набора инструментов определяются
+                включенными языками. В обычных сборках CMake автоматически определяет цепочку инструментов для сборок
+                хоста на основе системного анализа и значений по умолчанию. В сценариях кросс-компиляции может быть
+                указан файл цепочки инструментов с информацией о компиляторе и путях к утилитам.
+            </p>
+            <p>Новое в версии 3.19: можно использовать <code>cmake-presets(7)</code> для указания файлов цепочки
+                инструментов.</p>
+
+            <h2 id="languages" class="section-title">Языки</h2>
+            <p>Языки включаются с помощью команды <code>project()</code> . Встроенные переменные для конкретного языка,
+                такие как
+                <code>CMAKE_CXX_COMPILER</code>, <code>CMAKE_CXX_COMPILER_ID</code> и т.д., устанавливаются с помощью
+                <code>project()</code> команды. Если в
+                файле CMakeLists верхнего уровня нет команды проекта, она будет сгенерирована неявно. По умолчанию
+                разрешенными языками являются C и CXX:
+            </p>
+
+            <pre><code>project(C_Only C)</code></pre>
+            <p>Специальное значение NONE также может использоваться с <code>project()</code> командой для включения без
+                языков:</p>
+            <pre><code>project(MyProject NONE)</code></pre>
+            <p><code>enable_language()</code> Команда может использоваться для включения языков после
+                <code>project()</code> команды:
+            </p>
+            <pre><code>enable_language(CXX)</code></pre>
+            <p>Когда язык включен, CMake находит компилятор для этого языка и определяет некоторую информацию, такую как
+                поставщик и версия компилятора, целевая архитектура и разрядность, расположение соответствующих утилит и
+                т.д.</p>
+
+            <p>В <code>ENABLED_LANGUAGES</code> глобальном свойстве содержатся языки, которые в данный момент включены.
+            </p>
+
+            <h2 id="varAndProp" class="section-title">Переменные и свойства</h2>
+
+            <p>Несколько переменных относятся к языковым компонентам инструментов, которые включены:</p>
+
+            <ul>
+                <li><strong>CMAKE_&lt;LANG&gt;_COMPILER</strong><br>Полный путь к компилятору, используемому для
+                    &lt;LANG&gt;</li>
+                <li><strong>CMAKE_&lt;LANG&gt;_COMPILER_ID</strong><br>Идентификатор компилятора, используемый CMake
+                </li>
+                <li><strong>CMAKE_&lt;LANG&gt;_COMPILER_VERSION</strong><br>Версия компилятора.</li>
+                <li><strong>CMAKE_&lt;LANG&gt;_FLAGS</strong><br>Переменные и эквиваленты, зависящие от конфигурации,
+                    содержат флаги, которые будут добавлены в команду compile при компиляции файла на определенном
+                    языке.</li>
+            </ul>
+
+            <p>
+                CMake нужен способ определить, какой компилятор использовать для вызова компоновщика. Это определяется
+                <strong>LANGUAGE</strong> свойством исходных файлов target, а в случае статических библиотек - LANGUAGE
+                зависимых библиотек.
+                Выбор, сделанный CMake, может быть переопределен с помощью <code>LINKER_LANGUAGE</code> целевого
+                свойства.
+            </p>
+
+            <h4 id="functions" class="section-title">Функции</h4>
+            <p>
+                CMake предоставляет <code>try_compile()</code> макросы команд и оболочек, такие как
+                <strong>CheckSourceCompiles</strong>, <strong>CheckCXXSymbolExists</strong> и
+                <strong>CheckIncludeFile</strong> для тестирования возможностей и доступности различных функций цепочки
+                инструментов. Эти API каким-либо образом тестируют toolchain и кэшируют результат, чтобы тест не
+                пришлось выполнять повторно при следующем запуске CMake.
+            </p>
+            <p>
+                Некоторые функции цепочки инструментов имеют встроенную обработку в CMake и не требуют тестов
+                компиляции. Например, <strong>POSITION_INDEPENDENT_CODE</strong> позволяет указать, что целевой объект
+                должен быть создан как позиционно-независимый код, если компилятор поддерживает эту функцию. Свойства
+                <strong>
+                    &lt;LANG&gt;_VISIBILITY_PRESET
+                </strong> и <strong>VISIBILITY_INLINES_HIDDEN</strong> target добавляют флаги для скрытой видимости,
+                если они поддерживаются компилятором.
+            </p>
+
+            <h4 id="crossCompile" class="section-title">Кросс-компиляция</h4>
+            <p>
+                Если <code>cmake(1)</code> вызывается с параметром командной строки
+                <code>--toolchain path/to/file</code> или <code>-DCMAKE_TOOLCHAIN_FILE=path/to/file</code>, файл будет
+                загружен раньше, чтобы задать значения для компиляторов. Для <strong>CMAKE_CROSSCOMPILING</strong>
+                переменной устанавливается значение <code>true</code> при кросс-компиляции CMake.
+            </p>
+            <p>
+                Обратите внимание, что использование переменных <strong>CMAKE_SOURCE_DIR</strong> или
+                <strong>CMAKE_BINARY_DIR</strong> внутри файла цепочки инструментов обычно нежелательно. Файл цепочки
+                инструментов используется в контекстах, где эти переменные имеют разные значения при использовании в
+                разных местах (например, как часть вызова <code>try_compile()</code>). В большинстве случаев, когда
+                необходимо оценить пути внутри файла цепочки инструментов, более подходящей переменной для использования
+                была бы <strong>CMAKE_CURRENT_LIST_DIR</strong>, поскольку она всегда имеет однозначное, предсказуемое
+                значение.
+            </p>
+
+            <h5 class="section-title">Кросс-компиляция для Linux</h5>
+            <p>
+                Типичный набор инструментов для кросс-компиляции для Linux содержит такой контент, как:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME Linux)<br>set(CMAKE_SYSTEM_PROCESSOR arm)<br>
+                <br>set(CMAKE_SYSROOT /home/devel/rasp-pi-rootfs)<br>set(CMAKE_STAGING_PREFIX /home/devel/stage)<br>
+                <br>set(tools /home/devel/gcc-4.7-linaro-rpi-gnueabihf)<br>set(CMAKE_C_COMPILER ${tools}/bin/arm-linux-gnueabihf-gcc)<br>set(CMAKE_CXX_COMPILER ${tools}/bin/arm-linux-gnueabihf-g++)<br>
+                <br>set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)<br>set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)<br>set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)<br>set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)</code></pre>
+
+            <p>
+                Где:
+            </p>
+            <ul>
+                <li>CMAKE_SYSTEM_NAME<br>является идентификатором CMake целевой платформы для сборки.
+                </li>
+                <li>CMAKE_SYSTEM_PROCESSOR<br>является идентификатором CMake целевой архитектуры.</li>
+                <li>CMAKE_SYSROOT<br>является необязательной и может быть указана при наличии
+                    системного корня.</li>
+                <li>CMAKE_STAGING_PREFIX<br>также необязательно. Его можно использовать для указания
+                    пути на хосте для установки. CMAKE_INSTALL_PREFIX всегда является местом установки
+                    во время выполнения, даже при кросс-компиляции.</li>
+                <li>CMAKE_&lt;LANG&gt;_COMPILER<br>переменная может быть установлена на полные пути или
+                    на
+                    имена компиляторов для поиска в стандартных расположениях. Для цепочек инструментов, которые не
+                    поддерживают связывание двоичных файлов без пользовательских флагов или скриптов, можно установить
+                    CMAKE_TRY_COMPILE_TARGET_TYPE переменную в STATIC_LIBRARY, чтобы
+                    сообщить CMake, чтобы он не пытался связывать исполняемые файлы во время своих проверок.
+                </li>
+            </ul>
+
+            <p>
+                Команды CMake <code>find_*</code> будут искать в sysroot и <strong>CMAKE_FIND_ROOT_PATH</strong> записи
+                по умолчанию во всех случаях, а также искать в корневом префиксе хост-системы. Хотя это можно
+                контролировать в каждом конкретном случае, при кросс-компиляции может быть полезно исключить поиск
+                определенных артефактов либо в хосте, либо в цели. Как правило, включает в себя, библиотеки и пакеты
+                должны быть найдены в префиксах целевой системы, тогда как исполняемые файлы, которые должны запускаться
+                как часть сборки, должны быть найдены только на хосте, а не на целевой системе. Это назначение
+                <strong>CMAKE_FIND_ROOT_PATH_MODE_*</strong> переменных.
+            </p>
+
+            <h4 class="section-title">Кросс-компиляция для среды Cray Linux</h4>
+            <p>
+                Кросс-компиляция для вычислительных узлов в среде Cray Linux может выполняться без использования
+                отдельного файла инструментов. Указание <code>-DCMAKE_SYSTEM_NAME=CrayLinuxEnvironment</code> в
+                командной строке CMake гарантирует, что настроены соответствующие параметры сборки и пути поиска.
+                Платформа извлекает свою конфигурацию из текущих переменных среды и настраивает проект на использование
+                оболочек компилятора из PrgEnv-* модулей среды программирования Cray, если они присутствуют и загружены.
+            </p>
+            <p>
+                Конфигурация среды программирования Cray по умолчанию предназначена для поддержки только статических
+                библиотек. Это можно переопределить и включить общие библиотеки, установив для
+                <strong>CRAYPE_LINK_TYPE</strong> переменной среды значение <code>dynamic</code>.
+            </p>
+            <p>
+                Запуск CMake без указания <strong>CMAKE_SYSTEM_NAME</strong> запустит этап настройки в режиме хоста,
+                предполагающем стандартную среду Linux. Если их не переопределить, то в конечном итоге будут
+                использоваться PrgEnv-* оболочки компилятора, что, если ориентироваться либо на узел входа, либо на
+                вычислительный узел, скорее всего, не является желаемым поведением. Исключением из этого правила может
+                быть, если вы создаете непосредственно на NID вместо кросс-компиляции из узла входа. При попытке создать
+                программное обеспечение для узла входа в систему вам нужно будет либо сначала выгрузить загруженный в
+                данный момент PrgEnv-* модуль, либо явно указать CMake использовать системные компиляторы в
+                <code>/usr/bin</code> вместо оболочек Cray. Если вместо этого требуется нацеливание на вычислительный
+                узел, просто укажите <strong>CMAKE_SYSTEM_NAME</strong>, как упоминалось выше.
+            </p>
+
+            <h4 class="section-title">Кросс-компиляция с использованием Clang</h4>
+            <p>
+                Некоторые компиляторы, такие как Clang, по своей сути являются кросс-компиляторами.
+                <strong>CMAKE_&lt;LANG&gt;_COMPILER_TARGET</strong> можно настроить на передачу значения этим
+                поддерживаемым компиляторам при компиляции:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME Linux)<br>set(CMAKE_SYSTEM_PROCESSOR arm)
+                <br>set(triple arm-linux-gnueabihf)<br>set(CMAKE_C_COMPILER clang)
+                <br>set(CMAKE_C_COMPILER_TARGET ${triple})<br>set(CMAKE_CXX_COMPILER clang++)<br>set(CMAKE_CXX_COMPILER_TARGET ${triple})</code></pre>
+            <p>
+                Аналогично, некоторые компиляторы не поставляют свои собственные дополнительные утилиты, такие как
+                компоновщики, но предоставляют способ указать расположение внешних инструментов, которые будут
+                использоваться драйвером компилятора. Переменная
+                <strong>CMAKE_&lt;LANG&gt;_COMPILER_EXTERNAL_TOOLCHAIN</strong> может быть установлена в файле цепочки
+                инструментов для передачи пути к драйверу компилятора.
+            </p>
+
+            <h4 class="section-title">Кросс-компиляция для QNX</h4>
+            <p>
+                Как компилятор Clang, QNX QCC compile по своей сути является кросс-компилятором. И
+                <strong>CMAKE_&lt;LANG&gt;_COMPILER_TARGET</strong> может быть установлен для передачи значения этим
+                поддерживаемым компиляторам при компиляции:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME QNX)
+            <br>set(arch gcc_ntoarmv7le)
+            <br>set(CMAKE_C_COMPILER qcc)<br>set(CMAKE_C_COMPILER_TARGET ${arch})<br>set(CMAKE_CXX_COMPILER qcc++)<br>set(CMAKE_CXX_COMPILER_TARGET ${arch})
+            <br>set(CMAKE_SYSROOT $ENV{QNX_TARGET})</code></pre>
+
+            <h4 class="section-title">Кросс-компиляция для Windows CE</h4>
+            <p>
+                Для перекрестной компиляции для Windows CE в вашей системе требуется установить соответствующий SDK. Эти
+                SDK обычно устанавливаются под <code>C:/Program Files (x86)/Windows CE Tools/SDKs</code>.
+            </p>
+            <p>
+                Файл цепочки инструментов для настройки генератора Visual Studio для Windows CE может выглядеть
+                следующим образом:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME WindowsCE)
+                <br>set(CMAKE_SYSTEM_VERSION 8.0)<br>set(CMAKE_SYSTEM_PROCESSOR arm)
+                <br>set(CMAKE_GENERATOR_TOOLSET CE800) # Может быть опущен для 8.0<br>set(CMAKE_GENERATOR_PLATFORM SDK_AM335X_SK_WEC2013_V310)</code></pre>
+            <p>
+                <strong>CMAKE_GENERATOR_PLATFORM</strong> сообщает генератору, какой SDK использовать. Далее
+                <strong>CMAKE_SYSTEM_VERSION</strong> сообщает генератору, какую версию Windows CE использовать. В
+                настоящее время версия 8.0 (Windows Embedded Compact 2013) поддерживается "из коробки". Для других
+                версий может потребоваться установить <strong>CMAKE_GENERATOR_TOOLSET</strong> правильное значение.
+            </p>
+
+            <h4 class="section-title">Кросс-компиляция для универсальных приложений Windows 10</h4>
+            <p>
+                Файл цепочки инструментов для настройки генераторов Visual Studio для универсального приложения Windows
+                10 может выглядеть следующим образом:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME WindowsStore)><br>set(CMAKE_SYSTEM_VERSION 10.0)</code></pre>
+            <p>
+                Универсальное приложение Windows 10 предназначено как для магазина Windows, так и для Windows Phone.
+                Укажите, что переменная <strong>CMAKE_SYSTEM_VERSION</strong> должна быть 10.0 или выше.
+            </p>
+            <p>
+                CMake выбирает пакет SDK для Windows, как описано в документации к переменной
+                <strong>CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION</strong> .
+            </p>
+
+            <h4 class="section-title">Кросс-компиляция для Windows Phone</h4>
+            <p>
+                Файл цепочки инструментов для настройки генератора Visual Studio для Windows Phone может выглядеть
+                следующим образом:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME WindowsPhone)<br>set(CMAKE_SYSTEM_VERSION 8.1)</code></pre>
+
+            <h4 class="section-title">Кросс-компиляция для Windows Store</h4>
+            <p>
+                Файл инструментов для настройки генератора Visual Studio для магазина Windows может выглядеть
+                следующим образом:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME WindowsStore)<br>set(CMAKE_SYSTEM_VERSION 8.1)</code></pre>
+
+            <h4 class="section-title">Кросс-компиляция для ADSP SHARC / Blackfin</h4>
+            <p>
+                Перекрестную компиляцию для ADSP SHARC или Blackfin можно настроить, установив для
+                <strong>CMAKE_SYSTEM_NAME</strong> переменной значение <code>ADSP</code>, а для
+                <strong>CMAKE_SYSTEM_PROCESSOR</strong> переменной — значение "номер детали", исключая ADSP-префикс,
+                например, 21594, SC589 и т.д. Это значение не зависит от регистра.
+            </p>
+            <p>
+                CMake автоматически выполнит поиск установок CCES или VDSP++ в местах установки по умолчанию и выберет
+                самую последнюю найденную версию. CCES будет выбран вместо VDSP++, если установлены обе.
+                Пользовательские пути установки можно задать с помощью <strong>CMAKE_ADSP_ROOT</strong> переменной или
+                переменной окружения <code>ADSP_ROOT</code>.
+            </p>
+            <p>
+                Компилятор (cc21k против ccblkfn) выбирается автоматически на основе предоставленного
+                <strong>CMAKE_SYSTEM_PROCESSOR</strong> значения.
+            </p>
+
+            <h4 class="section-title">Кросс-компиляция для Android</h4>
+            <p>
+                Файл цепочки инструментов может настраивать перекрестную компиляцию для Android, задав для
+                <strong>CMAKE_SYSTEM_NAME</strong> переменной значение <code>Android</code>. Дальнейшая настройка
+                зависит от используемой среды разработки Android.
+            </p>
+            <p>
+                Для генераторов Visual Studio ожидается, что CMake установит Nsight Tegra Visual Studio Edition или
+                Visual Studio tools для Android. Смотрите эти разделы для получения дополнительных сведений о
+                конфигурации.
+            </p>
+            <p>
+                Для генераторов Makefile и Ninja генераторов CMake ожидает одну из этих сред:
+            </p>
+            <ul>
+                <li>NDK</li>
+                <li>Автономная цепочка инструментов</li>
+            </ul>
+            <p>
+                CMake использует следующие шаги для выбора одной из сред:
+            </p>
+            <ol>
+                <li>Если задана переменная <code>CMAKE_ANDROID_NDK</code>, будет использоваться NDK в указанном месте.
+                </li>
+                <li>Если задана переменная <code>CMAKE_ANDROID_STANDALONE_TOOLCHAIN</code>, будет использоваться
+                    автономная цепочка инструментов.</li>
+                <li>Если для <code>CMAKE_SYSROOT</code> переменной задан каталог, CMake будет использовать
+                    соответствующую среду NDK или автономной цепочки инструментов.</li>
+            </ol>
+            <p>
+                Например, файл цепочки инструментов может содержать:
+            </p>
+            <pre><code>set(CMAKE_SYSTEM_NAME Android)<br>set(CMAKE_SYSTEM_VERSION 21) # Уровень API<br>set(CMAKE_ANDROID_ARCH_ABI arm64-v8a)<br>set(CMAKE_ANDROID_NDK /myPath/android-ndk)<br>set(CMAKE_ANDROID_STL_TYPE gnustl_static)</code></pre>
+
+            <p>
+                В качестве альтернативы можно указать значения без файла цепочки инструментов:
+            </p>
+            <pre><code>$cmake ../src \<br>-DCMAKE_SYSTEM_NAME=Android \<br>-DCMAKE_SYSTEM_VERSION=21 \<br>-DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \<br>-DCMAKE_ANDROID_NDK=/myPath/android-ndk \<br>-DCMAKE_ANDROID_STL_TYPE=gnustl_static</code></pre>
+
+            <h4 class="section-title">Кросс-компиляция для Android с помощью автономных инструментов</h4>
+            <p>Файл цепочки инструментов может настраивать генераторы Makefile или сам Ninja генератор так, чтобы он был
+                нацелен на Android для кросс-компиляции с использованием автономной цепочки инструментов.</p>
+
+            <p>Настройте использование автономной цепочки инструментов Android со следующими переменными:</p>
+
+            <ul class="list-group mb-4">
+                <li><strong>CMAKE_SYSTEM_NAME</strong></li>
+                <p>Установлено значение <code>Android</code>. Должно быть указано, чтобы включить перекрестную
+                    компиляцию для Android.</p>
+
+                <li><strong>CMAKE_ANDROID_STANDALONE_TOOLCHAIN</strong></li>
+                <p>Устанавливается абсолютный путь к корневому каталогу автономной цепочки инструментов. Должен
+                    существовать <code>${CMAKE_ANDROID_STANDALONE_TOOLCHAIN}/sysroot</code> каталог. Если не указан, для
+                    этой переменной будет выбрано значение по умолчанию, как указано выше.</p>
+
+                <li><strong>CMAKE_ANDROID_ARM_MODE</strong></li>
+                <p>Если автономная цепочка инструментов нацелена на ARM, при необходимости установите для этого значение
+                    <code>ON</code>, чтобы использовать 32-разрядную ARM вместо 16-разрядной Thumb. Подробности смотрите
+                    в документации по переменным.
+                </p>
+
+                <li><strong>CMAKE_ANDROID_ARM_NEON</strong></li>
+                <p>Если автономная цепочка инструментов нацелена на ARM v7, при необходимости установите это значение на
+                    <code>ON</code> для устройств ARM NEON. Подробности смотрите в документации по переменным.
+                </p>
+            </ul>
+
+            <p>Следующие переменные будут вычислены и предоставлены автоматически:</p>
+            <ul class="list-group mb-4">
+                <li><strong>CMAKE_SYSTEM_VERSION</strong></li>
+                <p>Уровень API Android обнаружен в автономной цепочке инструментов.</p>
+
+                <li ><strong>CMAKE_ANDROID_ARCH_ABI</strong></li>
+                <p>Android ABI обнаружен с помощью автономной цепочки инструментов.</p>
+
+                <li ><strong>CMAKE_&lt;LANG&gt;_ANDROID_TOOLCHAIN_PREFIX</strong></li>
+                <p>Префикс абсолютного пути к binutils в автономной цепочке инструментов.</p>
+
+                <li ><strong>CMAKE_&lt;LANG&gt;_ANDROID_TOOLCHAIN_SUFFIX</strong></li>
+                <p>Суффикс платформы хоста в binutils в автономной цепочке инструментов.</p>
+            </ul>
+
+            <p>Например, файл цепочки инструментов может содержать:</p>
+            <pre><code>set(CMAKE_SYSTEM_NAME Android)<br>set(CMAKE_ANDROID_STANDALONE_TOOLCHAIN /path/to/android-toolchain)</code></pre>
+
+            <p>В качестве альтернативы можно указать значения без файла цепочки инструментов:</p>
+            <pre><code>$cmake ../src \<br>  -DCMAKE_SYSTEM_NAME=Android \<br>  -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=/path/to/android-toolchain</code></pre>
+
+            <h4 class="section-title">Кросс-компиляция для Android с NVIDIA Nsight Tegra Visual Studio Edition
+            </h4>
+            <p>Файл цепочки инструментов для настройки одного из генераторов Visual Studio для сборки с использованием
+                NVIDIA Nsight Tegra, ориентированной на Android, может выглядеть следующим образом:</p>
+            <pre><code>set(CMAKE_SYSTEM_NAME Android)</code></pre>
+            <p>Для <code>CMAKE_GENERATOR_TOOLSET</code> может быть установлено значение Nsight Tegra "Версия цепочки
+                инструментов".</p>
+
+            <p>Смотрите также свойства цели:</p>
+            <ul class="list-group mb-4">
+                <li class="list-group-item">ANDROID_ANT_ADDITIONAL_OPTIONS</li>
+                <li class="list-group-item">ANDROID_API_MIN</li>
+                <li class="list-group-item">ANDROID_API</li>
+                <li class="list-group-item">ANDROID_ARCH</li>
+                <li class="list-group-item">ANDROID_ASSETS_DIRECTORIES</li>
+                <li class="list-group-item">ANDROID_GUI</li>
+                <li class="list-group-item">ANDROID_JAR_DEPENDENCIES</li>
+                <li class="list-group-item">ANDROID_JAR_DIRECTORIES</li>
+                <li class="list-group-item">ANDROID_JAVA_SOURCE_DIR</li>
+                <li class="list-group-item">ANDROID_NATIVE_LIB_DEPENDENCIES</li>
+                <li class="list-group-item">ANDROID_NATIVE_LIB_DIRECTORIES</li>
+                <li class="list-group-item">ANDROID_PROCESS_MAX</li>
+                <li class="list-group-item">ANDROID_PROGUARD_CONFIG_PATH</li>
+                <li class="list-group-item">ANDROID_PROGUARD</li>
+                <li class="list-group-item">ANDROID_SECURE_PROPS_PATH</li>
+                <li class="list-group-item">ANDROID_SKIP_ANT_STEP</li>
+                <li class="list-group-item">ANDROID_STL_TYPE</li>
+            </ul>
+
+            <h4 class="section-title">Кросс-компиляция для iOS, tvOS, visionOS или watchOS</h4>
+            <p>Для кросс-компиляции в iOS, tvOS, visionOS или watchOS рекомендуется использовать Xcode генератор. Также
+                можно использовать генераторы Unix Makefiles или Ninja, но они требуют, чтобы проект обрабатывал больше
+                областей, таких как выбор целевого процессора и подписание кода.</p>
+
+            <p>Можно настроить таргетинг на любую из платформ устройств Apple, установив для переменной
+                <code>CMAKE_SYSTEM_NAME</code> значение из приведенной ниже таблицы. По умолчанию выбирается последняя
+                версия SDK для устройств. Как и для всех платформ Apple, можно выбрать другой SDK (например, симулятор),
+                установив <code>CMAKE_OSX_SYSROOT</code> переменную, хотя это редко бывает необходимо (см. Переключение
+                между устройством и симулятором ниже). Список доступных SDK можно получить, запустив
+                <code>xcodebuild -showsdks</code>.
+            </p>
+
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Операционная система</th>
+                            <th>CMAKE_SYSTEM_NAME</th>
+                            <th>SDK для устройств (по умолчанию)</th>
+                            <th>Simulator SDK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>iOS</td>
+                            <td>iOS</td>
+                            <td>iphoneos</td>
+                            <td>iphonesimulator</td>
+                        </tr>
+                        <tr>
+                            <td>tvOS</td>
+                            <td>tvOS</td>
+                            <td>appletvos</td>
+                            <td>appletvsimulator</td>
+                        </tr>
+                        <tr>
+                            <td>visionOS</td>
+                            <td>visionOS</td>
+                            <td>xros</td>
+                            <td>xrsimulator</td>
+                        </tr>
+                        <tr>
+                            <td>watchOS</td>
+                            <td>watchOS</td>
+                            <td>watchos</td>
+                            <td>watchsimulator</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Например, чтобы создать конфигурацию CMake для iOS, достаточно следующей команды:</p>
+
+            <pre><code>cmake .. -GXcode -DCMAKE_SYSTEM_NAME=iOS</code></pre>
+
+            <p>Переменную <code>CMAKE_OSX_ARCHITECTURES</code> можно использовать для настройки архитектуры как
+                устройства, так и симулятора. Переменную <code>CMAKE_OSX_DEPLOYMENT_TARGET</code> можно использовать для
+                установки цели развертывания iOS / tvOS / visionOS / watchOS.</p>
+
+            <p>В следующем примере пять архитектур устанавливаются в универсальный двоичный файл для библиотеки iOS. При
+                необходимости добавляется соответствующий флаг <code>-miphoneos-version-min=9.3</code> или
+                <code>-mios-simulator-version-min=9.3</code> компилятора. Обратите внимание, что переменная
+                <code>CMAKE_IOS_INSTALL_COMBINED</code>, использованная в примере, теперь устарела, поэтому такой подход
+                больше не рекомендуется.</p>
+
+            <pre><code>$cmake -S. -B_builds -GXcode \ <br>  -DCMAKE_SYSTEM_NAME=iOS \ <br>  "-DCMAKE_OSX_ARCHITECTURES=armv7; armv7s; arm64; i386; x86_64" \<br>  -DCMAKE_OSX_DEPLOYMENT_TARGET=9.3 \<br>  - DCMAKE_INSTALL_PREFIX=`pwd`/_install \<br>  -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \<br>  -DCMAKE_IOS_INSTALL_COMBINED=YES</code></pre>
+
+            <p>Пример:</p>
+            <pre><code># CMakeLists.txt<br>cmake_minimum_required(VERSION 3.14)<br>project(foo)<br>add_library(foo foo.cpp)<br>install(TARGETS foo DESTINATION lib)</code></pre>
+
+            <p>Установить:</p>
+            <pre><code>cmake --build _builds --config Release --target install</code></pre>
+
+            <p>Проверить библиотеку:</p>
+            <pre><code>lipo -info _install/lib/libfoo.a<br>Architectures in the fat file: _install/lib/libfoo.a are: i386 armv7 armv7s x86_64 arm64</code></pre>
+
+            <pre><code>$ otool -l _install/lib/libfoo.a | grep -A2 LC_VERSION_MIN_IPHONEOS<br>      cmd LC_VERSION_MIN_IPHONEOS<br>  cmdsize 16<br>  version 9.3</code></pre>
+
+            <h4 class ="section-title">Подписание кода</h4>
+            <p>Некоторые артефакты сборки для встроенных платформ Apple требуют обязательной подписи кода. Если
+                используется Xcode генератор и требуется или желательна подпись кода, идентификатор группы разработчиков
+                может быть указан через переменную CMake <code>CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM</code>. Затем этот
+                идентификатор команды будет включен в созданный проект Xcode. По умолчанию CMake позволяет избежать
+                необходимости подписи кода на этапе внутренней настройки (т.е. идентификатора компилятора и обнаружения
+                функций).</p>
+
+            <h4 class ="section-title">Переключение между устройством и симулятором</h4>
+            <p>При настройке для любой из встроенных платформ можно настроить таргетинг либо на реальные устройства,
+                либо на симулятор. У обоих есть свой отдельный SDK, но CMake поддерживает указание только одного SDK для
+                этапа настройки. Это означает, что разработчик должен выбрать тот или иной вариант во время настройки.
+            </p>
+            <p>При использовании Xcode генератора это является меньшим ограничением, поскольку Xcode по-прежнему
+                позволяет выполнять сборку либо для устройства, либо для симулятора, даже если настройка выполнялась
+                только для одного из двух. В среде IDE Xcode выполняются сборки для выбранной платформы "назначения".
+                При сборке из командной строки желаемый SDK можно указать напрямую, передав <code>-sdk</code> опцию
+                базовому инструменту сборки (<code>xcodebuild</code>). Например:</p>
+
+            <pre><code>cmake --build ... -- -sdk iphonesimulator</code></pre>
+
+            <p>Пожалуйста, обратите внимание, что проверки, сделанные во время настройки, были выполнены в отношении SDK
+                во время настройки и могут не соответствовать действительности для других SDK. Такие команды, как
+                <code>find_package()</code>, <code>find_library()</code> и т.д., хранят и используют сведения только для
+                настроенного SDK / платформы, поэтому они могут быть проблематичными при переключении между сборками
+                устройства и симулятора. Вы можете следовать следующим правилам, чтобы настроить устройство + симулятор
+                правильно:</p>
+
+            <ul>
+                <li>Используйте явный <code>-l</code> флаг компоновщика, например
+                    <code>target_link_libraries(foo PUBLIC "-lz")</code></li>
+                <li>Используйте явный <code>-framework</code> флаг компоновщика, например
+                    <code>target_link_libraries(foo PUBLIC "-framework CoreFoundation")</code></li>
+                <li>Используйте <code>find_package()</code> только для библиотек, установленных с функцией
+                    <code>CMAKE_IOS_INSTALL_COMBINED</code></li>
+            </ul>
+
+
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">cmake-toolchains</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/scripts.js"></script>
+
+</html>

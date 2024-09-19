@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xcode</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="genIndex.html" class="text-white">Генераторы</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Xcode</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">Xcode</h1>       
+
+            <p>Генерация файлов проекта Xcode.</p>
+
+            <p >Изменено в версии 3.15: Этот генератор поддерживает Xcode 5.0 и выше.</p>
+        
+            <h3 class="section-title">Выбор набора инструментов и системы сборки</h3>
+            <p>По умолчанию, Xcode выбирает свою собственную цепочку инструментов. Опция <code>CMAKE_GENERATOR_TOOLSET</code> может быть установлена, возможно, через опцию <a href="../../CommandLineTools/cmake.html">cmake -T</a>, чтобы указать другой набор инструментов.</p>
+        
+            <p >Новое в версии 3.19: Этот генератор поддерживает указание набора инструментов с использованием одной из следующих форм:</p>
+        
+            <ul>
+                <li><code>toolset</code></li>
+                <li><code>toolset[,key=value]*</code></li>
+                <li><code>key=value[,key=value]*</code></li>
+            </ul>
+        
+            <p>Набор инструментов указывает имя набора инструментов. Выбранное имя набора инструментов передается в переменную <code>CMAKE_XCODE_PLATFORM_TOOLSET</code>.</p>
+        
+            <p>Пары <code>key=value</code> формируют список опций, разделенных запятыми, для указания специфических для генератора деталей выбора набора инструментов. Поддерживаемые пары:</p>
+        
+            <ul>
+                <li><code>buildsystem=&lt;variant&gt;</code></li>
+            </ul>
+        
+            <p>Укажите вариант системы сборки, который следует использовать. См. переменную <code>CMAKE_XCODE_BUILD_SYSTEM</code> для допустимых значений.</p>
+        
+            <p>Например, чтобы выбрать оригинальную систему сборки в Xcode 12, выполните <a href="../../CommandLineTools/cmake.html">cmake с опцией -T buildsystem=1</a>.</p>
+        
+            <h3 class="section-title" >Поддержка Swift</h3>
+            <p >Новое в версии 3.4.</p>
+            <p>При использовании генератора Xcode с Xcode 6.1 или выше можно включить язык Swift с помощью команды <code>enable_language()</code> или <code>project()</code>.</p>
+        
+            <h3 class="section-title">Ограничения</h3>
+            <p>Генератор Xcode не поддерживает источники, зависящие от конфигурации. Такой код приведет к ошибке генерации:</p>
+        
+            <pre><code>add_executable(MyApp mymain-$&lt;CONFIG&gt;.cpp)</code></pre>
+
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="genIndex.html" class="text-white">Генераторы</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Xcode</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>

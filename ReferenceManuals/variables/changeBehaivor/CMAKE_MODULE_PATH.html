@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMAKE_MODULE_PATH</title>
+    <link href="../../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_MODULE_PATH</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">CMAKE_MODULE_PATH</h1>
+            <p>Список каталогов, разделенных точкой с запятой, указывающий путь поиска модулей CMake, которые будут
+                загружены командами <code>include()</code> или <code>find_package()</code> перед проверкой модулей по
+                умолчанию, поставляемых с CMake. По умолчанию этот список пуст. Предполагается, что он задается
+                проектом.</p>
+
+            <p>Часто проект имеет каталог, содержащий различные <code>*.cmake</code> файлы для помощи в разработке.
+                Добавление такого каталога в <code>CMAKE_MODULE_PATH</code> упрощает их загрузку. Например, файл
+                верхнего уровня проекта <code>CMakeLists.txt</code> может содержать:</p>
+
+            <pre><code>list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")<br>include(Foo) # Загружает ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Foo.cmake<br>find_package(Bar) # Загружает ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindBar.cmake</code></pre>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_MODULE_PATH</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../../js/jquery-3.5.1.min.js"></script>
+<script src="../../../js/popper.min.js"></script>
+<script src="../../../js/bootstrap.min.js"></script>
+<script src="../../../js/scripts.js"></script>
+
+</html>

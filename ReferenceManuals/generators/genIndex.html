@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генераторы</title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Генераторы</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">CMake генераторы</h1>
+
+            <h2>Содержание</h2>
+            <ul>
+                <li><a href="#introduction">Введение</a></li>
+                <li><a href="#cmake-generators">Генераторы CMake</a>
+                    <ul>
+                        <li><a href="#command-line-generators">Генераторы для командной строки</a>
+                            <ul>
+                                <li><a href="#makefile-generators">Makefile Generators</a></li>
+                                <li><a href="#ninja-generators">Ninja Generators</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#ide-generators">Генераторы для IDE</a>
+                            <ul>
+                                <li><a href="#visual-studio-generators">Visual Studio Generators</a></li>
+                                <li><a href="#other-generators">Другие Генераторы</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#extra-generators">Дополнительные Генераторы</a></li>
+            </ul>
+
+            <h2 id="introduction" class="section-title">Введение</h2>
+            <p>Генератор CMake отвечает за создание входных файлов для нативной системы сборки. Для сборки проекта
+                необходимо выбрать один из генераторов CMake, чтобы определить, какая нативная система сборки будет
+                использоваться. Дополнительно можно выбрать один из дополнительных генераторов в качестве варианта для
+                некоторых генераторов командной строки, чтобы создать файлы проекта для вспомогательной IDE.</p>
+            <p>Генераторы CMake зависят от платформы, поэтому каждый может быть доступен только на определённых
+                платформах. Команда <code>cmake(1)</code> с опцией <code>--help</code> выводит список доступных
+                генераторов на текущей платформе. Используйте опцию <code>-G</code> для указания генератора для нового
+                дерева сборки. В <code>cmake-gui(1)</code> можно выбрать генератор интерактивно при создании нового
+                дерева сборки.</p>
+
+            <h2 id="cmake-generators" class="section-title">Генераторы CMake</h2>
+
+            <h3 id="command-line-generators" class="section-title">Генераторы для командной строки</h3>
+            <p>Эти генераторы поддерживают инструменты сборки для командной строки. Для их использования необходимо
+                запустить CMake из командной строки, окружение которой уже настроено для выбранного компилятора и
+                инструмента сборки.</p>
+
+            <h4 id="makefile-generators" class="section-title">Makefile Generators</h4>
+            <ul>
+                <li class="list-group-item"><a href="#">Borland Makefiles</a></li>
+                <li class="list-group-item"><a href="MSYSMkefiles.html">MSYS Makefiles</a></li>
+                <li class="list-group-item"><a href="MinGWMakefiles.html">MinGW Makefiles</a></li>
+                <li class="list-group-item"><a href="NMakeMakefiles.html">NMake Makefiles</a></li>
+                <li class="list-group-item"><a href="#">NMake Makefiles JOM</a></li>
+                <li class="list-group-item"><a href="unixMakefiles.html">Unix Makefiles</a></li>
+                <li class="list-group-item"><a href="#">Watcom WMake</a></li>
+            </ul>
+
+            <h4 id="ninja-generators" class="section-title">Ninja Generators</h4>
+            <ul>
+                <li class="list-group-item"><a href="Ninja.html">Ninja</a></li>
+                <li class="list-group-item"><a href="#">Ninja Multi-Config</a></li>
+            </ul>
+
+            <h3 id="ide-generators" class="section-title">Генераторы для IDE</h3>
+            <p>Эти генераторы поддерживают файлы проектов для интегрированных сред разработки (IDE). Поскольку IDE сами
+                настраивают своё окружение, CMake можно запускать из любого окружения.</p>
+
+            <h4 id="visual-studio-generators" class="section-title">Visual Studio Generators</h4>
+            <ul>
+                <li class="list-group-item"><a href="#">Visual Studio 6</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 7</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 7 .NET 2003</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 8 2005</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 9 2008</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 10 2010</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 11 2012</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 12 2013</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 14 2015</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 15 2017</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 16 2019</a></li>
+                <li class="list-group-item"><a href="#">Visual Studio 17 2022</a></li>
+            </ul>
+
+            <h4 id="other-generators" class="section-title">Другие Генераторы</h4>
+            <ul>
+                <li class="list-group-item"><a href="#">Green Hills MULTI</a></li>
+                <li class="list-group-item"><a href="Xcode.html">Xcode</a></li>
+            </ul>
+
+            <h2 id="extra-generators" class="section-title">Дополнительные Генераторы</h2>
+            <p><strong>Устарело с версии 3.27:</strong> Поддержка "Дополнительных Генераторов" устарела и будет удалена
+                в одной из будущих версий CMake. IDE могут использовать <code>cmake-file-api(7)</code> для просмотра
+                деревьев сборки, созданных CMake.</p>
+            <p>Некоторые из генераторов CMake, перечисленных в выводе команды <code>cmake(1) --help</code>, могут иметь
+                варианты, которые указывают на дополнительный генератор для вспомогательного инструмента IDE. Имена
+                таких генераторов имеют форму
+                <code>&lt;дополнительный-генератор&gt; - &lt;основной-генератор&gt;</code>. Следующие дополнительные
+                генераторы известны CMake:</p>
+            <ul>
+                <li class="list-group-item"><a href="#">CodeBlocks</a></li>
+                <li class="list-group-item"><a href="#">CodeLite</a></li>
+                <li class="list-group-item"><a href="#">Eclipse CDT4</a></li>
+                <li class="list-group-item"><a href="#">Kate</a></li>
+                <li class="list-group-item"><a href="#">Sublime Text 2</a></li>
+            </ul>
+            <div></div>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white">Документация</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">Генераторы</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../js/jquery-3.5.1.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/scripts.js"></script>
+
+</html>

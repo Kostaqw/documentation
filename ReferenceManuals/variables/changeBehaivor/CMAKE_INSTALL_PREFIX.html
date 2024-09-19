@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMAKE_INSTALL_PREFIX</title>
+    <link href="../../../lib/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/styles.css" rel="stylesheet">
+
+</head>
+<header>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_INSTALL_PREFIX</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        <div class="container mt-5">
+            <h1 class="section-title">CMAKE_INSTALL_PREFIX</h1>
+            <p><code>CMAKE_INSTALL_PREFIX</code> каталог установки, используемый <code>install()</code>.</p>
+            <p>Если <code>make install</code> вызывается или <code>INSTALL</code> создается, этот каталог добавляется ко
+                всем каталогам установки.</p>
+
+            <p>По умолчанию эта переменная имеет следующий вид:</p>
+            <ul>
+                <li><strong>Новое в версии 3.29:</strong> Если <code>CMAKE_INSTALL_PREFIX</code> установлена переменная
+                    окружения, ее значение используется по умолчанию для этой переменной.</li>
+                <li><code>c:/Program Files/${PROJECT_NAME}</code> для Windows.</li>
+                <li><code>/usr/local</code> для платформ UNIX.</li>
+            </ul>
+
+            <p>Смотрите <code>CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT</code>, как проект может выбрать собственное
+                значение по умолчанию.</p>
+
+            <p>В UNIX можно использовать <code>DESTDIR</code> механизм для переноса всей установки в промежуточную
+                область. Смотрите <code>DESTDIR</code> Переменную среды для получения дополнительной информации.</p>
+
+            <p>Установочный префикс также добавлен в <code>CMAKE_SYSTEM_PREFIX_PATH</code>, так что
+                <code>find_package()</code>, <code>find_program()</code>, <code>find_library()</code>,
+                <code>find_path()</code>, <code>find_file()</code> будет выполняться поиск по префиксу другого
+                программного обеспечения. Это поведение можно отключить, установив
+                <code>CMAKE_FIND_NO_INSTALL_PREFIX</code> значение <code>TRUE</code> перед первым <code>project()</code>
+                вызовом.</p>
+
+            <p class="note"><strong>Примечание:</strong> Используйте <code>GNUInstallDirs</code> модуль для предоставления опций в
+                стиле GNU для расположения каталогов в рамках установки.</p>
+
+            <p><code>CMAKE_INSTALL_PREFIX</code> может быть определен при настройке дерева сборки для установки его
+                установочного префикса. Или, при использовании <code>cmake(1)</code> режима инструмента командной строки
+                <code>--install</code>, можно указать другой префикс с помощью <code>--prefix</code> опции:</p>
+            <pre><code>cmake --install . --prefix /my/install/prefix</code></pre>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <div class="container-fluid bg-primary text-white py-2">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <img src="../../../img/cmake-logo-16.png" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            </div>
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-primary text-white mb-0">
+                        <li class="breadcrumb-item"><a href="../../../index.html" class="text-white">Документация</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="../varIndex.html" class="text-white">Переменные</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="text-white">CMAKE_INSTALL_PREFIX</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="../../../js/jquery-3.5.1.min.js"></script>
+<script src="../../../js/popper.min.js"></script>
+<script src="../../../js/bootstrap.min.js"></script>
+<script src="../../../js/scripts.js"></script>
+
+</html>

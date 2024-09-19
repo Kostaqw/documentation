@@ -33,15 +33,27 @@ Coolors: coolors.co
 */
 
 
-
-
-
-
-
-body
-{
-    background-color: #e4ece8;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
+
+body {
+    background-color: #e4ece8;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-content {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+    width: 100%;
+}
+
 
 img
 {
@@ -58,6 +70,7 @@ img
 .container 
 {
     background-color: #F4F4F9;
+    padding-bottom: 15px;
 }
 .spoiler-header {
     cursor: pointer;
